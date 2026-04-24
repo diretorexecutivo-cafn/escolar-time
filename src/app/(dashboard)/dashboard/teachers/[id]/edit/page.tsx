@@ -14,7 +14,7 @@ export default async function EditTeacherPage({
 
   const { data: teacher } = await supabase
     .from('teachers')
-    .select('id, name, email, phone, max_daily_lessons, max_weekly_lessons, active')
+    .select('id, name, active')
     .eq('id', id)
     .eq('tenant_id', TENANT_ID)
     .single()

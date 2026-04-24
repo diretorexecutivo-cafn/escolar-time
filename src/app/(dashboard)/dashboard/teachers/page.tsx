@@ -8,7 +8,7 @@ export default async function TeachersPage() {
 
   const { data: teachers } = await supabase
     .from('teachers')
-    .select('id, name, email, phone, max_daily_lessons, max_weekly_lessons, active')
+    .select('id, name, active')
     .eq('tenant_id', TENANT_ID)
     .order('name')
 

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { Pencil, Power, Search, Plus } from 'lucide-react'
+import { Pencil, Power, Search, Plus, ShieldAlert } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -22,14 +22,8 @@ import { toggleTeacherStatus } from '@/app/(dashboard)/dashboard/teachers/action
 type Teacher = {
   id: string
   name: string
-  email: string | null
-  phone: string | null
-  max_daily_lessons: number | null
-  max_weekly_lessons: number | null
   active: boolean
 }
-
-const EMPTY = <span className="text-gray-300">—</span>
 
 export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
   const [search, setSearch] = useState('')
@@ -87,10 +81,6 @@ export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
           <TableHeader>
             <TableRow className="bg-gray-50">
               <TableHead className="font-semibold text-navy">Nome</TableHead>
-              <TableHead className="font-semibold text-navy">E-mail</TableHead>
-              <TableHead className="font-semibold text-navy">Telefone</TableHead>
-              <TableHead className="font-semibold text-navy text-center">Limite Diário</TableHead>
-              <TableHead className="font-semibold text-navy text-center">Limite Semanal</TableHead>
               <TableHead className="font-semibold text-navy">Status</TableHead>
               <TableHead className="font-semibold text-navy text-right">Ações</TableHead>
             </TableRow>
@@ -98,7 +88,7 @@ export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-12 text-slate">
+                <TableCell colSpan={3} className="text-center py-12 text-slate">
                   {search
                     ? 'Nenhum professor encontrado para esta busca.'
                     : 'Nenhum professor cadastrado.'}
@@ -107,26 +97,13 @@ export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
             ) : (
               filtered.map((teacher) => (
                 <TableRow key={teacher.id} className="hover:bg-gray-50/50">
-                  <TableCell className="font-medium text-navy">{teacher.name}</TableCell>
-                  <TableCell className="text-slate text-sm">
-                    {teacher.email ?? EMPTY}
-                  </TableCell>
-                  <TableCell className="text-slate text-sm">
-                    {teacher.phone ?? EMPTY}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {teacher.max_daily_lessons != null ? (
-                      <span className="font-mono text-sm bg-gray-100 px-2 py-0.5 rounded text-slate">
-                        {teacher.max_daily_lessons}
-                      </span>
-                    ) : EMPTY}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {teacher.max_weekly_lessons != null ? (
-                      <span className="font-mono text-sm bg-gray-100 px-2 py-0.5 rounded text-slate">
-                        {teacher.max_weekly_lessons}
-                      </span>
-                    ) : EMPTY}
+                  <TableCell className="font-medium">
+                    <Link
+                      href={`/dashboard/teachers/${teacher.id}`}
+                      className="text-navy hover:text-ocre hover:underline transition-colors"
+                    >
+                      {teacher.name}
+                    </Link>
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -140,16 +117,28 @@ export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1">
                       <Link
                         href={`/dashboard/teachers/${teacher.id}/edit`}
                         className={cn(
                           buttonVariants({ variant: 'ghost', size: 'sm' }),
                           'h-8 w-8 p-0 text-slate hover:text-navy cursor-pointer'
                         )}
+                        title="Editar"
                       >
                         <Pencil className="h-4 w-4" />
                         <span className="sr-only">Editar</span>
+                      </Link>
+                      <Link
+                        href={`/dashboard/teachers/${teacher.id}/constraints`}
+                        className={cn(
+                          buttonVariants({ variant: 'ghost', size: 'sm' }),
+                          'h-8 w-8 p-0 text-slate hover:text-ocre cursor-pointer'
+                        )}
+                        title="Restrições"
+                      >
+                        <ShieldAlert className="h-4 w-4" />
+                        <span className="sr-only">Restrições</span>
                       </Link>
                       <Button
                         variant="ghost"
