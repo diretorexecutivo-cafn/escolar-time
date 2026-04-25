@@ -11,6 +11,7 @@ import {
   Link2,
   Clock,
   ShieldAlert,
+  Settings2,
   Wand2,
   CalendarDays,
   School,
@@ -27,6 +28,7 @@ const NAV_ITEMS = [
   { label: 'Atribuições',    href: '/dashboard/assignments', icon: Link2 },
   { label: 'Grades Horárias',href: '/dashboard/grids',       icon: Clock },
   { label: 'Restrições',     href: '/dashboard/constraints', icon: ShieldAlert },
+  { label: 'Regras Globais', href: '/dashboard/constraints/rules', icon: Settings2 },
   { label: 'Gerar Horário',  href: '/dashboard/generate',    icon: Wand2 },
   { label: 'Horários',       href: '/dashboard/schedules',   icon: CalendarDays },
 ]
@@ -63,6 +65,10 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
             const isActive =
               href === '/dashboard'
                 ? pathname === '/dashboard'
+                : href === '/dashboard/constraints'
+                ? pathname === '/dashboard/constraints' ||
+                  (pathname.startsWith('/dashboard/constraints/') &&
+                    !pathname.startsWith('/dashboard/constraints/rules'))
                 : pathname.startsWith(href)
 
             return (
