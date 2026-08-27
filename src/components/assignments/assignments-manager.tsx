@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import {
   ChevronDown,
   ChevronRight,
@@ -219,12 +219,13 @@ export function AssignmentsManager({ units }: { units: Unit[] }) {
     }
   }, [])
 
-  useEffect(() => {
-    if (selectedUnitId) {
-      loadData(selectedUnitId)
+  function handleUnitChange(unitId: string) {
+    setSelectedUnitId(unitId)
+    if (unitId) {
+      loadData(unitId)
       setExpandedIds(new Set())
     }
-  }, [selectedUnitId, loadData])
+  }
 
   function toggleExpanded(id: string) {
     setExpandedIds((prev) => {
@@ -342,7 +343,7 @@ export function AssignmentsManager({ units }: { units: Unit[] }) {
         <select
           id="unit-select"
           value={selectedUnitId}
-          onChange={(e) => setSelectedUnitId(e.target.value)}
+          onChange={(e) => handleUnitChange(e.target.value)}
           className={SELECT_CLS}
         >
           <option value="">Selecione uma unidade…</option>
