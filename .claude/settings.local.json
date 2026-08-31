@@ -4,11 +4,13 @@
       "Bash(npx tsc *)",
       "Bash(echo \"EXIT: $?\")",
       "Bash(echo \"EXIT:$?\")",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(git -C \"/Users/heliosantana/Desktop/Projetos IA/local/escolar-time\" status)",
+      "Bash(git -C \"/Users/heliosantana/Desktop/Projetos IA/local/escolar-time\" log --oneline -15)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "supabase"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

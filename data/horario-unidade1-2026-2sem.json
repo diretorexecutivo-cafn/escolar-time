@@ -1,0 +1,2936 @@
+{
+  "fonte": "HORÁRIO 2026 - 2° semestre.pdf",
+  "unidade": "UNIDADE I - Colégio Arquidiocesano Família de Nazaré",
+  "periodo": "2026 / 2º semestre",
+  "turno_principal": "MANHÃ (07:10–12:30)",
+  "turmas": [
+    "6º ANO",
+    "7º ANO",
+    "8º ANO",
+    "9º ANO",
+    "1ª SÉRIE",
+    "2ª SÉRIE",
+    "3ª SÉRIE"
+  ],
+  "observacoes": [
+    "Grade matinal comum a todas as turmas: 6 aulas de 50min (07:10, 08:00, 08:50, 10:00, 10:50, 11:40) + recreio 09:40–10:00.",
+    "Contraturno (tarde) só em dias específicos e com horários próprios por etapa.",
+    "Educação Física e Projeto de Vida são aulas AGRUPADAS (várias turmas juntas) e separadas por gênero (MASC./FEM.).",
+    "Inglês do Fund. II é ministrado por CLARISSA E LARA em duas turmas simultâneas (turmas divididas por nível).",
+    "Célula em branco no PDF: FUND II / TERÇA / aula 8 (13:50) / 8º ANO."
+  ],
+  "slots": [
+    {
+      "etapa": "FUND II",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "6º ANO": {
+          "celula": "HISTÓRIA / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "ALEXANDRE"
+        },
+        "7º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "8º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "9º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "7º ANO": {
+          "celula": "LITERATURA 2 / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 2",
+          "professor": "ALEXANDRE"
+        },
+        "8º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "9º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "7º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "8º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "9º ANO": {
+          "celula": "LITERATURA 1 / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 1",
+          "professor": "CRISTIANE"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "7º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "8º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        },
+        "9º ANO": {
+          "celula": "BIOLOGIA / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA",
+          "professor": "RAQUEL"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        },
+        "7º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "8º ANO": {
+          "celula": "LITERATURA 2 / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 2",
+          "professor": "ALEXANDRE"
+        },
+        "9º ANO": {
+          "celula": "HISTÓRIA / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "EUGÊNIO"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "HISTÓRIA / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "ALEXANDRE"
+        },
+        "7º ANO": {
+          "celula": "LITERATURA 1 / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 1",
+          "professor": "CRISTIANE"
+        },
+        "8º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "9º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "6º ANO": {
+          "celula": "LITERATURA 2 / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 2",
+          "professor": "ALEXANDRE"
+        },
+        "7º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "8º ANO": {
+          "celula": "MÚSICA / CASSIANO",
+          "tipo": "AULA",
+          "disciplina": "MÚSICA",
+          "professor": "CASSIANO"
+        },
+        "9º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "MÚSICA / CASSIANO",
+          "tipo": "AULA",
+          "disciplina": "MÚSICA",
+          "professor": "CASSIANO"
+        },
+        "7º ANO": {
+          "celula": "HISTÓRIA / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "ALEXANDRE"
+        },
+        "8º ANO": {
+          "celula": "LITERATURA 1 / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 1",
+          "professor": "CRISTIANE"
+        },
+        "9º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "7º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        },
+        "8º ANO": {
+          "celula": "HISTÓRIA / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "EUGÊNIO"
+        },
+        "9º ANO": {
+          "celula": "MÚSICA / CASSIANO",
+          "tipo": "AULA",
+          "disciplina": "MÚSICA",
+          "professor": "CASSIANO"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        },
+        "7º ANO": {
+          "celula": "HISTÓRIA / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "ALEXANDRE"
+        },
+        "8º ANO": {
+          "celula": "HISTÓRIA / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "EUGÊNIO"
+        },
+        "9º ANO": {
+          "celula": "BIOLOGIA / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA",
+          "professor": "RAQUEL"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "7º ANO": {
+          "celula": "MÚSICA / CASSIANO",
+          "tipo": "AULA",
+          "disciplina": "MÚSICA",
+          "professor": "CASSIANO"
+        },
+        "8º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        },
+        "9º ANO": {
+          "celula": "HISTÓRIA / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "EUGÊNIO"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        },
+        "9º ANO": {
+          "celula": "LITERATURA 2 / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 2",
+          "professor": "ALEXANDRE"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 8,
+      "aula": 7,
+      "inicio": "13:10",
+      "turmas": {
+        "6º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "7º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "8º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 9,
+      "aula": 8,
+      "inicio": "13:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "7º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "9º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 10,
+      "aula": 9,
+      "inicio": "14:30",
+      "turmas": {
+        "6º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "9º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 11,
+      "aula": 10,
+      "inicio": "15:10",
+      "turmas": {
+        "6º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "9º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "6º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "7º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "8º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "9º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "7º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "8º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "9º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "7º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "8º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "9º ANO": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "7º ANO": {
+          "celula": "INGLÊS / CLARISSA E LARA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA E LARA"
+        },
+        "8º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "9º ANO": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "LITERATURA 1 / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA 1",
+          "professor": "CRISTIANE"
+        },
+        "7º ANO": {
+          "celula": "FILOSOFIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "FILOSOFIA",
+          "professor": "RAYNNER"
+        },
+        "8º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "9º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "7º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "8º ANO": {
+          "celula": "CIÊNCIAS / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "CIÊNCIAS",
+          "professor": "RAQUEL"
+        },
+        "9º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 8,
+      "aula": 7,
+      "inicio": "14:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "7º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "8º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 9,
+      "aula": 8,
+      "inicio": "14:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. /GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "7º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "8º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 10,
+      "aula": 9,
+      "inicio": "15:20",
+      "turmas": {
+        "6º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "9º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 11,
+      "aula": 10,
+      "inicio": "16:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "9º ANO": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "6º ANO": {
+          "celula": "FILOSOFIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "FILOSOFIA",
+          "professor": "RAYNNER"
+        },
+        "7º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        },
+        "8º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "9º ANO": {
+          "celula": "ARTE / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "LUCAS RIBEIRO"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "GRAMÁTICA / SALYN",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "SALYN"
+        },
+        "7º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "8º ANO": {
+          "celula": "FILOSOFIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "FILOSOFIA",
+          "professor": "RAYNNER"
+        },
+        "9º ANO": {
+          "celula": "QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "QUÍMICA",
+          "professor": "MARCIO"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "ARTE / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "LUCAS RIBEIRO"
+        },
+        "7º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        },
+        "8º ANO": {
+          "celula": "HISTÓRIA / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA",
+          "professor": "EUGÊNIO"
+        },
+        "9º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "7º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        },
+        "8º ANO": {
+          "celula": "ARTE / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "LUCAS RIBEIRO"
+        },
+        "9º ANO": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "7º ANO": {
+          "celula": "ARTE / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "LUCAS RIBEIRO"
+        },
+        "8º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        },
+        "9º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        },
+        "7º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "8º ANO": {
+          "celula": "ARTE / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "LUCAS RIBEIRO"
+        },
+        "9º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "6º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        },
+        "7º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "8º ANO": {
+          "celula": "ENSINO RELIGIOSO / CÉSAR",
+          "tipo": "AULA",
+          "disciplina": "ENSINO RELIGIOSO",
+          "professor": "CÉSAR"
+        },
+        "9º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "ENSINO RELIGIOSO / CÉSAR",
+          "tipo": "AULA",
+          "disciplina": "ENSINO RELIGIOSO",
+          "professor": "CÉSAR"
+        },
+        "7º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        },
+        "8º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "9º ANO": {
+          "celula": "FILOSOFIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "FILOSOFIA",
+          "professor": "RAYNNER"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        },
+        "7º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "8º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        },
+        "9º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "9º ANO": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "6º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "7º ANO": {
+          "celula": "ENSINO RELIGIOSO / CÉSAR",
+          "tipo": "AULA",
+          "disciplina": "ENSINO RELIGIOSO",
+          "professor": "CÉSAR"
+        },
+        "8º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "9º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "6º ANO": {
+          "celula": "MATEMÁTICA 1 / KELVY",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "KELVY"
+        },
+        "7º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        },
+        "8º ANO": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "9º ANO": {
+          "celula": "ENSINO RELIGIOSO / CÉSAR",
+          "tipo": "AULA",
+          "disciplina": "ENSINO RELIGIOSO",
+          "professor": "CÉSAR"
+        }
+      }
+    },
+    {
+      "etapa": "FUND II",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "6º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "7º ANO": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "8º ANO": {
+          "celula": "LATIM / SAMUEL",
+          "tipo": "AULA",
+          "disciplina": "LATIM",
+          "professor": "SAMUEL"
+        },
+        "9º ANO": {
+          "celula": "PRODUÇÃO DE TEXTO / SALYN",
+          "tipo": "AULA",
+          "disciplina": "PRODUÇÃO DE TEXTO",
+          "professor": "SALYN"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "QUÍMICA",
+          "professor": "MARCIO"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE FÍSICA / ERIELSON",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FÍSICA",
+          "professor": "ERIELSON"
+        },
+        "3ª SÉRIE": {
+          "celula": "LITERATURA / LIZ",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA",
+          "professor": "LIZ"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "LITERATURA / LIZ",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA",
+          "professor": "LIZ"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE FÍSICA / ERIELSON",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FÍSICA",
+          "professor": "ERIELSON"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE QUÍMICA",
+          "professor": "MARCIO"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "QUÍMICA",
+          "professor": "MARCIO"
+        },
+        "2ª SÉRIE": {
+          "celula": "LITERATURA / LIZ",
+          "tipo": "AULA",
+          "disciplina": "LITERATURA",
+          "professor": "LIZ"
+        },
+        "3ª SÉRIE": {
+          "celula": "HISTÓRIA 2 / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA 2",
+          "professor": "EUGÊNIO"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "HISTÓRIA 2 / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA 2",
+          "professor": "EUGÊNIO"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE QUÍMICA",
+          "professor": "MARCIO"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE FILOSOFIA / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FILOSOFIA",
+          "professor": "LUCAS RIBEIRO"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE FILOSOFIA / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FILOSOFIA",
+          "professor": "LUCAS RIBEIRO"
+        },
+        "2ª SÉRIE": {
+          "celula": "INGLÊS / CLARISSA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA"
+        },
+        "3ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEGUNDA",
+      "dia_num": 1,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE PRODUÇÃO DE TEXTO / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE PRODUÇÃO DE TEXTO",
+          "professor": "GILMARA"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE FILOSOFIA / LUCAS RIBEIRO",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FILOSOFIA",
+          "professor": "LUCAS RIBEIRO"
+        },
+        "3ª SÉRIE": {
+          "celula": "INGLÊS / CLARISSA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "BIOLOGIA 2 / JAQUELINE",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 2",
+          "professor": "JAQUELINE"
+        },
+        "2ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        },
+        "3ª SÉRIE": {
+          "celula": "ENSINO RELIGIOSO / CÉSAR",
+          "tipo": "AULA",
+          "disciplina": "ENSINO RELIGIOSO",
+          "professor": "CÉSAR"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "BIOLOGIA 2 / JAQUELINE",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 2",
+          "professor": "JAQUELINE"
+        },
+        "2ª SÉRIE": {
+          "celula": "BIOLOGIA 1 / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 1",
+          "professor": "RAQUEL"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE PRODUÇÃO DE TEXTO / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE PRODUÇÃO DE TEXTO",
+          "professor": "GILMARA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        },
+        "2ª SÉRIE": {
+          "celula": "BIOLOGIA 2 / JAQUELINE",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 2",
+          "professor": "JAQUELINE"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE PRODUÇÃO DE TEXTO / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE PRODUÇÃO DE TEXTO",
+          "professor": "GILMARA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE PRODUÇÃO DE TEXTO / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE PRODUÇÃO DE TEXTO",
+          "professor": "GILMARA"
+        },
+        "3ª SÉRIE": {
+          "celula": "BIOLOGIA 2 / JAQUELINE",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 2",
+          "professor": "JAQUELINE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE PRODUÇÃO DE TEXTO / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE PRODUÇÃO DE TEXTO",
+          "professor": "GILMARA"
+        },
+        "3ª SÉRIE": {
+          "celula": "BIOLOGIA 2 / JAQUELINE",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 2",
+          "professor": "JAQUELINE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE PRODUÇÃO DE TEXTO / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE PRODUÇÃO DE TEXTO",
+          "professor": "GILMARA"
+        },
+        "2ª SÉRIE": {
+          "celula": "BIOLOGIA 2 / JAQUELINE",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 2",
+          "professor": "JAQUELINE"
+        },
+        "3ª SÉRIE": {
+          "celula": "BIOLOGIA 1 / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 1",
+          "professor": "RAQUEL"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 8,
+      "aula": null,
+      "inicio": null,
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 9,
+      "aula": null,
+      "inicio": "14:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "PROJETO DE VIDA MASC. / ALEXANDRE QUEIROZ",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA MASC.",
+          "professor": "ALEXANDRE QUEIROZ"
+        },
+        "2ª SÉRIE": {
+          "celula": "PROJETO DE VIDA MASC. / ALEXANDRE QUEIROZ",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA MASC.",
+          "professor": "ALEXANDRE QUEIROZ"
+        },
+        "3ª SÉRIE": {
+          "celula": "PROJETO DE VIDA MASC. / ALEXANDRE QUEIROZ",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA MASC.",
+          "professor": "ALEXANDRE QUEIROZ"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 10,
+      "aula": null,
+      "inicio": "14:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "INTERVALO",
+          "tipo": "INTERVALO",
+          "disciplina": "INTERVALO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "INTERVALO",
+          "tipo": "INTERVALO",
+          "disciplina": "INTERVALO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "INTERVALO",
+          "tipo": "INTERVALO",
+          "disciplina": "INTERVALO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 11,
+      "aula": null,
+      "inicio": "15:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "PROJETO DE VIDA MASC. / ALEXANDRE QUEIROZ",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA MASC.",
+          "professor": "ALEXANDRE QUEIROZ"
+        },
+        "2ª SÉRIE": {
+          "celula": "PROJETO DE VIDA MASC. / ALEXANDRE QUEIROZ",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA MASC.",
+          "professor": "ALEXANDRE QUEIROZ"
+        },
+        "3ª SÉRIE": {
+          "celula": "PROJETO DE VIDA MASC. / ALEXANDRE QUEIROZ",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA MASC.",
+          "professor": "ALEXANDRE QUEIROZ"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 12,
+      "aula": null,
+      "inicio": "15:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "INTERVALO",
+          "tipo": "INTERVALO",
+          "disciplina": "INTERVALO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "INTERVALO",
+          "tipo": "INTERVALO",
+          "disciplina": "INTERVALO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "INTERVALO",
+          "tipo": "INTERVALO",
+          "disciplina": "INTERVALO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 13,
+      "aula": 7,
+      "inicio": "15:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "2ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "3ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "TERÇA",
+      "dia_num": 2,
+      "ordem": 14,
+      "aula": 8,
+      "inicio": "16:30",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "2ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        },
+        "3ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA MASC. / ALEX",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA MASC.",
+          "professor": "ALEX"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE FÍSICA / ERIELSON",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FÍSICA",
+          "professor": "ERIELSON"
+        },
+        "2ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        },
+        "3ª SÉRIE": {
+          "celula": "FÍSICA 2 / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA 2",
+          "professor": "JEANN"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE FÍSICA / ERIELSON",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FÍSICA",
+          "professor": "ERIELSON"
+        },
+        "2ª SÉRIE": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        },
+        "3ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE MATEMÁTICA / KELVY",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE MATEMÁTICA",
+          "professor": "KELVY"
+        },
+        "2ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        },
+        "3ª SÉRIE": {
+          "celula": "FÍSICA 1 / ERIELSON",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA 1",
+          "professor": "ERIELSON"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "FILOSOFIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "FILOSOFIA",
+          "professor": "RAYNNER"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE MATEMÁTICA / KELVY",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE MATEMÁTICA",
+          "professor": "KELVY"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE FÍSICA / ERIELSON",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FÍSICA",
+          "professor": "ERIELSON"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "INGLÊS / CLARISSA",
+          "tipo": "AULA",
+          "disciplina": "INGLÊS",
+          "professor": "CLARISSA"
+        },
+        "2ª SÉRIE": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE FÍSICA / ERIELSON",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE FÍSICA",
+          "professor": "ERIELSON"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        },
+        "2ª SÉRIE": {
+          "celula": "SOCIOLOGIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "SOCIOLOGIA",
+          "professor": "RAYNNER"
+        },
+        "3ª SÉRIE": {
+          "celula": "GRAMÁTICA / CHRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "GRAMÁTICA",
+          "professor": "CHRISTIANE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 8,
+      "aula": 7,
+      "inicio": "14:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "BIOLOGIA 1 / RAQUEL",
+          "tipo": "AULA",
+          "disciplina": "BIOLOGIA 1",
+          "professor": "RAQUEL"
+        },
+        "2ª SÉRIE": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        },
+        "3ª SÉRIE": {
+          "celula": "QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "QUÍMICA",
+          "professor": "MARCIO"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 9,
+      "aula": 8,
+      "inicio": "14:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        },
+        "2ª SÉRIE": {
+          "celula": "HISTÓRIA 1 / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA 1",
+          "professor": "ALEXANDRE"
+        },
+        "3ª SÉRIE": {
+          "celula": "QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "QUÍMICA",
+          "professor": "MARCIO"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 10,
+      "aula": null,
+      "inicio": "15:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 11,
+      "aula": 9,
+      "inicio": "16:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "FÍSICA / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA",
+          "professor": "JEANN"
+        },
+        "2ª SÉRIE": {
+          "celula": "QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "QUÍMICA",
+          "professor": "MARCIO"
+        },
+        "3ª SÉRIE": {
+          "celula": "HISTÓRIA 1 / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA 1",
+          "professor": "ALEXANDRE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUARTA",
+      "dia_num": 3,
+      "ordem": 12,
+      "aula": 10,
+      "inicio": "16:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "HISTÓRIA 1 / ALEXANDRE",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA 1",
+          "professor": "ALEXANDRE"
+        },
+        "2ª SÉRIE": {
+          "celula": "QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "QUÍMICA",
+          "professor": "MARCIO"
+        },
+        "3ª SÉRIE": {
+          "celula": "FÍSICA 2 / JEANN",
+          "tipo": "AULA",
+          "disciplina": "FÍSICA 2",
+          "professor": "JEANN"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE QUÍMICA / MARCIO",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE QUÍMICA",
+          "professor": "MARCIO"
+        },
+        "2ª SÉRIE": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "3ª SÉRIE": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "2ª SÉRIE": {
+          "celula": "HISTÓRIA 2 / EUGÊNIO",
+          "tipo": "AULA",
+          "disciplina": "HISTÓRIA 2",
+          "professor": "EUGÊNIO"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE MATEMÁTICA / KELVY",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE MATEMÁTICA",
+          "professor": "KELVY"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "2ª SÉRIE": {
+          "celula": "MATEMÁTICA 2 / BIANKA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 2",
+          "professor": "BIANKA"
+        },
+        "3ª SÉRIE": {
+          "celula": "FILOSOFIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "FILOSOFIA",
+          "professor": "RAYNNER"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "SOCIOLOGIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "SOCIOLOGIA",
+          "professor": "RAYNNER"
+        },
+        "2ª SÉRIE": {
+          "celula": "ARTE / MARIA BARBARA",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "MARIA BARBARA"
+        },
+        "3ª SÉRIE": {
+          "celula": "ESPANHOL / MARCELINA",
+          "tipo": "AULA",
+          "disciplina": "ESPANHOL",
+          "professor": "MARCELINA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "ARTE / MARIA BARBARA",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "MARIA BARBARA"
+        },
+        "2ª SÉRIE": {
+          "celula": "ESPANHOL / MARCELINA",
+          "tipo": "AULA",
+          "disciplina": "ESPANHOL",
+          "professor": "MARCELINA"
+        },
+        "3ª SÉRIE": {
+          "celula": "SOCIOLOGIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "SOCIOLOGIA",
+          "professor": "RAYNNER"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "ESPANHOL / MARCELINA",
+          "tipo": "AULA",
+          "disciplina": "ESPANHOL",
+          "professor": "MARCELINA"
+        },
+        "2ª SÉRIE": {
+          "celula": "FILOSOFIA / RAYNNER",
+          "tipo": "AULA",
+          "disciplina": "FILOSOFIA",
+          "professor": "RAYNNER"
+        },
+        "3ª SÉRIE": {
+          "celula": "ARTE / MARIA BARBARA",
+          "tipo": "AULA",
+          "disciplina": "ARTE",
+          "professor": "MARIA BARBARA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 8,
+      "aula": null,
+      "inicio": null,
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "-",
+          "tipo": "VAGO",
+          "disciplina": "VAGO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 9,
+      "aula": 7,
+      "inicio": "14:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "2ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "3ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 10,
+      "aula": 8,
+      "inicio": "14:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "2ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        },
+        "3ª SÉRIE": {
+          "celula": "EDUCAÇÃO FÍSICA FEM. / GLEICE",
+          "tipo": "AULA",
+          "disciplina": "EDUCAÇÃO FÍSICA FEM.",
+          "professor": "GLEICE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 11,
+      "aula": 9,
+      "inicio": "15:30",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "PROJETO DE VIDA FEM. / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA FEM.",
+          "professor": "GILMARA"
+        },
+        "2ª SÉRIE": {
+          "celula": "PROJETO DE VIDA FEM. / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA FEM.",
+          "professor": "GILMARA"
+        },
+        "3ª SÉRIE": {
+          "celula": "PROJETO DE VIDA FEM. / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA FEM.",
+          "professor": "GILMARA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "QUINTA",
+      "dia_num": 4,
+      "ordem": 12,
+      "aula": 10,
+      "inicio": "16:10",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "PROJETO DE VIDA FEM. / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA FEM.",
+          "professor": "GILMARA"
+        },
+        "2ª SÉRIE": {
+          "celula": "PROJETO DE VIDA FEM. / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA FEM.",
+          "professor": "GILMARA"
+        },
+        "3ª SÉRIE": {
+          "celula": "PROJETO DE VIDA FEM. / GILMARA",
+          "tipo": "AULA",
+          "disciplina": "PROJETO DE VIDA FEM.",
+          "professor": "GILMARA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 1,
+      "aula": 1,
+      "inicio": "07:10",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "MATEMÁTICA 1 / MARCELA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "MARCELA"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE LITERATURA / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE LITERATURA",
+          "professor": "CRISTIANE"
+        },
+        "3ª SÉRIE": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 2,
+      "aula": 2,
+      "inicio": "08:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "MATEMÁTICA 1 / MARCELA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "MARCELA"
+        },
+        "2ª SÉRIE": {
+          "celula": "OFICINA DE LITERATURA / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE LITERATURA",
+          "professor": "CRISTIANE"
+        },
+        "3ª SÉRIE": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 3,
+      "aula": 3,
+      "inicio": "08:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE LITERATURA / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE LITERATURA",
+          "professor": "CRISTIANE"
+        },
+        "2ª SÉRIE": {
+          "celula": "ENSINO RELIGIOSO / CÉSAR",
+          "tipo": "AULA",
+          "disciplina": "ENSINO RELIGIOSO",
+          "professor": "CÉSAR"
+        },
+        "3ª SÉRIE": {
+          "celula": "MATEMÁTICA 1 / MARCELA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "MARCELA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 4,
+      "aula": null,
+      "inicio": "09:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "2ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        },
+        "3ª SÉRIE": {
+          "celula": "RECREIO",
+          "tipo": "INTERVALO",
+          "disciplina": "RECREIO",
+          "professor": null
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 5,
+      "aula": 4,
+      "inicio": "10:00",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "OFICINA DE LITERATURA / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE LITERATURA",
+          "professor": "CRISTIANE"
+        },
+        "2ª SÉRIE": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "3ª SÉRIE": {
+          "celula": "MATEMÁTICA 1 / MARCELA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "MARCELA"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 6,
+      "aula": 5,
+      "inicio": "10:50",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "GEOGRAFIA / MAYARA",
+          "tipo": "AULA",
+          "disciplina": "GEOGRAFIA",
+          "professor": "MAYARA"
+        },
+        "2ª SÉRIE": {
+          "celula": "MATEMÁTICA 1 / MARCELA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "MARCELA"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE LITERATURA / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE LITERATURA",
+          "professor": "CRISTIANE"
+        }
+      }
+    },
+    {
+      "etapa": "MÉDIO",
+      "dia": "SEXTA",
+      "dia_num": 5,
+      "ordem": 7,
+      "aula": 6,
+      "inicio": "11:40",
+      "turmas": {
+        "1ª SÉRIE": {
+          "celula": "ENSINO RELIGIOSO / CÉSAR",
+          "tipo": "AULA",
+          "disciplina": "ENSINO RELIGIOSO",
+          "professor": "CÉSAR"
+        },
+        "2ª SÉRIE": {
+          "celula": "MATEMÁTICA 1 / MARCELA",
+          "tipo": "AULA",
+          "disciplina": "MATEMÁTICA 1",
+          "professor": "MARCELA"
+        },
+        "3ª SÉRIE": {
+          "celula": "OFICINA DE LITERATURA / CRISTIANE",
+          "tipo": "AULA",
+          "disciplina": "OFICINA DE LITERATURA",
+          "professor": "CRISTIANE"
+        }
+      }
+    }
+  ]
+}
