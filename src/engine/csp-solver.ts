@@ -72,6 +72,9 @@ function isPositionBlocked(pos: SlotPosition, c: EngineConstraint): boolean {
       return c.timeFrom !== undefined && pos.startTime < c.timeFrom
     case 'MUST_END_BEFORE':
       return c.timeTo !== undefined && pos.endTime > c.timeTo
+    case 'AVOID_DAY':
+      // Como PREFERRED vira penalidade no score; como MANDATORY bloqueia o dia.
+      return c.daysOfWeek.length > 0
     default:
       return false
   }

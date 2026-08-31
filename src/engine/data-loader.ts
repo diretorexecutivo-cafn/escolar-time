@@ -26,7 +26,6 @@ type RawConstraint = {
   teacher_id: string
   type: string
   priority: string
-  weight?: number | null
   days_of_week: number[] | null
   school_unit_id: string | null
   subject_id: string | null
@@ -57,7 +56,8 @@ type RawClassSubject = {
   weekly_lessons: number
   allow_double_lesson: boolean
   subjects: RawSubject | RawSubject[] | null
-  teaching_assignments: RawTeachingAssignment[] | null
+  // PostgREST devolve objeto (não array) porque teaching_assignments.class_subject_id é UNIQUE
+  teaching_assignments: RawTeachingAssignment | RawTeachingAssignment[] | null
 }
 
 type RawTimeSlot = {
@@ -89,9 +89,9 @@ type RawClassGroup = {
 }
 
 type RawBaselineEntry = {
-  assignment_id: string
+  teaching_assignment_id: string
   day_of_week: number
-  slot_id: string
+  time_slot_id: string
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -155,7 +155,7 @@ function normalizeConstraint(r: RawConstraint): EngineConstraint {
     id: r.id,
     type: r.type,
     priority: normalizePriority(r.priority),
-    weight: r.weight ?? 1,
+    weight: typeof r.value?.weight === 'number' ? r.value.weight : 1,
     daysOfWeek: r.days_of_week ?? [],
     schoolUnitId: r.school_unit_id ?? undefined,
     subjectId: r.subject_id ?? undefined,
@@ -212,7 +212,7 @@ export async function loadEngineInput(
   const { data: constraintsRaw, error: ctErr } = await adminSupabase
     .from('teacher_constraints')
     .select(
-      'id, teacher_id, type, priority, weight, days_of_week, school_unit_id, subject_id, time_from, time_to, slot_order, min_gap_slots, value, active'
+      'id, teacher_id, type, priority, days_of_week, school_unit_id, subject_id, time_from, time_to, slot_order, min_gap_slots, value, active'
     )
     .eq('tenant_id', tenantId)
     .eq('active', true)
@@ -258,7 +258,7 @@ export async function loadEngineInput(
 
   for (const cg of classGroupsRows) {
     for (const cs of cg.class_subjects ?? []) {
-      const ta = cs.teaching_assignments?.[0]
+      const ta = firstOf(cs.teaching_assignments)
       if (!ta || !ta.teacher_id) continue
       const subj = firstOf(cs.subjects)
       const a: EngineAssignment = {
@@ -329,15 +329,15 @@ export async function loadEngineInput(
     try {
       const { data: entries } = await adminSupabase
         .from('schedule_entries')
-        .select('assignment_id, day_of_week, slot_id')
-        .eq('schedule_id', baselineScheduleId)
+        .select('teaching_assignment_id, day_of_week, time_slot_id')
+        .eq('generated_schedule_id', baselineScheduleId)
       if (entries && entries.length > 0) {
         const rows = entries as unknown as RawBaselineEntry[]
         baseline = {
           entries: rows.map((e) => ({
-            assignmentId: e.assignment_id,
+            assignmentId: e.teaching_assignment_id,
             day: e.day_of_week,
-            slotId: e.slot_id,
+            slotId: e.time_slot_id,
           })),
         }
       }

@@ -43,7 +43,7 @@ export async function generateSchedule(
   }
 
   // 2. Validate
-  const { valid, errors } = validateEngineInput(input)
+  const { valid, errors, warnings } = validateEngineInput(input)
   const totalLessons = input.classGroups.reduce(
     (sum, cg) => sum + cg.assignments.reduce((s, a) => s + a.weeklyLessons, 0),
     0
@@ -62,6 +62,7 @@ export async function generateSchedule(
         optimizationIterations: 0,
       },
       validationErrors: errors,
+      warnings,
     }
   }
 
@@ -82,8 +83,10 @@ export async function generateSchedule(
         optimizationIterations: 0,
       },
       validationErrors: [
-        'Algumas aulas não possuem horário disponível após aplicar restrições obrigatórias.',
+        'Algumas aulas não possuem horário disponível após aplicar restrições obrigatórias. ' +
+          'Revise as restrições MANDATORY dos professores envolvidos.',
       ],
+      warnings,
     }
   }
 
@@ -105,6 +108,7 @@ export async function generateSchedule(
       validationErrors: [
         'Não foi possível encontrar uma alocação que satisfaça todas as restrições obrigatórias.',
       ],
+      warnings,
     }
   }
 
@@ -136,6 +140,12 @@ export async function generateSchedule(
     score,
     violations,
     baselineSimilarity,
+    warnings: isPartial
+      ? [
+          `Apenas ${optimized.entries.length} de ${totalLessons} aulas foram alocadas dentro do tempo limite.`,
+          ...warnings,
+        ]
+      : warnings,
     stats: {
       totalLessons,
       allocatedLessons: optimized.entries.length,

@@ -15,6 +15,7 @@ const W = {
   AVOID_DAY: 1.0,
   SPREAD_SUBJECT: 1.0,
   BALANCE_DAILY_LOAD: 0.8,
+  FIXED_DAY: 3.0,
 }
 
 const NEIGHBOR_MAX_ATTEMPTS = 20
@@ -218,6 +219,30 @@ export function scoreSolution(
           hits,
           W.AVOID_DAY
         )
+      }
+    }
+  }
+
+  // ── FIXED_DAY ──
+  // "Professor deve lecionar neste dia": não é restrição de domínio (não proíbe
+  // posições), e sim uma condição sobre o resultado — o professor precisa ter ao
+  // menos uma aula em cada dia exigido.
+  for (const teacher of input.teachers) {
+    const fixed = teacher.constraints.filter((c) => c.type === 'FIXED_DAY')
+    if (fixed.length === 0) continue
+    const daysWithLessons = new Set((byTeacher.get(teacher.id) ?? []).map((e) => e.day))
+    for (const c of fixed) {
+      for (const day of c.daysOfWeek) {
+        if (!daysWithLessons.has(day)) {
+          add(
+            'FIXED_DAY',
+            `${teacher.name} deveria lecionar no dia ${day}, mas não recebeu nenhuma aula nesse dia.`,
+            teacher.id,
+            1,
+            W.FIXED_DAY * c.weight,
+            c.priority
+          )
+        }
       }
     }
   }

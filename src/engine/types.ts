@@ -143,4 +143,5 @@ export interface EngineResult {
     optimizationIterations: number
   }
   validationErrors?: string[]
+  warnings?: string[]
 }
