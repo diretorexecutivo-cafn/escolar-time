@@ -1,38 +1,73 @@
 import { Building2, GraduationCap, Users, CalendarDays } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { createClient } from '@/lib/supabase/server'
 
-const SUMMARY_CARDS = [
-  {
-    label: 'Total de Unidades',
-    value: 0,
-    icon: Building2,
-    iconColor: 'text-teal',
-    bgColor: 'bg-teal/10',
-  },
-  {
-    label: 'Total de Professores',
-    value: 0,
-    icon: GraduationCap,
-    iconColor: 'text-ocre',
-    bgColor: 'bg-ocre/10',
-  },
-  {
-    label: 'Total de Turmas',
-    value: 0,
-    icon: Users,
-    iconColor: 'text-navy',
-    bgColor: 'bg-navy/10',
-  },
-  {
-    label: 'Total de Horários',
-    value: 0,
-    icon: CalendarDays,
-    iconColor: 'text-sky',
-    bgColor: 'bg-sky/20',
-  },
-]
+const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
-export default function DashboardPage() {
+async function getSummaryCounts() {
+  const supabase = await createClient()
+
+  const [units, teachers, classGroups, schedules] = await Promise.all([
+    supabase
+      .from('school_units')
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', TENANT_ID),
+    supabase
+      .from('teachers')
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', TENANT_ID),
+    supabase
+      .from('class_groups')
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', TENANT_ID),
+    supabase
+      .from('generated_schedules')
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', TENANT_ID),
+  ])
+
+  return {
+    units: units.count ?? 0,
+    teachers: teachers.count ?? 0,
+    classGroups: classGroups.count ?? 0,
+    schedules: schedules.count ?? 0,
+  }
+}
+
+export default async function DashboardPage() {
+  const counts = await getSummaryCounts()
+
+  const SUMMARY_CARDS = [
+    {
+      label: 'Total de Unidades',
+      value: counts.units,
+      icon: Building2,
+      iconColor: 'text-teal',
+      bgColor: 'bg-teal/10',
+    },
+    {
+      label: 'Total de Professores',
+      value: counts.teachers,
+      icon: GraduationCap,
+      iconColor: 'text-ocre',
+      bgColor: 'bg-ocre/10',
+    },
+    {
+      label: 'Total de Turmas',
+      value: counts.classGroups,
+      icon: Users,
+      iconColor: 'text-navy',
+      bgColor: 'bg-navy/10',
+    },
+    {
+      label: 'Total de Horários',
+      value: counts.schedules,
+      icon: CalendarDays,
+      iconColor: 'text-sky',
+      bgColor: 'bg-sky/20',
+    },
+  ]
+
   return (
     <div className="space-y-8">
       <div>
