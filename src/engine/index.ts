@@ -4,7 +4,12 @@ import { optimize, scoreSolution } from './optimizer'
 import type { EngineInput, EngineResult } from './types'
 import { validateEngineInput } from './validator'
 
-const SOLVE_TIMEOUT_MS = 25000
+// Tratar aulas agrupadas (group_key) como decisão conjunta deixa o CSP genuinamente mais
+// restrito (a busca precisa casar vários professores/turmas no mesmo slot em vez de tratá-los
+// como independentes) — medido contra os dados reais da Unidade I, o solve completo (274/274
+// aulas) leva ~31s, e o optimize() mais ~3s. 25s cortava a busca em ~99% (271/274). 40s dá
+// folga confortável ainda bem dentro do maxDuration=60s da rota de geração.
+const SOLVE_TIMEOUT_MS = 40000
 
 export interface GenerateScheduleOptions {
   name: string

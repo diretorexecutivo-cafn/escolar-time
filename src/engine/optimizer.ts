@@ -57,9 +57,17 @@ function getSlotMeta(
   return slotsByDay[day]?.find((s) => s.order === slotOrder) ?? null
 }
 
+// Uma aula agrupada (mesmo group_key) pode dar ao mesmo professor 2+ SolutionEntry no mesmo
+// dia/slot (ex.: professor de Ed. Física em 2 turmas simultâneas). Para as regras de soft
+// constraint (gaps, janelas livres, balanceamento) isso é 1 sessão, não 2 — dedupe por
+// (day, slotOrder) antes de devolver a lista do professor.
 function entriesByTeacher(entries: SolutionEntry[]): Map<string, SolutionEntry[]> {
   const map = new Map<string, SolutionEntry[]>()
+  const seen = new Set<string>()
   for (const e of entries) {
+    const dedupeKey = `${e.teacherId}:${e.day}:${e.slotOrder}`
+    if (seen.has(dedupeKey)) continue
+    seen.add(dedupeKey)
     let arr = map.get(e.teacherId)
     if (!arr) {
       arr = []
@@ -367,39 +375,76 @@ function buildIndices(entries: SolutionEntry[]): Indices {
   return { teacherSlots, classSlots }
 }
 
+// Identifica quais entradas devem sempre compartilhar dia/slot: entradas de um mesmo
+// LessonVariable agrupado compartilham groupInstanceId; uma aula solo é sua própria unidade.
+function unitOwner(e: SolutionEntry): string {
+  return e.groupInstanceId ?? e.lessonVariableId
+}
+
+// Agrupa índices de `entries` por unidade (aula agrupada = 1 unidade com N entries; aula solo
+// = unidade de 1). Swap/move sempre movem a unidade inteira, nunca uma entrada isolada dela.
+function buildUnits(entries: SolutionEntry[]): Map<string, number[]> {
+  const units = new Map<string, number[]>()
+  entries.forEach((e, i) => {
+    const owner = unitOwner(e)
+    let idxs = units.get(owner)
+    if (!idxs) {
+      idxs = []
+      units.set(owner, idxs)
+    }
+    idxs.push(i)
+  })
+  return units
+}
+
+// Confirma que (day, slotOrder) é um slot LESSON válido na grade de `classGroupId` e devolve o
+// slotId próprio dessa turma nessa posição — ou null se a posição não existir/for BREAK.
+function resolveSlotId(
+  input: EngineInput,
+  classGroupId: string,
+  day: number,
+  slotOrder: number
+): string | null {
+  const meta = getSlotMeta(input, classGroupId, day, slotOrder)
+  if (!meta || meta.type !== 'LESSON') return null
+  return meta.id
+}
+
 function trySwap(
   entries: SolutionEntry[],
   input: EngineInput
 ): SolutionEntry[] | null {
-  // Pick two random entries from same class
-  const byClass = new Map<string, number[]>()
-  entries.forEach((e, i) => {
-    if (!byClass.has(e.classGroupId)) byClass.set(e.classGroupId, [])
-    byClass.get(e.classGroupId)!.push(i)
-  })
-  const eligible = [...byClass.values()].filter((idxs) => idxs.length >= 2)
-  if (eligible.length === 0) return null
+  const units = [...buildUnits(entries).values()]
+  if (units.length < 2) return null
 
-  const pool = eligible[rand(eligible.length)]!
-  if (pool.length < 2) return null
-  const i1 = pool[rand(pool.length)]!
-  let i2 = pool[rand(pool.length)]!
+  const u1 = units[rand(units.length)]!
+  let u2 = units[rand(units.length)]!
   let attempts = 0
-  while (i2 === i1 && attempts < 5) {
-    i2 = pool[rand(pool.length)]!
+  while (u2 === u1 && attempts < 5) {
+    u2 = units[rand(units.length)]!
     attempts++
   }
-  if (i1 === i2) return null
+  if (u1 === u2) return null
 
-  const e1 = entries[i1]!
-  const e2 = entries[i2]!
-  if (e1.day === e2.day && e1.slotOrder === e2.slotOrder) return null
+  const anchor1 = entries[u1[0]!]!
+  const anchor2 = entries[u2[0]!]!
+  if (anchor1.day === anchor2.day && anchor1.slotOrder === anchor2.slotOrder) return null
 
   const next = entries.slice()
-  next[i1] = { ...e1, day: e2.day, slotId: e2.slotId, slotOrder: e2.slotOrder }
-  next[i2] = { ...e2, day: e1.day, slotId: e1.slotId, slotOrder: e1.slotOrder }
+  for (const i of u1) {
+    const e = entries[i]!
+    const slotId = resolveSlotId(input, e.classGroupId, anchor2.day, anchor2.slotOrder)
+    if (!slotId) return null
+    next[i] = { ...e, day: anchor2.day, slotId, slotOrder: anchor2.slotOrder }
+  }
+  for (const i of u2) {
+    const e = entries[i]!
+    const slotId = resolveSlotId(input, e.classGroupId, anchor1.day, anchor1.slotOrder)
+    if (!slotId) return null
+    next[i] = { ...e, day: anchor1.day, slotId, slotOrder: anchor1.slotOrder }
+  }
 
-  if (!validateHard(next, input, [i1, i2])) return null
+  if (!validateHard(next, input, [...u1, ...u2])) return null
   return next
 }
 
@@ -408,34 +453,36 @@ function tryMove(
   input: EngineInput
 ): SolutionEntry[] | null {
   if (entries.length === 0) return null
-  const idx = rand(entries.length)
-  const e = entries[idx]!
-  const slotsByDay = gridSlotIndex(input, e.classGroupId)
+  const units = [...buildUnits(entries).values()]
+  const unit = units[rand(units.length)]!
+
+  const anchor = entries[unit[0]!]!
+  const slotsByDay = gridSlotIndex(input, anchor.classGroupId)
   if (!slotsByDay) return null
 
-  // Pool of all (day, slot) lesson positions in class grid
-  const positions: { day: number; slotId: string; slotOrder: number }[] = []
+  // Pool of all (day, slot) lesson positions in the anchor's class grid
+  const positions: { day: number; slotOrder: number }[] = []
   for (const [dayStr, slots] of Object.entries(slotsByDay)) {
     const day = Number(dayStr)
     for (const s of slots) {
       if (s.type !== 'LESSON') continue
-      positions.push({ day, slotId: s.id, slotOrder: s.order })
+      positions.push({ day, slotOrder: s.order })
     }
   }
   if (positions.length === 0) return null
 
   const target = positions[rand(positions.length)]!
-  if (target.day === e.day && target.slotOrder === e.slotOrder) return null
+  if (target.day === anchor.day && target.slotOrder === anchor.slotOrder) return null
 
   const next = entries.slice()
-  next[idx] = {
-    ...e,
-    day: target.day,
-    slotId: target.slotId,
-    slotOrder: target.slotOrder,
+  for (const i of unit) {
+    const e = entries[i]!
+    const slotId = resolveSlotId(input, e.classGroupId, target.day, target.slotOrder)
+    if (!slotId) return null
+    next[i] = { ...e, day: target.day, slotId, slotOrder: target.slotOrder }
   }
 
-  if (!validateHard(next, input, [idx])) return null
+  if (!validateHard(next, input, unit)) return null
   return next
 }
 
@@ -445,19 +492,23 @@ function validateHard(
   changed: number[]
 ): boolean {
   const idx = buildIndices(entries)
-  // Re-derive: detect collisions at changed positions
-  const seenTeacher = new Map<string, Set<string>>()
-  const seenClass = new Map<string, Set<string>>()
+  // Re-derive: detect collisions at changed positions. Duas entradas no mesmo "day:order" só
+  // não são colisão se pertencerem à mesma unidade agrupada (mesmo owner).
+  const seenTeacher = new Map<string, Map<string, string>>()
+  const seenClass = new Map<string, Map<string, string>>()
   for (const e of entries) {
     const k = key(e.day, e.slotOrder)
-    if (!seenTeacher.has(e.teacherId)) seenTeacher.set(e.teacherId, new Set())
+    const owner = unitOwner(e)
+    if (!seenTeacher.has(e.teacherId)) seenTeacher.set(e.teacherId, new Map())
     const ts = seenTeacher.get(e.teacherId)!
-    if (ts.has(k)) return false
-    ts.add(k)
-    if (!seenClass.has(e.classGroupId)) seenClass.set(e.classGroupId, new Set())
+    const tOwner = ts.get(k)
+    if (tOwner !== undefined && tOwner !== owner) return false
+    ts.set(k, owner)
+    if (!seenClass.has(e.classGroupId)) seenClass.set(e.classGroupId, new Map())
     const cs = seenClass.get(e.classGroupId)!
-    if (cs.has(k)) return false
-    cs.add(k)
+    const cOwner = cs.get(k)
+    if (cOwner !== undefined && cOwner !== owner) return false
+    cs.set(k, owner)
   }
 
   // Check MAX_LESSONS_PER_DAY and MAX_CONSECUTIVE for teachers with such MANDATORY constraints

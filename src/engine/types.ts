@@ -35,6 +35,8 @@ export interface EngineAssignment {
   subjectName: string
   weeklyLessons: number
   allowDoubleLesson: boolean
+  /** Aula agrupada: class_subjects com o mesmo groupKey ocorrem no mesmo dia/slot. */
+  groupKey?: string
 }
 
 export interface EngineTeacher {
@@ -94,14 +96,30 @@ export interface SlotPosition {
   endTime: string
 }
 
-export interface LessonVariable {
-  id: string
+/** Um membro de um LessonVariable — uma aula normal tem 1 membro; uma aula agrupada
+ *  (mesmo group_key) tem 1 membro por class_subjects do grupo. */
+export interface LessonVariableMember {
   assignmentId: string
   teacherId: string
   classGroupId: string
   schoolUnitId: string
   subjectId: string
-  domain: SlotPosition[]
+}
+
+/** Posição de domínio compartilhada por todos os membros de um LessonVariable — mesmo
+ *  dia/ordem/horário, mas cada turma tem seu próprio slotId na grade. */
+export interface GroupDomainPosition {
+  day: number
+  slotOrder: number
+  startTime: string
+  endTime: string
+  slotIdByClass: Record<string, string>
+}
+
+export interface LessonVariable {
+  id: string
+  members: LessonVariableMember[]
+  domain: GroupDomainPosition[]
 }
 
 export interface SolutionEntry {
@@ -113,6 +131,9 @@ export interface SolutionEntry {
   day: number
   slotId: string
   slotOrder: number
+  /** Presente somente quando esta entrada veio de um LessonVariable com mais de 1 membro —
+   *  identifica quais entradas do resultado final precisam permanecer no mesmo dia/slot. */
+  groupInstanceId?: string
 }
 
 export interface ConstraintViolation {

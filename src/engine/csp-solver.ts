@@ -1,7 +1,10 @@
 import type {
+  EngineAssignment,
   EngineConstraint,
   EngineInput,
+  GroupDomainPosition,
   LessonVariable,
+  LessonVariableMember,
   ScheduleSolution,
   SlotPosition,
   SolutionEntry,
@@ -11,39 +14,131 @@ const DEFAULT_TIMEOUT_MS = 25000
 
 // ─── Variable construction ────────────────────────────────────────────────────
 
+function classLessonPositions(cg: EngineInput['classGroups'][number]): SlotPosition[] {
+  const positions: SlotPosition[] = []
+  if (!cg.timeGrid) return positions
+  for (const [dayStr, slots] of Object.entries(cg.timeGrid.slotsByDay)) {
+    const day = Number(dayStr)
+    for (const s of slots) {
+      if (s.type !== 'LESSON') continue
+      positions.push({
+        day,
+        slotId: s.id,
+        slotOrder: s.order,
+        startTime: s.startTime,
+        endTime: s.endTime,
+      })
+    }
+  }
+  return positions
+}
+
+function memberOf(a: EngineAssignment): LessonVariableMember {
+  return {
+    assignmentId: a.id,
+    teacherId: a.teacherId,
+    classGroupId: a.classGroupId,
+    schoolUnitId: a.schoolUnitId,
+    subjectId: a.subjectId,
+  }
+}
+
+// Interseção das posições LESSON das turmas de um grupo, casadas por (day, slotOrder) —
+// cada turma mantém seu próprio slotId nessa posição comum.
+function intersectGroupDomain(
+  classGroupIds: string[],
+  positionsByClass: Map<string, SlotPosition[]>
+): GroupDomainPosition[] {
+  if (classGroupIds.length === 0) return []
+  const [first, ...rest] = classGroupIds as [string, ...string[]]
+  const base = positionsByClass.get(first) ?? []
+  const result: GroupDomainPosition[] = []
+
+  for (const pos of base) {
+    const slotIdByClass: Record<string, string> = { [first]: pos.slotId }
+    let ok = true
+    for (const cid of rest) {
+      const match = (positionsByClass.get(cid) ?? []).find(
+        (p) => p.day === pos.day && p.slotOrder === pos.slotOrder
+      )
+      if (!match) {
+        ok = false
+        break
+      }
+      slotIdByClass[cid] = match.slotId
+    }
+    if (ok) {
+      result.push({
+        day: pos.day,
+        slotOrder: pos.slotOrder,
+        startTime: pos.startTime,
+        endTime: pos.endTime,
+        slotIdByClass,
+      })
+    }
+  }
+
+  return result
+}
+
 export function buildVariables(input: EngineInput): LessonVariable[] {
   const variables: LessonVariable[] = []
 
+  const positionsByClass = new Map<string, SlotPosition[]>()
   for (const cg of input.classGroups) {
-    if (!cg.timeGrid) continue
+    positionsByClass.set(cg.id, classLessonPositions(cg))
+  }
 
-    const lessonPositions: SlotPosition[] = []
-    for (const [dayStr, slots] of Object.entries(cg.timeGrid.slotsByDay)) {
-      const day = Number(dayStr)
-      for (const s of slots) {
-        if (s.type !== 'LESSON') continue
-        lessonPositions.push({
-          day,
-          slotId: s.id,
-          slotOrder: s.order,
-          startTime: s.startTime,
-          endTime: s.endTime,
-        })
+  const grouped = new Map<string, EngineAssignment[]>()
+  const solo: EngineAssignment[] = []
+
+  for (const cg of input.classGroups) {
+    for (const a of cg.assignments) {
+      if (a.groupKey) {
+        let arr = grouped.get(a.groupKey)
+        if (!arr) {
+          arr = []
+          grouped.set(a.groupKey, arr)
+        }
+        arr.push(a)
+      } else {
+        solo.push(a)
       }
     }
+  }
 
-    for (const a of cg.assignments) {
-      for (let i = 0; i < a.weeklyLessons; i++) {
-        variables.push({
-          id: `${a.id}#${i}`,
-          assignmentId: a.id,
-          teacherId: a.teacherId,
-          classGroupId: a.classGroupId,
-          schoolUnitId: a.schoolUnitId,
-          subjectId: a.subjectId,
-          domain: lessonPositions.slice(),
-        })
-      }
+  for (const a of solo) {
+    const domain: GroupDomainPosition[] = (positionsByClass.get(a.classGroupId) ?? []).map(
+      (pos) => ({
+        day: pos.day,
+        slotOrder: pos.slotOrder,
+        startTime: pos.startTime,
+        endTime: pos.endTime,
+        slotIdByClass: { [a.classGroupId]: pos.slotId },
+      })
+    )
+    const member = memberOf(a)
+    for (let i = 0; i < a.weeklyLessons; i++) {
+      variables.push({ id: `${a.id}#${i}`, members: [member], domain: domain.slice() })
+    }
+  }
+
+  for (const [groupKey, members] of grouped) {
+    const weeklyLessons = members[0]!.weeklyLessons
+    if (members.some((m) => m.weeklyLessons !== weeklyLessons)) {
+      console.warn(
+        `group_key "${groupKey}": weeklyLessons divergente entre class_subjects do grupo — usando ${weeklyLessons}.`
+      )
+    }
+    const classGroupIds = [...new Set(members.map((m) => m.classGroupId))]
+    const domain = intersectGroupDomain(classGroupIds, positionsByClass)
+    const variableMembers = members.map(memberOf)
+    for (let i = 0; i < weeklyLessons; i++) {
+      variables.push({
+        id: `group:${groupKey}#${i}`,
+        members: variableMembers,
+        domain: domain.slice(),
+      })
     }
   }
 
@@ -56,7 +151,10 @@ function dayMatches(c: EngineConstraint, day: number): boolean {
   return c.daysOfWeek.length === 0 || c.daysOfWeek.includes(day)
 }
 
-function isPositionBlocked(pos: SlotPosition, c: EngineConstraint): boolean {
+function isPositionBlocked(
+  pos: { day: number; startTime: string; endTime: string; slotOrder: number },
+  c: EngineConstraint
+): boolean {
   if (!dayMatches(c, pos.day)) return false
   switch (c.type) {
     case 'UNAVAILABLE_SLOT':
@@ -93,14 +191,16 @@ export function applyHardConstraints(
   }
 
   return variables.map((v) => {
-    const constraints = teacherConstraints.get(v.teacherId) ?? []
-    if (constraints.length === 0) return v
-
+    // Uma posição é válida para o grupo só se for válida para TODOS os membros — se um dos
+    // professores do grupo não pode naquele horário, o grupo inteiro não pode.
     const filtered = v.domain.filter((pos) => {
-      for (const c of constraints) {
-        if (c.subjectId && c.subjectId !== v.subjectId) continue
-        if (c.schoolUnitId && c.schoolUnitId !== v.schoolUnitId) continue
-        if (isPositionBlocked(pos, c)) return false
+      for (const member of v.members) {
+        const constraints = teacherConstraints.get(member.teacherId) ?? []
+        for (const c of constraints) {
+          if (c.subjectId && c.subjectId !== member.subjectId) continue
+          if (c.schoolUnitId && c.schoolUnitId !== member.schoolUnitId) continue
+          if (isPositionBlocked(pos, c)) return false
+        }
       }
       return true
     })
@@ -175,18 +275,21 @@ export function solve(
 
   const limits = extractTeacherLimits(input)
 
-  const teacherSlot = new Map<string, Set<string>>() // teacherId -> "day:order"
-  const classSlot = new Map<string, Set<string>>() // classGroupId -> "day:order"
+  // "day:order" -> id do LessonVariable dono daquela ocupação. Como v.id é único por variável,
+  // membros do mesmo grupo (mesmo v.id) nunca conflitam entre si; qualquer outra variável tem
+  // v.id diferente e conflita normalmente.
+  const teacherSlot = new Map<string, Map<string, string>>() // teacherId -> "day:order" -> variableId
+  const classSlot = new Map<string, Map<string, string>>() // classGroupId -> "day:order" -> variableId
   const teacherDayCount = new Map<string, Map<number, number>>() // teacher -> day -> count
   const teacherDayOrders = new Map<string, Map<number, Set<number>>>() // teacher -> day -> orders
 
-  function ensureSet<K, V>(map: Map<K, Set<V>>, key: K): Set<V> {
-    let s = map.get(key)
-    if (!s) {
-      s = new Set<V>()
-      map.set(key, s)
+  function ensureMap<K, V>(map: Map<K, Map<string, V>>, key: K): Map<string, V> {
+    let m = map.get(key)
+    if (!m) {
+      m = new Map<string, V>()
+      map.set(key, m)
     }
-    return s
+    return m
   }
 
   function ensureDayMap<V>(
@@ -229,65 +332,93 @@ export function solve(
     return len
   }
 
-  function isValid(v: LessonVariable, pos: SlotPosition): boolean {
+  function isValid(v: LessonVariable, pos: GroupDomainPosition): boolean {
     const key = makeKey(pos.day, pos.slotOrder)
-    if (teacherSlot.get(v.teacherId)?.has(key)) return false
-    if (classSlot.get(v.classGroupId)?.has(key)) return false
 
-    const lim = limits.get(v.teacherId)
-    if (lim?.maxLessonsPerDay !== undefined) {
-      const count = teacherDayCount.get(v.teacherId)?.get(pos.day) ?? 0
-      if (count + 1 > lim.maxLessonsPerDay) return false
+    const uniqueTeachers = new Set<string>()
+    for (const member of v.members) {
+      const occTeacher = teacherSlot.get(member.teacherId)?.get(key)
+      if (occTeacher !== undefined && occTeacher !== v.id) return false
+      const occClass = classSlot.get(member.classGroupId)?.get(key)
+      if (occClass !== undefined && occClass !== v.id) return false
+      uniqueTeachers.add(member.teacherId)
     }
-    if (lim?.maxConsecutive !== undefined) {
-      const len = consecutiveLengthIfPlaced(v.teacherId, pos.day, pos.slotOrder)
-      if (len > lim.maxConsecutive) return false
+
+    for (const teacherId of uniqueTeachers) {
+      const lim = limits.get(teacherId)
+      if (lim?.maxLessonsPerDay !== undefined) {
+        const count = teacherDayCount.get(teacherId)?.get(pos.day) ?? 0
+        if (count + 1 > lim.maxLessonsPerDay) return false
+      }
+      if (lim?.maxConsecutive !== undefined) {
+        const len = consecutiveLengthIfPlaced(teacherId, pos.day, pos.slotOrder)
+        if (len > lim.maxConsecutive) return false
+      }
     }
     return true
   }
 
-  function place(v: LessonVariable, pos: SlotPosition): SolutionEntry {
+  function place(v: LessonVariable, pos: GroupDomainPosition): SolutionEntry[] {
     const key = makeKey(pos.day, pos.slotOrder)
-    ensureSet(teacherSlot, v.teacherId).add(key)
-    ensureSet(classSlot, v.classGroupId).add(key)
-    const dayMap = teacherDayCount.get(v.teacherId) ?? new Map<number, number>()
-    teacherDayCount.set(v.teacherId, dayMap)
-    dayMap.set(pos.day, (dayMap.get(pos.day) ?? 0) + 1)
-    ensureDayMap(teacherDayOrders, v.teacherId, () => new Set<number>(), pos.day).add(
-      pos.slotOrder
-    )
+    const countedTeachers = new Set<string>()
 
-    return {
+    for (const member of v.members) {
+      ensureMap(teacherSlot, member.teacherId).set(key, v.id)
+      ensureMap(classSlot, member.classGroupId).set(key, v.id)
+
+      if (!countedTeachers.has(member.teacherId)) {
+        countedTeachers.add(member.teacherId)
+        const dayMap = teacherDayCount.get(member.teacherId) ?? new Map<number, number>()
+        teacherDayCount.set(member.teacherId, dayMap)
+        dayMap.set(pos.day, (dayMap.get(pos.day) ?? 0) + 1)
+        ensureDayMap(teacherDayOrders, member.teacherId, () => new Set<number>(), pos.day).add(
+          pos.slotOrder
+        )
+      }
+    }
+
+    const groupInstanceId = v.members.length > 1 ? v.id : undefined
+    return v.members.map((member) => ({
       lessonVariableId: v.id,
-      assignmentId: v.assignmentId,
-      teacherId: v.teacherId,
-      classGroupId: v.classGroupId,
-      schoolUnitId: v.schoolUnitId,
+      assignmentId: member.assignmentId,
+      teacherId: member.teacherId,
+      classGroupId: member.classGroupId,
+      schoolUnitId: member.schoolUnitId,
       day: pos.day,
-      slotId: pos.slotId,
+      slotId: pos.slotIdByClass[member.classGroupId]!,
       slotOrder: pos.slotOrder,
-    }
+      groupInstanceId,
+    }))
   }
 
-  function unplace(v: LessonVariable, pos: SlotPosition): void {
+  function unplace(v: LessonVariable, pos: GroupDomainPosition): void {
     const key = makeKey(pos.day, pos.slotOrder)
-    teacherSlot.get(v.teacherId)?.delete(key)
-    classSlot.get(v.classGroupId)?.delete(key)
-    const dayMap = teacherDayCount.get(v.teacherId)
-    if (dayMap) {
-      const c = (dayMap.get(pos.day) ?? 1) - 1
-      if (c <= 0) dayMap.delete(pos.day)
-      else dayMap.set(pos.day, c)
+    const uncountedTeachers = new Set<string>()
+
+    for (const member of v.members) {
+      teacherSlot.get(member.teacherId)?.delete(key)
+      classSlot.get(member.classGroupId)?.delete(key)
+
+      if (!uncountedTeachers.has(member.teacherId)) {
+        uncountedTeachers.add(member.teacherId)
+        const dayMap = teacherDayCount.get(member.teacherId)
+        if (dayMap) {
+          const c = (dayMap.get(pos.day) ?? 1) - 1
+          if (c <= 0) dayMap.delete(pos.day)
+          else dayMap.set(pos.day, c)
+        }
+        teacherDayOrders.get(member.teacherId)?.get(pos.day)?.delete(pos.slotOrder)
+      }
     }
-    teacherDayOrders.get(v.teacherId)?.get(pos.day)?.delete(pos.slotOrder)
   }
 
-  function orderDomain(v: LessonVariable): SlotPosition[] {
-    const baseline = baselineByAssignment.get(v.assignmentId)
+  function orderDomain(v: LessonVariable): GroupDomainPosition[] {
+    // Grupo não tem um "assignment" único — usa o primeiro membro como representante.
+    const baseline = baselineByAssignment.get(v.members[0]!.assignmentId)
     if (!baseline || baseline.size === 0) return v.domain
     return [...v.domain].sort((a, b) => {
-      const ka = `${a.day}:${a.slotId}`
-      const kb = `${b.day}:${b.slotId}`
+      const ka = `${a.day}:${a.slotIdByClass[v.members[0]!.classGroupId]}`
+      const kb = `${b.day}:${b.slotIdByClass[v.members[0]!.classGroupId]}`
       return (baseline.has(kb) ? 1 : 0) - (baseline.has(ka) ? 1 : 0)
     })
   }
@@ -314,11 +445,12 @@ export function solve(
     const ordered = orderDomain(v)
     for (const pos of ordered) {
       if (!isValid(v, pos)) continue
-      const entry = place(v, pos)
-      solution.push(entry)
+      const before = solution.length
+      const entries = place(v, pos)
+      solution.push(...entries)
       if (solution.length > bestPartial.length) bestPartial = [...solution]
       if (backtrack(idx + 1)) return true
-      solution.pop()
+      solution.length = before
       unplace(v, pos)
       backtracks++
     }

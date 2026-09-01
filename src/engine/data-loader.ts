@@ -55,6 +55,7 @@ type RawClassSubject = {
   id: string
   weekly_lessons: number
   allow_double_lesson: boolean
+  group_key: string | null
   subjects: RawSubject | RawSubject[] | null
   // PostgREST devolve objeto (não array) porque teaching_assignments.class_subject_id é UNIQUE
   teaching_assignments: RawTeachingAssignment | RawTeachingAssignment[] | null
@@ -181,7 +182,7 @@ export async function loadEngineInput(
       `
       id, name, school_unit_id, active,
       class_subjects (
-        id, weekly_lessons, allow_double_lesson,
+        id, weekly_lessons, allow_double_lesson, group_key,
         subjects ( id, name ),
         teaching_assignments ( id, teacher_id )
       ),
@@ -271,6 +272,7 @@ export async function loadEngineInput(
         subjectName: subj?.name ?? '',
         weeklyLessons: cs.weekly_lessons,
         allowDoubleLesson: cs.allow_double_lesson,
+        groupKey: cs.group_key ?? undefined,
       }
       allAssignments.push(a)
       let tarr = assignmentsByTeacher.get(a.teacherId)

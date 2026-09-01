@@ -1,4 +1,4 @@
-import type { EngineInput } from './types'
+import type { EngineAssignment, EngineInput } from './types'
 
 const TEACHER_OVERLOAD_THRESHOLD = 30
 
@@ -7,6 +7,24 @@ function lessonSlotCount(cg: EngineInput['classGroups'][number]): number {
   return Object.values(cg.timeGrid.slotsByDay)
     .flat()
     .filter((s) => s.type === 'LESSON').length
+}
+
+// Aulas agrupadas (mesmo group_key) ocorrem simultaneamente — contam como 1 slot de demanda
+// (não 1 por class_subjects), tanto para a turma quanto para o professor.
+function groupedDemand(assignments: EngineAssignment[]): number {
+  let sum = 0
+  const seenGroups = new Map<string, number>() // groupKey -> weeklyLessons (1ª ocorrência)
+  for (const a of assignments) {
+    if (!a.groupKey) {
+      sum += a.weeklyLessons
+      continue
+    }
+    if (!seenGroups.has(a.groupKey)) {
+      seenGroups.set(a.groupKey, a.weeklyLessons)
+      sum += a.weeklyLessons
+    }
+  }
+  return sum
 }
 
 export function validateEngineInput(input: EngineInput): {
@@ -50,7 +68,7 @@ export function validateEngineInput(input: EngineInput): {
     }
 
     // Capacidade: não adianta procurar solução se não há slots suficientes.
-    const demand = cg.assignments.reduce((s, a) => s + a.weeklyLessons, 0)
+    const demand = groupedDemand(cg.assignments)
     if (demand > slots) {
       errors.push(
         `Turma "${cg.name}": são ${demand} aulas semanais para apenas ${slots} slots de aula na grade. ` +
@@ -81,7 +99,7 @@ export function validateEngineInput(input: EngineInput): {
   const slotsByClass = new Map(schedulable.map((cg) => [cg.id, lessonSlotCount(cg)]))
   for (const t of input.teachers) {
     const relevant = t.assignments.filter((a) => slotsByClass.has(a.classGroupId))
-    const total = relevant.reduce((sum, a) => sum + a.weeklyLessons, 0)
+    const total = groupedDemand(relevant)
     if (total === 0) continue
 
     const reachable = Math.max(
