@@ -21,6 +21,7 @@ type EntryRow = {
     teachers: { id: string; name: string } | null
     class_subjects: {
       id: string
+      group_key: string | null
       subjects: { id: string; name: string; color: string | null } | null
       class_groups: {
         id: string
@@ -130,8 +131,11 @@ const DAYS = [
   { value: 6, label: 'Sáb' },
 ]
 
+/** Intensidade do fundo das células com a cor da disciplina (a borda usa a cor cheia). */
+const SUBJECT_TINT = 0.22
+
 function hexWithOpacity(hex: string | null | undefined, opacity: number): string {
-  if (!hex) return `rgba(33, 47, 92, ${opacity})`
+  if (!hex || !/^#[0-9a-fA-F]{6}$/.test(hex)) return `rgba(33, 47, 92, ${opacity})`
   const r = parseInt(hex.slice(1, 3), 16)
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
@@ -195,7 +199,7 @@ function LessonCell({
     <div
       className="h-full min-h-[56px] p-1.5 rounded-sm border-l-2 relative"
       style={{
-        background: hexWithOpacity(subjectColor, 0.15),
+        background: hexWithOpacity(subjectColor, SUBJECT_TINT),
         borderLeftColor: subjectColor ?? '#212F5C',
       }}
     >
@@ -579,10 +583,343 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
   )
 }
 
+// ─── Slot view (todas as turmas lado a lado) ──────────────────────────────────
+
+const DAY_NAMES: Record<number, string> = {
+  1: 'Segunda-feira',
+  2: 'Terça-feira',
+  3: 'Quarta-feira',
+  4: 'Quinta-feira',
+  5: 'Sexta-feira',
+  6: 'Sábado',
+}
+
+type Clash = {
+  day: number
+  order: number
+  teacherName: string
+  classNames: string[]
+}
+
+function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] }) {
+  const [dayFilter, setDayFilter] = useState<number | 'all'>('all')
+  const [onlyClashes, setOnlyClashes] = useState(false)
+
+  const classGroups = useMemo(() => {
+    const map = new Map<string, { id: string; name: string; unitName: string }>()
+    for (const e of entries) {
+      const cg = e.teaching_assignments?.class_subjects?.class_groups
+      if (cg) map.set(cg.id, { id: cg.id, name: cg.name, unitName: cg.school_units?.name ?? '' })
+    }
+    return Array.from(map.values()).sort(
+      (a, b) => a.unitName.localeCompare(b.unitName) || a.name.localeCompare(b.name)
+    )
+  }, [entries])
+
+  const units = useMemo(() => {
+    const spans: { name: string; count: number }[] = []
+    for (const cg of classGroups) {
+      const last = spans[spans.length - 1]
+      if (last && last.name === cg.unitName) last.count++
+      else spans.push({ name: cg.unitName, count: 1 })
+    }
+    return spans
+  }, [classGroups])
+
+  // chave: "turma:dia:aula" — cada turma tem os próprios time_slots.
+  const slotByClass = useMemo(() => {
+    const m = new Map<string, GridSlot>()
+    for (const g of grids) {
+      for (const sl of g.slots) m.set(`${g.classGroupId}:${sl.day_of_week}:${sl.slot_order}`, sl)
+    }
+    return m
+  }, [grids])
+
+  const orderBySlotId = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const g of grids) for (const sl of g.slots) m.set(sl.id, sl.slot_order)
+    return m
+  }, [grids])
+
+  const entryByClass = useMemo(() => {
+    const m = new Map<string, EntryRow>()
+    for (const e of entries) {
+      const cgId = e.teaching_assignments?.class_subjects?.class_groups?.id
+      const order = orderBySlotId.get(e.time_slot_id)
+      if (cgId && order !== undefined) m.set(`${cgId}:${e.day_of_week}:${order}`, e)
+    }
+    return m
+  }, [entries, orderBySlotId])
+
+  // Mesmo critério do motor: professor em 2+ turmas no mesmo (dia, nº da aula) é
+  // choque, exceto quando todas as aulas pertencem ao mesmo group_key (aula agrupada).
+  const { clashes, clashEntryIds } = useMemo(() => {
+    const byTeacherSlot = new Map<string, EntryRow[]>()
+    for (const e of entries) {
+      const teacherId = e.teaching_assignments?.teachers?.id
+      const order = orderBySlotId.get(e.time_slot_id)
+      if (!teacherId || order === undefined) continue
+      const k = `${teacherId}:${e.day_of_week}:${order}`
+      const arr = byTeacherSlot.get(k) ?? []
+      arr.push(e)
+      byTeacherSlot.set(k, arr)
+    }
+    const list: Clash[] = []
+    const ids = new Set<string>()
+    for (const group of byTeacherSlot.values()) {
+      if (group.length < 2) continue
+      const keys = new Set(group.map((e) => e.teaching_assignments?.class_subjects?.group_key ?? null))
+      const [onlyKey] = keys
+      if (keys.size === 1 && onlyKey) continue
+      for (const e of group) ids.add(e.id)
+      const first = group[0]!
+      list.push({
+        day: first.day_of_week,
+        order: orderBySlotId.get(first.time_slot_id)!,
+        teacherName: first.teaching_assignments?.teachers?.name ?? '—',
+        classNames: group
+          .map((e) => e.teaching_assignments?.class_subjects?.class_groups?.name ?? '—')
+          .sort((a, b) => a.localeCompare(b)),
+      })
+    }
+    list.sort((a, b) => a.day - b.day || a.order - b.order || a.teacherName.localeCompare(b.teacherName))
+    return { clashes: list, clashEntryIds: ids }
+  }, [entries, orderBySlotId])
+
+  const clashSlots = useMemo(() => new Set(clashes.map((c) => `${c.day}:${c.order}`)), [clashes])
+
+  const allSlots = useMemo(() => grids.flatMap((g) => g.slots), [grids])
+  const dayValues = useMemo(() => daysOf(allSlots), [allSlots])
+  const visibleDays = dayFilter === 'all' ? dayValues : dayValues.filter((d) => d === dayFilter)
+
+  if (classGroups.length === 0) {
+    return <p className="text-slate text-sm">Nenhuma entrada no horário.</p>
+  }
+
+  const showUnits = units.length > 1
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex rounded-md border border-border overflow-hidden text-xs">
+          {(['all', ...dayValues] as const).map((d) => (
+            <button
+              key={d}
+              onClick={() => setDayFilter(d)}
+              className={cn(
+                'px-3 py-1.5 font-medium cursor-pointer transition-colors border-l border-border first:border-l-0',
+                dayFilter === d ? 'bg-navy text-white' : 'bg-white text-slate hover:text-navy'
+              )}
+            >
+              {d === 'all' ? 'Todos' : DAYS.find((x) => x.value === d)?.label}
+            </button>
+          ))}
+        </div>
+        <label className="flex items-center gap-2 text-xs text-slate cursor-pointer">
+          <input
+            type="checkbox"
+            checked={onlyClashes}
+            onChange={(e) => setOnlyClashes(e.target.checked)}
+          />
+          Só horários com choque
+        </label>
+      </div>
+
+      {clashes.length === 0 ? (
+        <p className="text-xs text-emerald-700">Nenhum choque de professor encontrado.</p>
+      ) : (
+        <div className="rounded-md border border-red-200 bg-red-50 p-3 space-y-1">
+          <p className="text-sm font-semibold text-red-700 flex items-center gap-1.5">
+            <AlertTriangle className="h-4 w-4" />
+            {clashes.length} choque(s) de professor
+          </p>
+          <ul className="space-y-0.5">
+            {clashes.map((c, i) => (
+              <li key={i} className="text-xs text-red-700">
+                {DAYS.find((d) => d.value === c.day)?.label} {c.order}ª — {c.teacherName}:{' '}
+                {c.classNames.join(', ')}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="overflow-auto max-h-[75vh] rounded-lg border border-border">
+        <table className="text-sm border-collapse">
+          <thead className="sticky top-0 z-20">
+            {showUnits && (
+              <tr className="bg-navy/90">
+                <th className="sticky left-0 z-30 bg-navy" />
+                {units.map((u, i) => (
+                  <th
+                    key={i}
+                    colSpan={u.count}
+                    className="px-2 py-1 text-white font-medium text-[11px] border-l border-white/20"
+                  >
+                    {u.name || '—'}
+                  </th>
+                ))}
+              </tr>
+            )}
+            <tr className="bg-navy">
+              <th className="sticky left-0 z-30 bg-navy text-left px-3 py-2 text-white font-medium text-xs min-w-24">
+                Horário
+              </th>
+              {classGroups.map((cg) => (
+                <th
+                  key={cg.id}
+                  className="px-2 py-2 text-white font-medium text-xs min-w-28 whitespace-nowrap"
+                >
+                  {cg.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {visibleDays.map((day) => {
+              const periods = periodsOf(allSlots.filter((s) => s.day_of_week === day)).filter(
+                (order) => !onlyClashes || clashSlots.has(`${day}:${order}`)
+              )
+              if (periods.length === 0) return null
+              const daySlots = allSlots.filter((s) => s.day_of_week === day)
+              return (
+                <DayRows
+                  key={day}
+                  day={day}
+                  periods={periods}
+                  daySlots={daySlots}
+                  classGroups={classGroups}
+                  slotByClass={slotByClass}
+                  entryByClass={entryByClass}
+                  clashEntryIds={clashEntryIds}
+                />
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function DayRows({
+  day,
+  periods,
+  daySlots,
+  classGroups,
+  slotByClass,
+  entryByClass,
+  clashEntryIds,
+}: {
+  day: number
+  periods: number[]
+  daySlots: GridSlot[]
+  classGroups: { id: string; name: string }[]
+  slotByClass: Map<string, GridSlot>
+  entryByClass: Map<string, EntryRow>
+  clashEntryIds: Set<string>
+}) {
+  return (
+    <>
+      <tr className="border-t-2 border-navy/30">
+        <td
+          colSpan={classGroups.length + 1}
+          className="sticky left-0 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-navy"
+        >
+          {DAY_NAMES[day]}
+        </td>
+      </tr>
+      {periods.map((order) => {
+        const { title, time } = periodLabel(daySlots, order)
+        return (
+          <tr key={order} className="border-t border-border">
+            <td className="sticky left-0 z-10 px-3 py-1 text-xs text-slate bg-gray-50 whitespace-nowrap">
+              <span className="font-medium text-navy">{title}</span>
+              {time && <span className="block text-[11px]">{time}</span>}
+            </td>
+            {classGroups.map((cg) => {
+              const slot = slotByClass.get(`${cg.id}:${day}:${order}`)
+              if (!slot) {
+                return (
+                  <td key={cg.id} className="p-0.5">
+                    <div className="h-full min-h-[44px] bg-gray-100" />
+                  </td>
+                )
+              }
+              if (slot.type === 'BREAK') {
+                return (
+                  <td key={cg.id} className="p-0.5">
+                    <div
+                      className="h-full min-h-[44px] flex items-center justify-center text-[10px] text-slate"
+                      style={{
+                        background:
+                          'repeating-linear-gradient(45deg, #F5F7FA, #F5F7FA 4px, #E8EBF0 4px, #E8EBF0 8px)',
+                      }}
+                    >
+                      Intervalo
+                    </div>
+                  </td>
+                )
+              }
+              const entry = entryByClass.get(`${cg.id}:${day}:${order}`)
+              if (!entry) {
+                return (
+                  <td key={cg.id} className="p-0.5">
+                    <div className="h-full min-h-[44px]" style={{ background: '#F5F7FA' }} />
+                  </td>
+                )
+              }
+              const subject = entry.teaching_assignments?.class_subjects?.subjects
+              const teacher = entry.teaching_assignments?.teachers
+              const clash = clashEntryIds.has(entry.id)
+              return (
+                <td key={cg.id} className="p-0.5">
+                  <div
+                    className={cn(
+                      'h-full min-h-[44px] p-1 rounded-sm border-l-2 relative',
+                      clash && 'ring-2 ring-red-500'
+                    )}
+                    style={{
+                      background: clash ? '#FEE2E2' : hexWithOpacity(subject?.color, SUBJECT_TINT),
+                      borderLeftColor: clash ? '#EF4444' : (subject?.color ?? '#212F5C'),
+                    }}
+                    title={`${subject?.name ?? '—'} — ${teacher?.name ?? '—'}${clash ? ' (choque)' : ''}`}
+                  >
+                    <p className="text-[11px] font-semibold text-navy leading-tight truncate">
+                      {subject?.name ?? '—'}
+                    </p>
+                    <p
+                      className={cn(
+                        'text-[10px] leading-tight truncate mt-0.5',
+                        clash ? 'text-red-700 font-semibold' : 'text-slate'
+                      )}
+                    >
+                      {teacher?.name ?? '—'}
+                    </p>
+                    {entry.locked && (
+                      <Lock className="absolute top-1 right-1 h-2.5 w-2.5" style={{ color: '#D6A441' }} />
+                    )}
+                  </div>
+                </td>
+              )
+            })}
+          </tr>
+        )
+      })}
+    </>
+  )
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
+const TAB_LABELS = {
+  class: 'Por Turma',
+  teacher: 'Por Professor',
+  slot: 'Por Horário',
+} as const
+
 export function ScheduleGrid({ schedule, entries, grids }: Props) {
-  const [tab, setTab] = useState<'class' | 'teacher'>('class')
+  const [tab, setTab] = useState<keyof typeof TAB_LABELS>('class')
 
   return (
     <div className="space-y-6">
@@ -611,7 +948,7 @@ export function ScheduleGrid({ schedule, entries, grids }: Props) {
 
       {/* Tabs */}
       <div className="flex border-b border-border">
-        {(['class', 'teacher'] as const).map((t) => (
+        {(Object.keys(TAB_LABELS) as (keyof typeof TAB_LABELS)[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -622,17 +959,15 @@ export function ScheduleGrid({ schedule, entries, grids }: Props) {
                 : 'border-transparent text-slate hover:text-navy'
             )}
           >
-            {t === 'class' ? 'Por Turma' : 'Por Professor'}
+            {TAB_LABELS[t]}
           </button>
         ))}
       </div>
 
       {/* Grid */}
-      {tab === 'class' ? (
-        <ClassView entries={entries} grids={grids} />
-      ) : (
-        <TeacherView entries={entries} grids={grids} />
-      )}
+      {tab === 'class' && <ClassView entries={entries} grids={grids} />}
+      {tab === 'teacher' && <TeacherView entries={entries} grids={grids} />}
+      {tab === 'slot' && <SlotView entries={entries} grids={grids} />}
     </div>
   )
 }

@@ -83,6 +83,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
         teachers ( id, name ),
         class_subjects (
           id,
+          group_key,
           subjects ( id, name, color ),
           class_groups (
             id,
