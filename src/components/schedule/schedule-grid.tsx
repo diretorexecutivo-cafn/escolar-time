@@ -1,13 +1,37 @@
 'use client'
 
-import { useState, useMemo, type ReactNode } from 'react'
+import { useState, useMemo, useEffect, type ReactNode } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Lock, ArrowLeft, AlertTriangle, ChevronDown } from 'lucide-react'
+import {
+  Lock,
+  ArrowLeft,
+  AlertTriangle,
+  ChevronDown,
+  Pencil,
+  Undo2,
+  X,
+  ShieldCheck,
+  Save,
+  Archive,
+  CheckCircle2,
+} from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import type { SolutionValidationResult } from '@/engine/solution-validator'
+import { findTeacherClashes, toMinutes, type Interval, type TimedItem } from '@/engine/time'
+import {
+  cellKey,
+  changedCells,
+  swapCells,
+  toPlacedLessons,
+  type CellRef,
+} from './edit-swap'
 
 // ─── Types from Supabase join ──────────────────────────────────────────────
 
@@ -55,6 +79,10 @@ type ScheduleInfo = {
   created_at: string
   violations?: unknown
   config_snapshot?: unknown
+  deleted_at?: string | null
+  deleted_reason?: string | null
+  deleter?: { name: string } | null
+  replacement?: { id: string; name: string } | null
 }
 
 type Violation = {
@@ -104,14 +132,20 @@ function daysOf(slots: GridSlot[]): number[] {
   return Array.from(new Set(slots.map((s) => s.day_of_week as number))).sort((a, b) => a - b)
 }
 
+/** "07:10–08:00" (descarta segundos, caso venham do banco como HH:MM:SS). */
+function slotTime(slot: Pick<GridSlot, 'start_time' | 'end_time'>): string {
+  return `${slot.start_time.slice(0, 5)}–${slot.end_time.slice(0, 5)}`
+}
+
 /**
- * Rótulo do período. Cada dia pode ter horários diferentes para o mesmo número
- * de aula (ex.: 9ª aula começa 13:50 na terça e 14:00 na quarta), então só
- * mostramos o horário quando ele é igual em todos os dias.
+ * Rótulo do período. Cada dia (e cada turma) pode ter horários diferentes para o
+ * mesmo número de aula (ex.: 9ª aula começa 13:10 numa turma e 14:00 em outra),
+ * então só mostramos o horário na linha quando ele é igual em todas as colunas;
+ * caso contrário, `time` é null e cada célula mostra o próprio horário.
  */
 function periodLabel(slots: GridSlot[], order: number): { title: string; time: string | null } {
   const ofOrder = slots.filter((s) => s.slot_order === order)
-  const times = new Set(ofOrder.map((s) => `${s.start_time}–${s.end_time}`))
+  const times = new Set(ofOrder.map(slotTime))
   return {
     title: `${order}ª`,
     time: times.size === 1 ? [...times][0]! : null,
@@ -158,22 +192,53 @@ function ScoreBadge({ score }: { score: number | null }) {
 
 // ─── Cell components ──────────────────────────────────────────────────────────
 
-function BreakCell() {
+const BREAK_BG = 'repeating-linear-gradient(45deg, #F5F7FA, #F5F7FA 4px, #E8EBF0 4px, #E8EBF0 8px)'
+
+/** Horário dentro da célula — usado quando a linha não tem um horário único. */
+function CellTime({ time }: { time?: string | null }) {
+  if (!time) return null
+  return <p className="text-[10px] text-slate/80 leading-tight tabular-nums mt-0.5">{time}</p>
+}
+
+function PeriodHeader({ title, time }: { title: string; time: string | null }) {
+  return (
+    <>
+      <span className="font-medium text-navy">{title}</span>
+      {time ? (
+        <span className="block text-[11px]">{time}</span>
+      ) : (
+        <span className="block text-[10px] italic" title="O horário desta aula varia entre as colunas">
+          varia
+        </span>
+      )}
+    </>
+  )
+}
+
+function BreakCell({ time, compact = false }: { time?: string | null; compact?: boolean }) {
   return (
     <div
-      className="h-full min-h-[56px] flex items-center justify-center text-xs text-slate font-medium"
-      style={{
-        background:
-          'repeating-linear-gradient(45deg, #F5F7FA, #F5F7FA 4px, #E8EBF0 4px, #E8EBF0 8px)',
-      }}
+      className={cn(
+        'h-full flex flex-col items-center justify-center text-slate',
+        compact ? 'min-h-[44px] text-[10px]' : 'min-h-[56px] text-xs font-medium'
+      )}
+      style={{ background: BREAK_BG }}
     >
       Intervalo
+      <CellTime time={time} />
     </div>
   )
 }
 
-function EmptyCell() {
-  return <div className="h-full min-h-[56px]" style={{ background: '#F5F7FA' }} />
+function EmptyCell({ time, compact = false }: { time?: string | null; compact?: boolean }) {
+  return (
+    <div
+      className={cn('h-full flex items-end p-1', compact ? 'min-h-[44px]' : 'min-h-[56px]')}
+      style={{ background: '#F5F7FA' }}
+    >
+      <CellTime time={time} />
+    </div>
+  )
 }
 
 function LessonCell({
@@ -185,6 +250,7 @@ function LessonCell({
   showUnit,
   locked,
   mode,
+  time,
 }: {
   subjectName: string
   subjectColor: string | null
@@ -194,6 +260,7 @@ function LessonCell({
   showUnit: boolean
   locked: boolean
   mode: 'class' | 'teacher'
+  time?: string | null
 }) {
   return (
     <div
@@ -216,6 +283,7 @@ function LessonCell({
           )}
         </>
       )}
+      <CellTime time={time} />
       {locked && (
         <Lock
           className="absolute top-1 right-1 h-3 w-3"
@@ -335,10 +403,17 @@ function QualityPanel({ schedule }: { schedule: ScheduleInfo }) {
 
 function GridTable({
   slots,
+  labelSlots = slots,
+  breakTimes = true,
   renderCell,
 }: {
   slots: GridSlot[]
-  renderCell: (day: number, slot: GridSlot) => ReactNode
+  /** Slots usados para decidir se a linha tem horário único (padrão: `slots`). */
+  labelSlots?: GridSlot[]
+  /** Mostrar o horário dentro dos intervalos quando a linha não tem horário único. */
+  breakTimes?: boolean
+  /** `showTime`: a linha não tem horário único, então a célula deve mostrar o seu. */
+  renderCell: (day: number, slot: GridSlot, showTime: boolean) => ReactNode
 }) {
   const periods = useMemo(() => periodsOf(slots), [slots])
   const dayValues = useMemo(() => daysOf(slots), [slots])
@@ -363,12 +438,12 @@ function GridTable({
         </thead>
         <tbody>
           {periods.map((order) => {
-            const { title, time } = periodLabel(slots, order)
+            const { title, time } = periodLabel(labelSlots, order)
+            const showTime = time === null
             return (
               <tr key={order} className="border-t border-border">
                 <td className="px-3 py-1 text-xs text-slate bg-gray-50 whitespace-nowrap">
-                  <span className="font-medium text-navy">{title}</span>
-                  {time && <span className="block text-[11px]">{time}</span>}
+                  <PeriodHeader title={title} time={time} />
                 </td>
                 {days.map((d) => {
                   const slot = slotAt(slots, d.value, order)
@@ -383,13 +458,13 @@ function GridTable({
                   if (slot.type === 'BREAK') {
                     return (
                       <td key={d.value} className="p-0.5">
-                        <BreakCell />
+                        <BreakCell time={showTime && breakTimes ? slotTime(slot) : null} />
                       </td>
                     )
                   }
                   return (
                     <td key={d.value} className="p-0.5">
-                      {renderCell(d.value, slot)}
+                      {renderCell(d.value, slot, showTime)}
                     </td>
                   )
                 })}
@@ -404,7 +479,60 @@ function GridTable({
 
 // ─── Class view ───────────────────────────────────────────────────────────────
 
-function ClassView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] }) {
+type EditHandlers = {
+  selected: CellRef | null
+  /** Células alteradas em relação ao original. */
+  changed: Set<string>
+  /** Células apontadas pela última validação. */
+  flagged: Set<string>
+  onCellClick: (cell: CellRef) => void
+}
+
+/** Envolve a célula para torná-la clicável no modo edição. */
+function EditableCell({
+  cell,
+  edit,
+  children,
+}: {
+  cell: CellRef
+  edit: EditHandlers
+  children: ReactNode
+}) {
+  const k = cellKey(cell)
+  const isSelected = edit.selected != null && cellKey(edit.selected) === k
+  const isFlagged = edit.flagged.has(k)
+  const isChanged = edit.changed.has(k)
+  return (
+    <button
+      type="button"
+      onClick={() => edit.onCellClick(cell)}
+      className={cn(
+        'relative block w-full h-full text-left rounded-sm cursor-pointer transition-shadow',
+        'hover:ring-2 hover:ring-navy/30',
+        isFlagged && 'ring-2 ring-red-500',
+        isSelected && 'ring-2 ring-navy ring-offset-1'
+      )}
+    >
+      {children}
+      {isChanged && (
+        <span
+          className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-ocre"
+          title="Alterado nesta edição"
+        />
+      )}
+    </button>
+  )
+}
+
+function ClassView({
+  entries,
+  grids,
+  edit,
+}: {
+  entries: EntryRow[]
+  grids: ClassGrid[]
+  edit?: EditHandlers
+}) {
   const classGroups = useMemo(() => {
     const map = new Map<string, string>()
     for (const e of entries) {
@@ -421,12 +549,16 @@ function ClassView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[]
     [grids, selectedClass]
   )
 
-  // chave: "slotId:dia"
+  // chave: "slotId:dia" — pode haver mais de uma aula na célula durante a edição (choque)
   const lookup = useMemo(() => {
-    const m = new Map<string, EntryRow>()
+    const m = new Map<string, EntryRow[]>()
     for (const e of entries) {
       const cgId = e.teaching_assignments?.class_subjects?.class_groups?.id
-      if (cgId === selectedClass) m.set(`${e.time_slot_id}:${e.day_of_week}`, e)
+      if (cgId !== selectedClass) continue
+      const k = `${e.time_slot_id}:${e.day_of_week}`
+      const arr = m.get(k)
+      if (arr) arr.push(e)
+      else m.set(k, [e])
     }
     return m
   }, [entries, selectedClass])
@@ -454,20 +586,48 @@ function ClassView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[]
 
       <GridTable
         slots={slots}
-        renderCell={(day, slot) => {
-          const entry = lookup.get(`${slot.id}:${day}`)
-          if (!entry) return <EmptyCell />
-          const subject = entry.teaching_assignments?.class_subjects?.subjects
-          const teacher = entry.teaching_assignments?.teachers
+        renderCell={(day, slot, showTime) => {
+          const time = showTime ? slotTime(slot) : null
+          const cellEntries = lookup.get(`${slot.id}:${day}`) ?? []
+          const entry = cellEntries[0]
+          let content: ReactNode
+          if (!entry) {
+            content = <EmptyCell time={time} />
+          } else {
+            const subject = entry.teaching_assignments?.class_subjects?.subjects
+            const teacher = entry.teaching_assignments?.teachers
+            content = (
+              <div className="relative h-full">
+                <LessonCell
+                  subjectName={subject?.name ?? '—'}
+                  subjectColor={subject?.color ?? null}
+                  teacherName={teacher?.name ?? '—'}
+                  locked={entry.locked}
+                  mode="class"
+                  showUnit={false}
+                  time={time}
+                />
+                {cellEntries.length > 1 && (
+                  <span
+                    className="absolute top-1 right-1 text-[10px] font-semibold text-white bg-red-500 rounded px-1"
+                    title={cellEntries
+                      .map((e) => e.teaching_assignments?.class_subjects?.subjects?.name)
+                      .join(' + ')}
+                  >
+                    +{cellEntries.length - 1}
+                  </span>
+                )}
+              </div>
+            )
+          }
+          if (!edit) return content
           return (
-            <LessonCell
-              subjectName={subject?.name ?? '—'}
-              subjectColor={subject?.color ?? null}
-              teacherName={teacher?.name ?? '—'}
-              locked={entry.locked}
-              mode="class"
-              showUnit={false}
-            />
+            <EditableCell
+              cell={{ classGroupId: selectedClass, day, order: slot.slot_order }}
+              edit={edit}
+            >
+              {content}
+            </EditableCell>
           )
         }}
       />
@@ -511,6 +671,17 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
     for (const g of grids) for (const sl of g.slots) m.set(sl.id, sl.slot_order)
     return m
   }, [grids])
+
+  // O horário real de cada aula vem do slot da turma dela — o slot da "união"
+  // acima pode ser de outra turma, com outro horário.
+  const slotById = useMemo(() => {
+    const m = new Map<string, GridSlot>()
+    for (const g of grids) for (const sl of g.slots) m.set(sl.id, sl)
+    return m
+  }, [grids])
+
+  // Linha só tem horário único se ele for igual em todas as turmas e dias.
+  const allSlots = useMemo(() => grids.flatMap((g) => g.slots), [grids])
 
   const lookup = useMemo(() => {
     const m = new Map<string, EntryRow>()
@@ -560,11 +731,14 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
 
       <GridTable
         slots={slots}
-        renderCell={(day, slot) => {
+        labelSlots={allSlots}
+        breakTimes={false}
+        renderCell={(day, slot, showTime) => {
           const entry = lookup.get(`${day}:${slot.slot_order}`)
           if (!entry) return <EmptyCell />
           const subject = entry.teaching_assignments?.class_subjects?.subjects
           const cg = entry.teaching_assignments?.class_subjects?.class_groups
+          const ownSlot = slotById.get(entry.time_slot_id)
           return (
             <LessonCell
               subjectName={subject?.name ?? '—'}
@@ -575,6 +749,7 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
               showUnit={(unitsByDay.get(day)?.size ?? 0) >= 2}
               locked={entry.locked}
               mode="teacher"
+              time={showTime && ownSlot ? slotTime(ownSlot) : null}
             />
           )
         }}
@@ -596,9 +771,13 @@ const DAY_NAMES: Record<number, string> = {
 
 type Clash = {
   day: number
-  order: number
+  /** Início do choque (minutos) — para ordenar a lista. */
+  start: number
   teacherName: string
-  classNames: string[]
+  /** "6º A 3ª (11:00–11:50)" */
+  parts: string[]
+  /** Linhas (dia:nº da aula) envolvidas — para o filtro "só horários com choque". */
+  rows: string[]
 }
 
 function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] }) {
@@ -641,6 +820,12 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
     return m
   }, [grids])
 
+  const slotById = useMemo(() => {
+    const m = new Map<string, GridSlot>()
+    for (const g of grids) for (const sl of g.slots) m.set(sl.id, sl)
+    return m
+  }, [grids])
+
   const entryByClass = useMemo(() => {
     const m = new Map<string, EntryRow>()
     for (const e of entries) {
@@ -651,42 +836,48 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
     return m
   }, [entries, orderBySlotId])
 
-  // Mesmo critério do motor: professor em 2+ turmas no mesmo (dia, nº da aula) é
-  // choque, exceto quando todas as aulas pertencem ao mesmo group_key (aula agrupada).
+  // Mesmo critério do motor (src/engine/time.ts): choque é o professor em aulas cujos
+  // HORÁRIOS se sobrepõem — cada turma tem a própria grade, então números de aula diferentes
+  // podem chocar e números iguais podem não chocar. Aulas do mesmo group_key no mesmo dia/aula
+  // são uma aula só (agrupada).
   const { clashes, clashEntryIds } = useMemo(() => {
-    const byTeacherSlot = new Map<string, EntryRow[]>()
+    const items: TimedItem<EntryRow>[] = []
     for (const e of entries) {
       const teacherId = e.teaching_assignments?.teachers?.id
-      const order = orderBySlotId.get(e.time_slot_id)
-      if (!teacherId || order === undefined) continue
-      const k = `${teacherId}:${e.day_of_week}:${order}`
-      const arr = byTeacherSlot.get(k) ?? []
-      arr.push(e)
-      byTeacherSlot.set(k, arr)
+      const slot = slotById.get(e.time_slot_id)
+      if (!teacherId || !slot) continue
+      const interval: Interval = { start: toMinutes(slot.start_time), end: toMinutes(slot.end_time) }
+      const groupKey = e.teaching_assignments?.class_subjects?.group_key
+      const owner = groupKey ? `g:${groupKey}:${e.day_of_week}:${slot.slot_order}` : `e:${e.id}`
+      items.push({ teacherId, day: e.day_of_week, interval, owner, item: e })
     }
     const list: Clash[] = []
     const ids = new Set<string>()
-    for (const group of byTeacherSlot.values()) {
-      if (group.length < 2) continue
-      const keys = new Set(group.map((e) => e.teaching_assignments?.class_subjects?.group_key ?? null))
-      const [onlyKey] = keys
-      if (keys.size === 1 && onlyKey) continue
-      for (const e of group) ids.add(e.id)
-      const first = group[0]!
+    for (const cluster of findTeacherClashes(items)) {
+      const first = cluster[0]!.item
+      const parts: string[] = []
+      const rows: string[] = []
+      for (const { item } of cluster) {
+        ids.add(item.id)
+        const slot = slotById.get(item.time_slot_id)!
+        rows.push(`${item.day_of_week}:${slot.slot_order}`)
+        parts.push(
+          `${item.teaching_assignments?.class_subjects?.class_groups?.name ?? '—'} ${slot.slot_order}ª (${slotTime(slot)})`
+        )
+      }
       list.push({
         day: first.day_of_week,
-        order: orderBySlotId.get(first.time_slot_id)!,
+        start: cluster[0]!.interval.start,
         teacherName: first.teaching_assignments?.teachers?.name ?? '—',
-        classNames: group
-          .map((e) => e.teaching_assignments?.class_subjects?.class_groups?.name ?? '—')
-          .sort((a, b) => a.localeCompare(b)),
+        parts,
+        rows,
       })
     }
-    list.sort((a, b) => a.day - b.day || a.order - b.order || a.teacherName.localeCompare(b.teacherName))
+    list.sort((a, b) => a.day - b.day || a.start - b.start || a.teacherName.localeCompare(b.teacherName))
     return { clashes: list, clashEntryIds: ids }
-  }, [entries, orderBySlotId])
+  }, [entries, slotById])
 
-  const clashSlots = useMemo(() => new Set(clashes.map((c) => `${c.day}:${c.order}`)), [clashes])
+  const clashSlots = useMemo(() => new Set(clashes.flatMap((c) => c.rows)), [clashes])
 
   const allSlots = useMemo(() => grids.flatMap((g) => g.slots), [grids])
   const dayValues = useMemo(() => daysOf(allSlots), [allSlots])
@@ -711,7 +902,7 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
                 dayFilter === d ? 'bg-navy text-white' : 'bg-white text-slate hover:text-navy'
               )}
             >
-              {d === 'all' ? 'Todos' : DAYS.find((x) => x.value === d)?.label}
+              {d === 'all' ? 'Semana toda' : DAYS.find((x) => x.value === d)?.label}
             </button>
           ))}
         </div>
@@ -736,8 +927,8 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
           <ul className="space-y-0.5">
             {clashes.map((c, i) => (
               <li key={i} className="text-xs text-red-700">
-                {DAYS.find((d) => d.value === c.day)?.label} {c.order}ª — {c.teacherName}:{' '}
-                {c.classNames.join(', ')}
+                {DAYS.find((d) => d.value === c.day)?.label} — {c.teacherName}:{' '}
+                {c.parts.join(' × ')}
               </li>
             ))}
           </ul>
@@ -831,11 +1022,11 @@ function DayRows({
       </tr>
       {periods.map((order) => {
         const { title, time } = periodLabel(daySlots, order)
+        const showTime = time === null
         return (
           <tr key={order} className="border-t border-border">
             <td className="sticky left-0 z-10 px-3 py-1 text-xs text-slate bg-gray-50 whitespace-nowrap">
-              <span className="font-medium text-navy">{title}</span>
-              {time && <span className="block text-[11px]">{time}</span>}
+              <PeriodHeader title={title} time={time} />
             </td>
             {classGroups.map((cg) => {
               const slot = slotByClass.get(`${cg.id}:${day}:${order}`)
@@ -846,18 +1037,11 @@ function DayRows({
                   </td>
                 )
               }
+              const cellTime = showTime ? slotTime(slot) : null
               if (slot.type === 'BREAK') {
                 return (
                   <td key={cg.id} className="p-0.5">
-                    <div
-                      className="h-full min-h-[44px] flex items-center justify-center text-[10px] text-slate"
-                      style={{
-                        background:
-                          'repeating-linear-gradient(45deg, #F5F7FA, #F5F7FA 4px, #E8EBF0 4px, #E8EBF0 8px)',
-                      }}
-                    >
-                      Intervalo
-                    </div>
+                    <BreakCell compact time={cellTime} />
                   </td>
                 )
               }
@@ -865,7 +1049,7 @@ function DayRows({
               if (!entry) {
                 return (
                   <td key={cg.id} className="p-0.5">
-                    <div className="h-full min-h-[44px]" style={{ background: '#F5F7FA' }} />
+                    <EmptyCell compact time={cellTime} />
                   </td>
                 )
               }
@@ -896,6 +1080,7 @@ function DayRows({
                     >
                       {teacher?.name ?? '—'}
                     </p>
+                    <CellTime time={cellTime} />
                     {entry.locked && (
                       <Lock className="absolute top-1 right-1 h-2.5 w-2.5" style={{ color: '#D6A441' }} />
                     )}
@@ -918,8 +1103,394 @@ const TAB_LABELS = {
   slot: 'Por Horário',
 } as const
 
+// ─── Edição manual ────────────────────────────────────────────────────────────
+
+type EditMode = 'replace' | 'copy'
+
+const EDIT_MODE_LABEL: Record<EditMode, string> = {
+  replace: 'Editar e excluir o original',
+  copy: 'Editar e manter o original',
+}
+
+function EditModeDialog({
+  onChoose,
+  onClose,
+}: {
+  onChoose: (mode: EditMode) => void
+  onClose: () => void
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-navy/40 p-4"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="w-full max-w-md rounded-lg bg-white shadow-xl p-6 space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div>
+          <h2 className="text-lg font-semibold text-navy">Editar horário</h2>
+          <p className="text-sm text-slate mt-1">
+            Clique em duas aulas da mesma turma para trocá-las de lugar. Ao terminar, valide as
+            edições — só é possível salvar um horário sem violações obrigatórias.
+          </p>
+        </div>
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => onChoose('replace')}
+            className="w-full text-left rounded-md border border-border p-3 hover:border-navy hover:bg-navy/5 cursor-pointer"
+          >
+            <p className="text-sm font-medium text-navy">{EDIT_MODE_LABEL.replace}</p>
+            <p className="text-xs text-slate mt-0.5">
+              O horário editado substitui este. O original sai da lista e fica no histórico de
+              apagados.
+            </p>
+          </button>
+          <button
+            type="button"
+            onClick={() => onChoose('copy')}
+            className="w-full text-left rounded-md border border-border p-3 hover:border-navy hover:bg-navy/5 cursor-pointer"
+          >
+            <p className="text-sm font-medium text-navy">{EDIT_MODE_LABEL.copy}</p>
+            <p className="text-xs text-slate mt-0.5">
+              O horário editado é salvo como um novo horário. Este continua como está.
+            </p>
+          </button>
+        </div>
+        <div className="flex justify-end">
+          <Button variant="ghost" size="sm" onClick={onClose} className="cursor-pointer">
+            Cancelar
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EditToolbar({
+  mode,
+  changedCount,
+  canUndo,
+  validating,
+  saving,
+  canSave,
+  copyName,
+  onCopyNameChange,
+  onUndo,
+  onDiscard,
+  onValidate,
+  onSave,
+}: {
+  mode: EditMode
+  changedCount: number
+  canUndo: boolean
+  validating: boolean
+  saving: boolean
+  canSave: boolean
+  copyName: string
+  onCopyNameChange: (v: string) => void
+  onUndo: () => void
+  onDiscard: () => void
+  onValidate: () => void
+  onSave: () => void
+}) {
+  return (
+    <div className="sticky top-0 z-30 rounded-lg border border-navy/20 bg-white shadow-sm p-3 flex flex-wrap items-center gap-3">
+      <div className="flex items-center gap-2 mr-auto">
+        <Pencil className="h-4 w-4 text-navy" />
+        <div>
+          <p className="text-sm font-semibold text-navy">Modo edição — {EDIT_MODE_LABEL[mode]}</p>
+          <p className="text-xs text-slate">
+            {changedCount === 0
+              ? 'Clique numa aula e depois em outra (ou num horário vago) da mesma turma.'
+              : `${changedCount} célula(s) alterada(s).`}
+          </p>
+        </div>
+      </div>
+      {mode === 'copy' && (
+        <input
+          value={copyName}
+          onChange={(e) => onCopyNameChange(e.target.value)}
+          placeholder="Nome do novo horário"
+          className="rounded-md border border-input bg-background px-2.5 py-1 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-ring"
+        />
+      )}
+      <Button variant="ghost" size="sm" onClick={onUndo} disabled={!canUndo} className="cursor-pointer">
+        <Undo2 /> Desfazer
+      </Button>
+      <Button variant="ghost" size="sm" onClick={onDiscard} className="cursor-pointer">
+        <X /> Descartar
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onValidate}
+        disabled={validating || saving}
+        className="cursor-pointer"
+      >
+        <ShieldCheck /> {validating ? 'Validando…' : 'Validar edições'}
+      </Button>
+      <Button
+        size="sm"
+        onClick={onSave}
+        disabled={!canSave || saving}
+        title={canSave ? undefined : 'Valide as edições sem violações obrigatórias para salvar.'}
+        className="bg-navy hover:bg-navy-light text-white cursor-pointer"
+      >
+        <Save /> {saving ? 'Salvando…' : 'Salvar'}
+      </Button>
+    </div>
+  )
+}
+
+function ValidationPanel({ result }: { result: SolutionValidationResult }) {
+  const [showSoft, setShowSoft] = useState(false)
+  const hard = result.hardViolations
+  return (
+    <div
+      className={cn(
+        'rounded-md border p-4 space-y-2',
+        result.valid ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'
+      )}
+    >
+      <div className="flex items-center gap-2 flex-wrap">
+        {result.valid ? (
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+        ) : (
+          <AlertTriangle className="h-4 w-4 text-red-600" />
+        )}
+        <p className={cn('text-sm font-semibold', result.valid ? 'text-emerald-800' : 'text-red-700')}>
+          {result.valid
+            ? 'Horário válido — nenhuma regra obrigatória violada.'
+            : `${hard.length} violação(ões) obrigatória(s) — corrija antes de salvar.`}
+        </p>
+        <ScoreBadge score={result.score} />
+      </div>
+      {hard.length > 0 && (
+        <ul className="space-y-0.5 max-h-60 overflow-y-auto">
+          {hard.map((v, i) => (
+            <li key={i} className="text-xs text-red-700">
+              • {v.description}
+            </li>
+          ))}
+        </ul>
+      )}
+      {result.softViolations.length > 0 && (
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowSoft((s) => !s)}
+            className="text-xs text-amber-800 underline cursor-pointer"
+          >
+            {result.softViolations.length} preferência(s) não atendida(s) — não bloqueiam o salvamento
+          </button>
+          {showSoft && (
+            <ul className="mt-1 space-y-0.5 max-h-48 overflow-y-auto">
+              {result.softViolations.map((v, i) => (
+                <li key={i} className="text-xs text-amber-800">
+                  • {v.description}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DeletedBanner({ schedule }: { schedule: ScheduleInfo }) {
+  if (!schedule.deleted_at) return null
+  const when = format(new Date(schedule.deleted_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+  return (
+    <div className="rounded-md border border-slate/30 bg-gray-50 p-3 flex items-start gap-2">
+      <Archive className="h-4 w-4 text-slate shrink-0 mt-0.5" />
+      <p className="text-sm text-slate">
+        Este horário foi apagado em {when}
+        {schedule.deleter?.name ? ` por ${schedule.deleter.name}` : ''}
+        {schedule.deleted_reason === 'replaced_by_edit' && schedule.replacement ? (
+          <>
+            {' '}
+            e substituído por{' '}
+            <Link
+              href={`/dashboard/schedules/${schedule.replacement.id}`}
+              className="text-navy underline hover:text-ocre"
+            >
+              {schedule.replacement.name}
+            </Link>
+          </>
+        ) : null}
+        . Está disponível apenas para consulta.
+      </p>
+    </div>
+  )
+}
+
 export function ScheduleGrid({ schedule, entries, grids }: Props) {
+  const router = useRouter()
   const [tab, setTab] = useState<keyof typeof TAB_LABELS>('class')
+
+  const isDeleted = !!schedule.deleted_at
+  const [showModeDialog, setShowModeDialog] = useState(false)
+  const [editMode, setEditMode] = useState<EditMode | null>(null)
+  const [draft, setDraft] = useState<EntryRow[]>(entries)
+  const [history, setHistory] = useState<EntryRow[][]>([])
+  const [selected, setSelected] = useState<CellRef | null>(null)
+  const [validation, setValidation] = useState<SolutionValidationResult | null>(null)
+  const [validating, setValidating] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [copyName, setCopyName] = useState(`${schedule.name} (editado)`)
+
+  const editing = editMode !== null
+  const shown = editing ? draft : entries
+
+  const changed = useMemo(
+    () => (editing ? changedCells(entries, draft, grids) : new Set<string>()),
+    [editing, entries, draft, grids]
+  )
+  const flagged = useMemo(() => {
+    const s = new Set<string>()
+    for (const v of validation?.hardViolations ?? []) {
+      for (const c of v.cells) s.add(cellKey({ classGroupId: c.classGroupId, day: c.day, order: c.slotOrder }))
+    }
+    return s
+  }, [validation])
+
+  // Avisa antes de sair da página com edições não salvas.
+  const dirty = editing && changed.size > 0
+  useEffect(() => {
+    if (!dirty) return
+    const onBeforeUnload = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [dirty])
+
+  function startEditing(mode: EditMode) {
+    setShowModeDialog(false)
+    setEditMode(mode)
+    setDraft(entries)
+    setHistory([])
+    setSelected(null)
+    setValidation(null)
+    setTab('class')
+  }
+
+  function stopEditing() {
+    setEditMode(null)
+    setDraft(entries)
+    setHistory([])
+    setSelected(null)
+    setValidation(null)
+  }
+
+  function handleDiscard() {
+    if (dirty && !confirm('Descartar todas as alterações desta edição?')) return
+    stopEditing()
+  }
+
+  function handleUndo() {
+    const prev = history[history.length - 1]
+    if (!prev) return
+    setDraft(prev)
+    setHistory((h) => h.slice(0, -1))
+    setSelected(null)
+    setValidation(null)
+  }
+
+  function handleCellClick(cell: CellRef) {
+    if (!selected || selected.classGroupId !== cell.classGroupId) {
+      setSelected(cell)
+      return
+    }
+    if (cellKey(selected) === cellKey(cell)) {
+      setSelected(null)
+      return
+    }
+    const r = swapCells(draft, grids, selected, cell)
+    setSelected(null)
+    if (!r.ok) {
+      toast.error(r.error)
+      return
+    }
+    if (r.entries === draft) return
+    setHistory((h) => [...h, draft])
+    setDraft(r.entries)
+    setValidation(null) // qualquer mudança exige validar de novo
+  }
+
+  async function handleValidate() {
+    setValidating(true)
+    try {
+      const res = await fetch(`/api/schedule/${schedule.id}/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entries: toPlacedLessons(draft) }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error ?? 'Erro ao validar.')
+        return
+      }
+      const result = data as SolutionValidationResult
+      setValidation(result)
+      if (result.valid) toast.success('Horário válido. Já pode salvar.')
+      else toast.error(`${result.hardViolations.length} violação(ões) obrigatória(s).`)
+    } catch {
+      toast.error('Erro de conexão.')
+    } finally {
+      setValidating(false)
+    }
+  }
+
+  async function handleSave() {
+    if (!editMode || !validation?.valid) return
+    if (
+      editMode === 'replace' &&
+      !confirm('Salvar a edição e mover o horário original para o histórico de apagados?')
+    ) {
+      return
+    }
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/schedule/${schedule.id}/save-edit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mode: editMode,
+          name: editMode === 'copy' ? copyName.trim() || undefined : undefined,
+          entries: toPlacedLessons(draft),
+        }),
+      })
+      const data = await res.json()
+      if (res.status === 422 && data.validation) {
+        setValidation(data.validation)
+        toast.error(data.error)
+        return
+      }
+      if (!res.ok) {
+        toast.error(data.error ?? 'Erro ao salvar.')
+        return
+      }
+      if (data.warning) toast.warning(data.warning)
+      toast.success('Horário editado salvo.')
+      setEditMode(null) // libera o aviso de saída antes de navegar
+      router.push(`/dashboard/schedules/${data.scheduleId}`)
+      router.refresh()
+    } catch {
+      toast.error('Erro de conexão.')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -942,9 +1513,44 @@ export function ScheduleGrid({ schedule, entries, grids }: Props) {
             <ScoreBadge score={schedule.score} />
           </div>
         </div>
+        {!isDeleted && !editing && (
+          <Button
+            variant="outline"
+            onClick={() => setShowModeDialog(true)}
+            className="cursor-pointer"
+          >
+            <Pencil /> Editar horário
+          </Button>
+        )}
       </div>
 
-      <QualityPanel schedule={schedule} />
+      <DeletedBanner schedule={schedule} />
+
+      {showModeDialog && (
+        <EditModeDialog onChoose={startEditing} onClose={() => setShowModeDialog(false)} />
+      )}
+
+      {editing ? (
+        <>
+          <EditToolbar
+            mode={editMode}
+            changedCount={changed.size}
+            canUndo={history.length > 0}
+            validating={validating}
+            saving={saving}
+            canSave={!!validation?.valid}
+            copyName={copyName}
+            onCopyNameChange={setCopyName}
+            onUndo={handleUndo}
+            onDiscard={handleDiscard}
+            onValidate={handleValidate}
+            onSave={handleSave}
+          />
+          {validation && <ValidationPanel result={validation} />}
+        </>
+      ) : (
+        <QualityPanel schedule={schedule} />
+      )}
 
       {/* Tabs */}
       <div className="flex border-b border-border">
@@ -960,14 +1566,27 @@ export function ScheduleGrid({ schedule, entries, grids }: Props) {
             )}
           >
             {TAB_LABELS[t]}
+            {editing && t !== 'class' && (
+              <span className="ml-1 text-[10px] text-slate font-normal">(visualização)</span>
+            )}
           </button>
         ))}
       </div>
 
-      {/* Grid */}
-      {tab === 'class' && <ClassView entries={entries} grids={grids} />}
-      {tab === 'teacher' && <TeacherView entries={entries} grids={grids} />}
-      {tab === 'slot' && <SlotView entries={entries} grids={grids} />}
+      {/* Grid — no modo edição todas as abas mostram o rascunho; a troca é feita em "Por Turma" */}
+      {tab === 'class' && (
+        <ClassView
+          entries={shown}
+          grids={grids}
+          edit={
+            editing
+              ? { selected, changed, flagged, onCellClick: handleCellClick }
+              : undefined
+          }
+        />
+      )}
+      {tab === 'teacher' && <TeacherView entries={shown} grids={grids} />}
+      {tab === 'slot' && <SlotView entries={shown} grids={grids} />}
     </div>
   )
 }

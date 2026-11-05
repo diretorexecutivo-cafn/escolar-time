@@ -22,7 +22,11 @@ export default async function ScheduleDetailPage({ params }: Props) {
 
   const { data: schedule } = await supabase
     .from('generated_schedules')
-    .select('id, name, status, score, violations, config_snapshot, created_at')
+    .select(
+      `id, name, status, score, violations, config_snapshot, created_at, deleted_at, deleted_reason,
+       deleter:profiles!generated_schedules_deleted_by_fkey(name),
+       replacement:generated_schedules!generated_schedules_replaced_by_fkey(id, name)`
+    )
     .eq('id', id)
     .single()
 
@@ -124,7 +128,8 @@ export default async function ScheduleDetailPage({ params }: Props) {
 
   return (
     <ScheduleGrid
-      schedule={schedule}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      schedule={schedule as any}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       entries={(entries ?? []) as any}
       grids={gridsByClass}
