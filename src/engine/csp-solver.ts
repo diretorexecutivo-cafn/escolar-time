@@ -9,6 +9,7 @@ import type {
   SlotPosition,
   SolutionEntry,
 } from './types'
+import { overlaps, slotTimeIndex, type Interval } from './time'
 
 const DEFAULT_TIMEOUT_MS = 25000
 
@@ -275,10 +276,14 @@ export function solve(
 
   const limits = extractTeacherLimits(input)
 
-  // "day:order" -> id do LessonVariable dono daquela ocupação. Como v.id é único por variável,
-  // membros do mesmo grupo (mesmo v.id) nunca conflitam entre si; qualquer outra variável tem
-  // v.id diferente e conflita normalmente.
-  const teacherSlot = new Map<string, Map<string, string>>() // teacherId -> "day:order" -> variableId
+  // Ocupação registra o id do LessonVariable dono. Como v.id é único por variável, membros do
+  // mesmo grupo (mesmo v.id) nunca conflitam entre si; qualquer outra variável conflita.
+  //
+  // Professor: choque por SOBREPOSIÇÃO DE HORÁRIO — cada turma tem a própria grade, então a
+  // mesma "3ª aula" pode ter horários diferentes (e aulas de números diferentes podem se
+  // sobrepor). Turma: uma grade só, então (dia, nº da aula) identifica o horário.
+  const slotTimes = slotTimeIndex(input)
+  const teacherBusy = new Map<string, Map<number, { interval: Interval; owner: string }[]>>()
   const classSlot = new Map<string, Map<string, string>>() // classGroupId -> "day:order" -> variableId
   const teacherDayCount = new Map<string, Map<number, number>>() // teacher -> day -> count
   const teacherDayOrders = new Map<string, Map<number, Set<number>>>() // teacher -> day -> orders
@@ -337,8 +342,11 @@ export function solve(
 
     const uniqueTeachers = new Set<string>()
     for (const member of v.members) {
-      const occTeacher = teacherSlot.get(member.teacherId)?.get(key)
-      if (occTeacher !== undefined && occTeacher !== v.id) return false
+      const interval = slotTimes.get(pos.slotIdByClass[member.classGroupId]!)
+      const busy = teacherBusy.get(member.teacherId)?.get(pos.day)
+      if (interval && busy?.some((b) => b.owner !== v.id && overlaps(b.interval, interval))) {
+        return false
+      }
       const occClass = classSlot.get(member.classGroupId)?.get(key)
       if (occClass !== undefined && occClass !== v.id) return false
       uniqueTeachers.add(member.teacherId)
@@ -363,7 +371,10 @@ export function solve(
     const countedTeachers = new Set<string>()
 
     for (const member of v.members) {
-      ensureMap(teacherSlot, member.teacherId).set(key, v.id)
+      const interval = slotTimes.get(pos.slotIdByClass[member.classGroupId]!)
+      if (interval) {
+        ensureDayMap(teacherBusy, member.teacherId, () => [], pos.day).push({ interval, owner: v.id })
+      }
       ensureMap(classSlot, member.classGroupId).set(key, v.id)
 
       if (!countedTeachers.has(member.teacherId)) {
@@ -396,7 +407,9 @@ export function solve(
     const uncountedTeachers = new Set<string>()
 
     for (const member of v.members) {
-      teacherSlot.get(member.teacherId)?.delete(key)
+      const dayBusy = teacherBusy.get(member.teacherId)
+      const busy = dayBusy?.get(pos.day)
+      if (dayBusy && busy) dayBusy.set(pos.day, busy.filter((b) => b.owner !== v.id))
       classSlot.get(member.classGroupId)?.delete(key)
 
       if (!uncountedTeachers.has(member.teacherId)) {
