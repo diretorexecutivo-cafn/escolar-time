@@ -4,6 +4,10 @@ import { adminSupabase } from '@/lib/supabase/admin'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
+/**
+ * Exclusão lógica: o horário some da listagem, mas fica no histórico de apagados
+ * (com as aulas preservadas) registrando quem apagou e quando.
+ */
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -19,12 +23,17 @@ export async function DELETE(
     return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 })
   }
 
-  // schedule_entries tem ON DELETE CASCADE — remover o horário já limpa as aulas.
   const { data, error } = await adminSupabase
     .from('generated_schedules')
-    .delete()
+    .update({
+      deleted_at: new Date().toISOString(),
+      deleted_by: user.id,
+      deleted_reason: 'manual',
+      is_baseline: false,
+    })
     .eq('id', id)
     .eq('tenant_id', TENANT_ID)
+    .is('deleted_at', null)
     .select('id')
 
   if (error) {

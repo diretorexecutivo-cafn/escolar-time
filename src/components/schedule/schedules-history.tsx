@@ -2,9 +2,10 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Plus, Eye, Star, Trash2 } from 'lucide-react'
+import { Plus, Eye, Star, Trash2, ChevronDown, ChevronRight, Archive } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -23,8 +24,27 @@ type Schedule = {
   profiles: { id: string; name: string } | null
 }
 
+type DeletedSchedule = {
+  id: string
+  name: string
+  created_at: string
+  status: string
+  score: number | null
+  deleted_at: string
+  deleted_reason: 'manual' | 'replaced_by_edit' | null
+  replaced_by: string | null
+  deleter: { id: string; name: string } | null
+  replacement: { id: string; name: string } | null
+}
+
 type Props = {
   schedules: Schedule[]
+  deletedSchedules?: DeletedSchedule[]
+}
+
+const DELETE_REASON_LABEL: Record<string, string> = {
+  manual: 'Excluído manualmente',
+  replaced_by_edit: 'Substituído por edição',
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -55,13 +75,15 @@ function ScoreBadge({ score }: { score: number | null }) {
   return <Badge className={cls}>Score: {pct}</Badge>
 }
 
-export function SchedulesHistory({ schedules }: Props) {
+export function SchedulesHistory({ schedules, deletedSchedules = [] }: Props) {
+  const router = useRouter()
   const [list, setList] = useState(schedules)
+  const [showDeleted, setShowDeleted] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [pendingId, setPendingId] = useState<string | null>(null)
 
   async function handleDelete(id: string) {
-    if (!confirm('Excluir este horário? Esta ação não pode ser desfeita.')) return
+    if (!confirm('Excluir este horário? Ele ficará registrado no histórico de apagados.')) return
     setPendingId(id)
     startTransition(async () => {
       try {
@@ -69,6 +91,7 @@ export function SchedulesHistory({ schedules }: Props) {
         if (res.ok) {
           setList((prev) => prev.filter((s) => s.id !== id))
           toast.success('Horário excluído.')
+          router.refresh()
         } else {
           toast.error('Erro ao excluir horário.')
         }
@@ -200,6 +223,80 @@ export function SchedulesHistory({ schedules }: Props) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {deletedSchedules.length > 0 && (
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => setShowDeleted((v) => !v)}
+            className="flex items-center gap-2 text-sm font-medium text-slate hover:text-navy cursor-pointer"
+          >
+            {showDeleted ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            <Archive className="h-4 w-4" />
+            Apagados ({deletedSchedules.length})
+          </button>
+
+          {showDeleted && (
+            <div className="rounded-lg border border-border bg-white overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-[#F5F7FA] text-slate text-xs">
+                  <tr>
+                    <th className="text-left font-medium px-4 py-2">Horário</th>
+                    <th className="text-left font-medium px-4 py-2">Apagado em</th>
+                    <th className="text-left font-medium px-4 py-2">Por</th>
+                    <th className="text-left font-medium px-4 py-2">Motivo</th>
+                    <th className="px-4 py-2" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {deletedSchedules.map((d) => (
+                    <tr key={d.id} className="border-t border-border">
+                      <td className="px-4 py-2">
+                        <span className="text-navy">{d.name}</span>
+                        <span className="block text-xs text-slate">
+                          criado em {format(new Date(d.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-slate tabular-nums">
+                        {format(new Date(d.deleted_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                      </td>
+                      <td className="px-4 py-2 text-slate">{d.deleter?.name ?? '—'}</td>
+                      <td className="px-4 py-2 text-slate">
+                        {DELETE_REASON_LABEL[d.deleted_reason ?? ''] ?? '—'}
+                        {d.replacement && (
+                          <>
+                            {' → '}
+                            <Link
+                              href={`/dashboard/schedules/${d.replacement.id}`}
+                              className="text-navy underline hover:text-ocre"
+                            >
+                              {d.replacement.name}
+                            </Link>
+                          </>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {d.status === 'COMPLETED' && (
+                          <Link
+                            href={`/dashboard/schedules/${d.id}`}
+                            className={cn(
+                              buttonVariants({ variant: 'ghost', size: 'sm' }),
+                              'text-slate hover:text-navy cursor-pointer gap-1'
+                            )}
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span className="hidden sm:inline">Consultar</span>
+                          </Link>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
     </div>

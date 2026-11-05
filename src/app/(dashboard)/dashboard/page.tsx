@@ -23,7 +23,8 @@ async function getSummaryCounts() {
     supabase
       .from('generated_schedules')
       .select('*', { count: 'exact', head: true })
-      .eq('tenant_id', TENANT_ID),
+      .eq('tenant_id', TENANT_ID)
+      .is('deleted_at', null),
   ])
 
   return {

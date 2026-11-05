@@ -10,6 +10,7 @@ export default async function GeneratePage() {
     .from('generated_schedules')
     .select('id, name, created_at, score, status')
     .eq('tenant_id', TENANT_ID)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   return <GenerateScheduleForm existingSchedules={schedules ?? []} />
