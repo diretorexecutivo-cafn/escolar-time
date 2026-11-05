@@ -14,11 +14,19 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { createSubject, updateSubject } from '@/app/(dashboard)/dashboard/subjects/actions'
 
+// As 12 primeiras são a paleta original (mantidas para não "perder" a cor de
+// disciplinas já cadastradas); as demais ampliam a variedade, já que a escola
+// tem dezenas de disciplinas e cada uma deve ser distinguível na grade.
 const COLOR_OPTIONS = [
   '#E63946', '#2A9D8F', '#E9C46A', '#264653',
   '#F4A261', '#A8DADC', '#6D6875', '#B5838D',
   '#048BA8', '#212F5C', '#D6A441', '#7D869C',
+  '#2563EB', '#4F46E5', '#7C3AED', '#C026D3',
+  '#DB2777', '#EA580C', '#B45309', '#65A30D',
+  '#16A34A', '#0891B2', '#0F766E', '#9F1239',
 ]
+
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/
 
 const subjectSchema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres').max(100, 'Nome muito longo'),
@@ -26,7 +34,7 @@ const subjectSchema = z.object({
     .string()
     .min(2, 'Código deve ter pelo menos 2 caracteres')
     .max(10, 'Código deve ter no máximo 10 caracteres'),
-  color: z.string().min(1, 'Selecione uma cor'),
+  color: z.string().regex(HEX_COLOR, 'Selecione uma cor'),
   active: z.boolean(),
 })
 
@@ -118,32 +126,50 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
             <Controller
               name="color"
               control={control}
-              render={({ field }) => (
-                <div className="flex flex-wrap gap-2.5">
-                  {COLOR_OPTIONS.map((hex) => (
-                    <button
-                      key={hex}
-                      type="button"
-                      onClick={() => field.onChange(hex)}
-                      title={hex}
-                      className={cn(
-                        'w-8 h-8 rounded-full border-2 flex items-center justify-center transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                        field.value === hex
-                          ? 'border-navy scale-110 shadow-md'
-                          : 'border-transparent'
-                      )}
-                      style={{ backgroundColor: hex }}
-                    >
-                      {field.value === hex && (
-                        <Check
-                          className="w-4 h-4 drop-shadow"
-                          style={{ color: isLight(hex) ? '#1a1a1a' : '#ffffff' }}
-                        />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
+              render={({ field }) => {
+                const value = (field.value ?? '').toUpperCase()
+                const isCustom = !COLOR_OPTIONS.includes(value)
+                return (
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-2.5">
+                      {COLOR_OPTIONS.map((hex) => (
+                        <button
+                          key={hex}
+                          type="button"
+                          onClick={() => field.onChange(hex)}
+                          title={hex}
+                          className={cn(
+                            'w-8 h-8 rounded-full border-2 flex items-center justify-center transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                            value === hex
+                              ? 'border-navy scale-110 shadow-md'
+                              : 'border-transparent'
+                          )}
+                          style={{ backgroundColor: hex }}
+                        >
+                          {value === hex && (
+                            <Check
+                              className="w-4 h-4 drop-shadow"
+                              style={{ color: isLight(hex) ? '#1a1a1a' : '#ffffff' }}
+                            />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    <label className="flex items-center gap-2 text-xs text-slate cursor-pointer w-fit">
+                      <input
+                        type="color"
+                        value={HEX_COLOR.test(value) ? value.toLowerCase() : '#048ba8'}
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        className={cn(
+                          'h-8 w-8 cursor-pointer rounded-full border-2 bg-transparent p-0',
+                          isCustom ? 'border-navy shadow-md' : 'border-border'
+                        )}
+                      />
+                      Outra cor{isCustom && HEX_COLOR.test(value) ? `: ${value}` : ''}
+                    </label>
+                  </div>
+                )
+              }}
             />
             {errors.color && (
               <p className="text-xs text-red-500">{errors.color.message}</p>
