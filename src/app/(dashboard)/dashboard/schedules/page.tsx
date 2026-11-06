@@ -24,7 +24,7 @@ export default async function SchedulesPage() {
       .select(
         `id, name, created_at, status, score, deleted_at, deleted_reason, replaced_by,
          deleter:profiles!generated_schedules_deleted_by_fkey(id, name),
-         replacement:generated_schedules!generated_schedules_replaced_by_fkey(id, name)`
+         replacement:generated_schedules!replaced_by(id, name)`
       )
       .eq('tenant_id', TENANT_ID)
       .not('deleted_at', 'is', null)

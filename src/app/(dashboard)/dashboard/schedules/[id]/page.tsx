@@ -25,7 +25,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
     .select(
       `id, name, status, score, violations, config_snapshot, created_at, deleted_at, deleted_reason,
        deleter:profiles!generated_schedules_deleted_by_fkey(name),
-       replacement:generated_schedules!generated_schedules_replaced_by_fkey(id, name)`
+       replacement:generated_schedules!replaced_by(id, name)`
     )
     .eq('id', id)
     .single()
