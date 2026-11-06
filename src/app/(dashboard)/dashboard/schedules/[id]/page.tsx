@@ -24,13 +24,17 @@ export default async function ScheduleDetailPage({ params }: Props) {
     .from('generated_schedules')
     .select(
       `id, name, status, score, violations, config_snapshot, created_at, deleted_at, deleted_reason,
-       deleter:profiles!generated_schedules_deleted_by_fkey(name),
-       replacement:generated_schedules!replaced_by(id, name)`
+       deleted_by, replacement:generated_schedules!replaced_by(id, name)`
     )
     .eq('id', id)
     .single()
 
   if (!schedule) notFound()
+
+  // deleted_by não tem FK (migration 004) — nome de quem apagou buscado à parte.
+  const { data: deleter } = schedule.deleted_by
+    ? await supabase.from('profiles').select('name').eq('id', schedule.deleted_by).maybeSingle()
+    : { data: null }
 
   if (schedule.status === 'FAILED') {
     const errors = Array.isArray(schedule.violations)
@@ -129,7 +133,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
   return (
     <ScheduleGrid
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      schedule={schedule as any}
+      schedule={{ ...schedule, deleter } as any}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       entries={(entries ?? []) as any}
       grids={gridsByClass}

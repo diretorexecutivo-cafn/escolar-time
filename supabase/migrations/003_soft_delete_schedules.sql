@@ -13,7 +13,7 @@
 
 ALTER TABLE generated_schedules
   ADD COLUMN IF NOT EXISTS deleted_at     timestamptz,
-  ADD COLUMN IF NOT EXISTS deleted_by     uuid REFERENCES profiles(id),
+  ADD COLUMN IF NOT EXISTS deleted_by     uuid,  -- sem FK: ver 004
   ADD COLUMN IF NOT EXISTS deleted_reason text
     CHECK (deleted_reason IN ('manual', 'replaced_by_edit')),
   ADD COLUMN IF NOT EXISTS replaced_by    uuid REFERENCES generated_schedules(id);
