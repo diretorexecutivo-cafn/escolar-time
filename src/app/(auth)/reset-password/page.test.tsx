@@ -122,7 +122,8 @@ describe('ResetPasswordPage', () => {
 
   it('shows an error state when Supabase rejects the new password', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
-    updateUser.mockResolvedValue({ data: {}, error: { message: 'weak password' } })
+    updateUser.mockResolvedValue({ data: {}, error: { code: 'same_password', message: 'New password should be different from the old password.' } })
+    vi.spyOn(console, 'error').mockImplementation(() => {})
     const user = userEvent.setup()
     render(<ResetPasswordPage />)
     authStateCallback?.('PASSWORD_RECOVERY')
@@ -132,7 +133,7 @@ describe('ResetPasswordPage', () => {
     await user.click(screen.getByRole('button', { name: /redefinir senha/i }))
 
     expect(
-      await screen.findByText(/não foi possível redefinir sua senha/i)
+      await screen.findByText(/diferente da senha atual/i)
     ).toBeInTheDocument()
   })
 })
