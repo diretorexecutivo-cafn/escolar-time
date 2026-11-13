@@ -1,5 +1,6 @@
 'use client'
 
+import { useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -16,6 +17,8 @@ import {
   CalendarDays,
   School,
   LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -33,6 +36,24 @@ const NAV_ITEMS = [
   { label: 'Horários',       href: '/dashboard/schedules',   icon: CalendarDays },
 ]
 
+const COLLAPSED_KEY = 'sidebar-collapsed'
+const collapsedListeners = new Set<() => void>()
+
+function subscribeCollapsed(listener: () => void) {
+  collapsedListeners.add(listener)
+  return () => {
+    collapsedListeners.delete(listener)
+  }
+}
+
+function getCollapsedSnapshot() {
+  try {
+    return localStorage.getItem(COLLAPSED_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
 interface SidebarProps {
   userName: string
   userEmail: string
@@ -42,6 +63,18 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  const collapsed = useSyncExternalStore(
+    subscribeCollapsed,
+    getCollapsedSnapshot,
+    () => false,
+  )
+
+  function toggleCollapsed() {
+    try {
+      localStorage.setItem(COLLAPSED_KEY, collapsed ? '0' : '1')
+    } catch {}
+    collapsedListeners.forEach((l) => l())
+  }
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -49,13 +82,33 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
   }
 
   return (
-    <aside className="w-64 bg-navy flex flex-col sticky top-0 h-screen shrink-0">
-      {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 py-6 border-b border-white/10">
+    <aside
+      className={[
+        'bg-navy flex flex-col sticky top-0 h-screen shrink-0 transition-[width] duration-200',
+        collapsed ? 'w-16' : 'w-64',
+      ].join(' ')}
+    >
+      {/* Logo + toggle */}
+      <div
+        className={[
+          'flex items-center border-b border-white/10 py-6',
+          collapsed ? 'flex-col gap-3 px-2 justify-center' : 'gap-2.5 px-5',
+        ].join(' ')}
+      >
         <School className="text-ocre shrink-0" size={24} />
-        <span className="text-white text-lg font-bold tracking-tight">
-          EscolarTime
-        </span>
+        {!collapsed && (
+          <span className="text-white text-lg font-bold tracking-tight flex-1">
+            EscolarTime
+          </span>
+        )}
+        <button
+          onClick={toggleCollapsed}
+          title={collapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+          aria-label={collapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+          className="text-white/70 hover:text-white transition-colors cursor-pointer shrink-0"
+        >
+          {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+        </button>
       </div>
 
       {/* Navigation */}
@@ -75,6 +128,7 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
               <li key={href}>
                 <Link
                   href={href}
+                  title={collapsed ? label : undefined}
                   className={[
                     'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors',
                     isActive
@@ -83,7 +137,7 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
                   ].join(' ')}
                 >
                   <Icon size={18} className="shrink-0" />
-                  {label}
+                  {!collapsed && <span className="truncate">{label}</span>}
                 </Link>
               </li>
             )
@@ -92,17 +146,23 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
       </nav>
 
       {/* Footer / User */}
-      <div className="border-t border-white/10 px-4 py-4">
-        <div className="mb-3">
-          <p className="text-white text-sm font-medium truncate">{userName}</p>
-          <p className="text-white/50 text-xs truncate">{userEmail}</p>
-        </div>
+      <div className={['border-t border-white/10 py-4', collapsed ? 'px-2' : 'px-4'].join(' ')}>
+        {!collapsed && (
+          <div className="mb-3">
+            <p className="text-white text-sm font-medium truncate">{userName}</p>
+            <p className="text-white/50 text-xs truncate">{userEmail}</p>
+          </div>
+        )}
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors w-full cursor-pointer"
+          title={collapsed ? `Sair (${userName})` : undefined}
+          className={[
+            'flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors w-full cursor-pointer',
+            collapsed ? 'justify-center' : '',
+          ].join(' ')}
         >
           <LogOut size={16} />
-          Sair
+          {!collapsed && 'Sair'}
         </button>
       </div>
     </aside>
