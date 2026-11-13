@@ -5,7 +5,7 @@ import type {
   ScheduleSolution,
   SolutionEntry,
 } from './types'
-import { hasTeacherClash, slotTimeIndex, type TimedItem } from './time'
+import { hasTeacherClash, routineDutiesByTeacherDay, slotTimeIndex, type TimedItem } from './time'
 
 // ─── Tunable weights (per spec) ───────────────────────────────────────────────
 
@@ -508,6 +508,18 @@ function validateHard(
     const cOwner = cs.get(k)
     if (cOwner !== undefined && cOwner !== owner) return false
     cs.set(k, owner)
+  }
+  // Rotinas da regente ocupam o horário dela como se fossem aulas fixas.
+  for (const duties of routineDutiesByTeacherDay(input).values()) {
+    for (const d of duties) {
+      timed.push({
+        teacherId: d.teacherId,
+        day: d.day,
+        interval: d.interval,
+        owner: `routine:${d.slotId}`,
+        item: null,
+      })
+    }
   }
   if (hasTeacherClash(timed)) return false
 

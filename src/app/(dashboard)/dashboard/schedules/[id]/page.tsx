@@ -150,9 +150,26 @@ export default async function ScheduleDetailPage({ params }: Props) {
     return true
   })
 
+  // Regente de cada turma: conduz as rotinas da grade (mostrada nas células de rotina).
+  const gridClassIds = grids.map((g) => g.class_group_id as string)
+  const { data: regentes } = gridClassIds.length
+    ? await supabase
+        .from('class_groups')
+        .select('id, regente:teachers!homeroom_teacher_id(id, name)')
+        .in('id', gridClassIds)
+    : { data: [] }
+  type Regente = { id: string; name: string }
+  const regenteByClass = new Map(
+    (regentes ?? []).map((r) => {
+      const reg = r.regente as unknown as Regente | Regente[] | null
+      return [r.id as string, (Array.isArray(reg) ? reg[0] : reg) ?? null]
+    })
+  )
+
   const gridsByClass = grids.map((g) => ({
     classGroupId: g.class_group_id as string,
     slots: ((g.time_slots ?? []) as GridSlotRow[]).filter((s) => s.day_of_week != null),
+    homeroomTeacher: regenteByClass.get(g.class_group_id as string) ?? null,
   }))
 
   return (

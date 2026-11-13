@@ -80,6 +80,16 @@ export function validateEngineInput(input: EngineInput): {
       )
     }
 
+    const hasRoutine = Object.values(cg.timeGrid.slotsByDay).some((day) =>
+      day.some((s) => s.type === 'ROUTINE')
+    )
+    if (hasRoutine && !cg.homeroomTeacherId) {
+      warnings.push(
+        `Turma "${cg.name}" tem rotinas na grade mas não tem professora regente — ` +
+          `o horário das rotinas não será reservado para ninguém.`
+      )
+    }
+
     for (const a of cg.assignments) {
       if (!a.teacherId) {
         errors.push(

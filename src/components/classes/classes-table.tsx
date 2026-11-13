@@ -32,6 +32,12 @@ type ClassGroup = {
   year: number
   active: boolean
   school_units: { id: string; name: string }[]
+  regente: { name: string } | { name: string }[] | null
+}
+
+function regenteName(c: ClassGroup): string | null {
+  const r = Array.isArray(c.regente) ? c.regente[0] : c.regente
+  return r?.name ?? null
 }
 
 type Unit = { id: string; name: string }
@@ -120,6 +126,7 @@ export function ClassesTable({ classes, units }: ClassesTableProps) {
             <TableRow className="bg-gray-50">
               <TableHead className="font-semibold text-navy">Nome</TableHead>
               <TableHead className="font-semibold text-navy">Unidade Escolar</TableHead>
+              <TableHead className="font-semibold text-navy">Regente</TableHead>
               <TableHead className="font-semibold text-navy">Turno</TableHead>
               <TableHead className="font-semibold text-navy">Ano</TableHead>
               <TableHead className="font-semibold text-navy">Status</TableHead>
@@ -129,7 +136,7 @@ export function ClassesTable({ classes, units }: ClassesTableProps) {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12 text-slate">
+                <TableCell colSpan={7} className="text-center py-12 text-slate">
                   {search || unitFilter
                     ? 'Nenhuma turma encontrada para os filtros selecionados.'
                     : 'Nenhuma turma cadastrada.'}
@@ -142,6 +149,7 @@ export function ClassesTable({ classes, units }: ClassesTableProps) {
                   <TableCell className="text-slate">
                     {classGroup.school_units?.[0]?.name ?? '—'}
                   </TableCell>
+                  <TableCell className="text-slate">{regenteName(classGroup) ?? '—'}</TableCell>
                   <TableCell>
                     <span className="text-sm text-slate">
                       {SHIFT_LABELS[classGroup.shift] ?? classGroup.shift}

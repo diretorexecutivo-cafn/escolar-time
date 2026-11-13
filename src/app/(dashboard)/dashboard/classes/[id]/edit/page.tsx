@@ -12,15 +12,21 @@ export default async function EditClassPage({
   const { id } = await params
   const supabase = await createClient()
 
-  const [{ data: classGroup }, { data: units }] = await Promise.all([
+  const [{ data: classGroup }, { data: units }, { data: teachers }] = await Promise.all([
     supabase
       .from('class_groups')
-      .select('id, name, shift, year, active, school_unit_id')
+      .select('id, name, shift, year, active, school_unit_id, homeroom_teacher_id')
       .eq('id', id)
       .eq('tenant_id', TENANT_ID)
       .single(),
     supabase
       .from('school_units')
+      .select('id, name')
+      .eq('tenant_id', TENANT_ID)
+      .eq('active', true)
+      .order('name'),
+    supabase
+      .from('teachers')
       .select('id, name')
       .eq('tenant_id', TENANT_ID)
       .eq('active', true)
@@ -35,7 +41,7 @@ export default async function EditClassPage({
         <h1 className="text-2xl font-bold text-navy">Editar Turma</h1>
         <p className="text-slate text-sm mt-1">Altere os dados da turma.</p>
       </div>
-      <ClassForm initialData={classGroup} units={units ?? []} />
+      <ClassForm initialData={classGroup} units={units ?? []} teachers={teachers ?? []} />
     </div>
   )
 }

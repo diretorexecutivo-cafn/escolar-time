@@ -79,6 +79,8 @@ type TimedSlot = GridSlot & Interval
 export type ClassGrid = {
   classGroupId: string
   slots: GridSlot[]
+  /** Professora regente: conduz as rotinas (slots ROUTINE) desta turma. */
+  homeroomTeacher?: { id: string; name: string } | null
 }
 
 type ScheduleInfo = {
@@ -228,10 +230,13 @@ function PeriodHeader({ title, time }: { title: string; time: string | null }) {
 /** Atividade fixa do dia (não é aula nem intervalo): mostra o rótulo cadastrado na grade. */
 function RoutineCell({
   label,
+  who,
   time,
   compact = false,
 }: {
   label?: string | null
+  /** Quem conduz (visão da turma: a regente) ou de qual turma é (visão da professora). */
+  who?: string | null
   time?: string | null
   compact?: boolean
 }) {
@@ -241,8 +246,14 @@ function RoutineCell({
         'h-full flex flex-col items-center justify-center text-center text-teal-800 bg-teal-50 rounded-sm border-l-2 border-teal-400 px-1',
         compact ? 'text-[10px]' : 'min-h-[56px] text-xs font-medium'
       )}
+      title={who ? `${label || 'Rotina'} — ${who}` : undefined}
     >
       {label || 'Rotina'}
+      {who && (
+        <span className={cn('font-normal text-teal-700/80 truncate max-w-full', compact ? 'text-[9px]' : 'text-[11px]')}>
+          {who}
+        </span>
+      )}
       <CellTime time={time} />
     </div>
   )
@@ -438,15 +449,21 @@ function GridTable({
   slots,
   labelSlots = slots,
   breakTimes = true,
+  routineWho,
   renderCell,
+  renderRoutine,
 }: {
   slots: GridSlot[]
   /** Slots usados para decidir se a linha tem horário único (padrão: `slots`). */
   labelSlots?: GridSlot[]
   /** Mostrar o horário dentro dos intervalos quando a linha não tem horário único. */
   breakTimes?: boolean
+  /** Quem conduz as rotinas (a regente da turma), mostrado nas células de rotina. */
+  routineWho?: string | null
   /** `showTime`: a linha não tem horário único, então a célula deve mostrar o seu. */
   renderCell: (day: number, slot: GridSlot, showTime: boolean) => ReactNode
+  /** Substitui a célula padrão de rotina (visão por professora). */
+  renderRoutine?: (day: number, slot: GridSlot, showTime: boolean) => ReactNode
 }) {
   const periods = useMemo(() => periodsOf(slots), [slots])
   const dayValues = useMemo(() => daysOf(slots), [slots])
@@ -498,10 +515,15 @@ function GridTable({
                   if (slot.type === 'ROUTINE') {
                     return (
                       <td key={d.value} className="p-0.5">
-                        <RoutineCell
-                          label={slot.label}
-                          time={showTime && breakTimes ? slotTime(slot) : null}
-                        />
+                        {renderRoutine ? (
+                          renderRoutine(d.value, slot, showTime)
+                        ) : (
+                          <RoutineCell
+                            label={slot.label}
+                            who={routineWho}
+                            time={showTime && breakTimes ? slotTime(slot) : null}
+                          />
+                        )}
                       </td>
                     )
                   }
@@ -587,10 +609,11 @@ function ClassView({
 
   const [selectedClass, setSelectedClass] = useState(classGroups[0]?.[0] ?? '')
 
-  const slots = useMemo(
-    () => grids.find((g) => g.classGroupId === selectedClass)?.slots ?? [],
+  const selectedGrid = useMemo(
+    () => grids.find((g) => g.classGroupId === selectedClass),
     [grids, selectedClass]
   )
+  const slots = useMemo(() => selectedGrid?.slots ?? [], [selectedGrid])
 
   // chave: "slotId:dia" — pode haver mais de uma aula na célula durante a edição (choque)
   const lookup = useMemo(() => {
@@ -629,6 +652,7 @@ function ClassView({
 
       <GridTable
         slots={slots}
+        routineWho={selectedGrid?.homeroomTeacher?.name}
         renderCell={(day, slot, showTime) => {
           const time = showTime ? slotTime(slot) : null
           const cellEntries = lookup.get(`${slot.id}:${day}`) ?? []
@@ -687,7 +711,18 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
       const t = e.teaching_assignments?.teachers
       if (t) map.set(t.id, t.name)
     }
+    // A regente aparece mesmo sem aulas: a agenda dela tem as rotinas da turma.
+    for (const g of grids) if (g.homeroomTeacher) map.set(g.homeroomTeacher.id, g.homeroomTeacher.name)
     return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1]))
+  }, [entries, grids])
+
+  const classNameById = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const e of entries) {
+      const cg = e.teaching_assignments?.class_subjects?.class_groups
+      if (cg) m.set(cg.id, cg.name)
+    }
+    return m
   }, [entries])
 
   const [selectedTeacher, setSelectedTeacher] = useState(teachers[0]?.[0] ?? '')
@@ -737,6 +772,27 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
     return m
   }, [entries, selectedTeacher, orderBySlotId])
 
+  // Rotinas das turmas de que a professora é regente — ela as conduz. Chave (dia, nº da aula).
+  const routineAt = useMemo(() => {
+    const m = new Map<string, { slot: GridSlot; className: string }>()
+    for (const g of grids) {
+      if (g.homeroomTeacher?.id !== selectedTeacher) continue
+      const className = classNameById.get(g.classGroupId) ?? 'Turma'
+      for (const sl of g.slots) {
+        if (sl.type === 'ROUTINE') m.set(`${sl.day_of_week}:${sl.slot_order}`, { slot: sl, className })
+      }
+    }
+    return m
+  }, [grids, selectedTeacher, classNameById])
+
+  const routineCell = (day: number, order: number, showTime: boolean) => {
+    const r = routineAt.get(`${day}:${order}`)
+    if (!r) return null
+    return (
+      <RoutineCell label={r.slot.label} who={r.className} time={showTime ? slotTime(r.slot) : null} />
+    )
+  }
+
   // Quando o professor passa por mais de uma unidade no dia, destacamos a unidade.
   const unitsByDay = useMemo(() => {
     const map = new Map<number, Set<string>>()
@@ -776,9 +832,12 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
         slots={slots}
         labelSlots={allSlots}
         breakTimes={false}
+        renderRoutine={(day, slot, showTime) =>
+          routineCell(day, slot.slot_order, showTime) ?? <EmptyCell />
+        }
         renderCell={(day, slot, showTime) => {
           const entry = lookup.get(`${day}:${slot.slot_order}`)
-          if (!entry) return <EmptyCell />
+          if (!entry) return routineCell(day, slot.slot_order, showTime) ?? <EmptyCell />
           const subject = entry.teaching_assignments?.class_subjects?.subjects
           const cg = entry.teaching_assignments?.class_subjects?.class_groups
           const ownSlot = slotById.get(entry.time_slot_id)
@@ -864,8 +923,14 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
   // HORÁRIOS se sobrepõem — cada turma tem a própria grade, então números de aula diferentes
   // podem chocar e números iguais podem não chocar. Aulas do mesmo group_key no mesmo dia/aula
   // são uma aula só (agrupada).
-  const { clashes, clashEntryIds } = useMemo(() => {
-    const items: TimedItem<EntryRow>[] = []
+  //
+  // As rotinas da turma ocupam a regente (mesma regra do motor): aula dela em outra turma
+  // no horário de uma rotina também é choque.
+  const { clashes, clashEntryIds, clashRoutineKeys } = useMemo(() => {
+    type ClashItem =
+      | { kind: 'lesson'; entry: EntryRow }
+      | { kind: 'routine'; slot: GridSlot; className: string; teacherName: string }
+    const items: TimedItem<ClashItem>[] = []
     for (const e of entries) {
       const teacherId = e.teaching_assignments?.teachers?.id
       const slot = slotById.get(e.time_slot_id)
@@ -873,31 +938,59 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
       const interval: Interval = { start: toMinutes(slot.start_time), end: toMinutes(slot.end_time) }
       const groupKey = e.teaching_assignments?.class_subjects?.group_key
       const owner = groupKey ? `g:${groupKey}:${e.day_of_week}:${slot.slot_order}` : `e:${e.id}`
-      items.push({ teacherId, day: e.day_of_week, interval, owner, item: e })
+      items.push({ teacherId, day: e.day_of_week, interval, owner, item: { kind: 'lesson', entry: e } })
+    }
+    for (const g of grids) {
+      const regente = g.homeroomTeacher
+      if (!regente) continue
+      const className = classGroups.find((c) => c.id === g.classGroupId)?.name ?? 'Turma'
+      for (const sl of g.slots) {
+        if (sl.type !== 'ROUTINE' || sl.day_of_week == null) continue
+        items.push({
+          teacherId: regente.id,
+          day: sl.day_of_week,
+          interval: { start: toMinutes(sl.start_time), end: toMinutes(sl.end_time) },
+          owner: `r:${sl.id}`,
+          item: { kind: 'routine', slot: sl, className, teacherName: regente.name },
+        })
+      }
     }
     const list: Clash[] = []
     const ids = new Set<string>()
+    const routineKeys = new Set<string>()
     for (const cluster of findTeacherClashes(items)) {
-      const first = cluster[0]!.item
       const parts: string[] = []
-      for (const { item } of cluster) {
-        ids.add(item.id)
-        const slot = slotById.get(item.time_slot_id)!
+      let teacherName = '—'
+      for (const { item, day } of cluster) {
+        if (item.kind === 'routine') {
+          routineKeys.add(`${item.slot.id}:${day}`)
+          teacherName = item.teacherName
+          parts.push(`${item.className} — ${item.slot.label || 'Rotina'} (rotina, ${slotTime(item.slot)})`)
+          continue
+        }
+        ids.add(item.entry.id)
+        teacherName = item.entry.teaching_assignments?.teachers?.name ?? teacherName
+        const slot = slotById.get(item.entry.time_slot_id)!
         parts.push(
-          `${item.teaching_assignments?.class_subjects?.class_groups?.name ?? '—'} ${slot.slot_order}ª (${slotTime(slot)})`
+          `${item.entry.teaching_assignments?.class_subjects?.class_groups?.name ?? '—'} ${slot.slot_order}ª (${slotTime(slot)})`
         )
       }
       list.push({
-        day: first.day_of_week,
+        day: cluster[0]!.day,
         start: cluster[0]!.interval.start,
-        teacherName: first.teaching_assignments?.teachers?.name ?? '—',
+        teacherName,
         parts,
         spans: cluster.map((c) => c.interval),
       })
     }
     list.sort((a, b) => a.day - b.day || a.start - b.start || a.teacherName.localeCompare(b.teacherName))
-    return { clashes: list, clashEntryIds: ids }
-  }, [entries, slotById])
+    return { clashes: list, clashEntryIds: ids, clashRoutineKeys: routineKeys }
+  }, [entries, slotById, grids, classGroups])
+
+  const regenteByClass = useMemo(
+    () => new Map(grids.map((g) => [g.classGroupId, g.homeroomTeacher?.name ?? null])),
+    [grids]
+  )
 
   const clashSpansByDay = useMemo(() => {
     const m = new Map<number, Interval[]>()
@@ -1069,6 +1162,8 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
                   slotsFor={slotsFor}
                   entryByClass={entryByClass}
                   clashEntryIds={clashEntryIds}
+                  clashRoutineKeys={clashRoutineKeys}
+                  regenteByClass={regenteByClass}
                 />
               )
             })}
@@ -1097,6 +1192,8 @@ function DayRows({
   slotsFor,
   entryByClass,
   clashEntryIds,
+  clashRoutineKeys,
+  regenteByClass,
 }: {
   day: number
   first: boolean
@@ -1110,6 +1207,9 @@ function DayRows({
   slotsFor: (classGroupId: string) => TimedSlot[]
   entryByClass: Map<string, EntryRow>
   clashEntryIds: Set<string>
+  /** "slotId:dia" das rotinas cuja regente está em aula noutra turma no mesmo horário. */
+  clashRoutineKeys: Set<string>
+  regenteByClass: Map<string, string | null>
 }) {
   const bandSegments = new Map<number, Segment[]>()
   for (const col of columns) {
@@ -1194,7 +1294,19 @@ function DayRows({
               if (slot.type === 'ROUTINE') {
                 return (
                   <td key={key} rowSpan={cell.rowSpan} className="p-0.5 h-px">
-                    <RoutineCell compact label={slot.label} time={cellTime} />
+                    <div
+                      className={cn(
+                        'h-full rounded-sm',
+                        clashRoutineKeys.has(`${slot.id}:${day}`) && 'ring-2 ring-red-500'
+                      )}
+                    >
+                      <RoutineCell
+                        compact
+                        label={slot.label}
+                        who={regenteByClass.get(col.cg.id)}
+                        time={cellTime}
+                      />
+                    </div>
                   </td>
                 )
               }
