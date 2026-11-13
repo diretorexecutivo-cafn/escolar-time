@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
+import { passwordUpdateErrorMessage } from '@/lib/auth/password-errors'
 
 // Tempo máximo de espera pela sessão de recuperação antes de considerar o
 // link inválido ou expirado.
@@ -131,7 +132,8 @@ export default function ResetPasswordPage() {
     })
 
     if (error) {
-      setServerError('Não foi possível redefinir sua senha. Tente novamente.')
+      console.error('[reset-password] updateUser falhou:', error)
+      setServerError(passwordUpdateErrorMessage(error))
       return
     }
 
