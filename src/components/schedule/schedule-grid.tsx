@@ -24,7 +24,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { SolutionValidationResult } from '@/engine/solution-validator'
-import { findTeacherClashes, toMinutes, type Interval, type TimedItem } from '@/engine/time'
+import {
+  findTeacherClashes,
+  overlaps,
+  toMinutes,
+  type Interval,
+  type TimedItem,
+} from '@/engine/time'
+import { buildSegments, layoutColumn, type Segment } from './time-rows'
 import {
   cellKey,
   changedCells,
@@ -65,6 +72,9 @@ export type GridSlot = {
   type: string | null
   label: string | null
 }
+
+/** Slot com o horário em minutos — usado no layout por tempo real da visão "Por Horário". */
+type TimedSlot = GridSlot & Interval
 
 export type ClassGrid = {
   classGroupId: string
@@ -220,7 +230,7 @@ function BreakCell({ time, compact = false }: { time?: string | null; compact?: 
     <div
       className={cn(
         'h-full flex flex-col items-center justify-center text-slate',
-        compact ? 'min-h-[44px] text-[10px]' : 'min-h-[56px] text-xs font-medium'
+        compact ? 'text-[10px]' : 'min-h-[56px] text-xs font-medium'
       )}
       style={{ background: BREAK_BG }}
     >
@@ -233,7 +243,7 @@ function BreakCell({ time, compact = false }: { time?: string | null; compact?: 
 function EmptyCell({ time, compact = false }: { time?: string | null; compact?: boolean }) {
   return (
     <div
-      className={cn('h-full flex items-end p-1', compact ? 'min-h-[44px]' : 'min-h-[56px]')}
+      className={cn('h-full flex items-end p-1', !compact && 'min-h-[56px]')}
       style={{ background: '#F5F7FA' }}
     >
       <CellTime time={time} />
@@ -776,8 +786,8 @@ type Clash = {
   teacherName: string
   /** "6º A 3ª (11:00–11:50)" */
   parts: string[]
-  /** Linhas (dia:nº da aula) envolvidas — para o filtro "só horários com choque". */
-  rows: string[]
+  /** Horários envolvidos — para o filtro "só horários com choque". */
+  spans: Interval[]
 }
 
 function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] }) {
@@ -804,15 +814,6 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
     }
     return spans
   }, [classGroups])
-
-  // chave: "turma:dia:aula" — cada turma tem os próprios time_slots.
-  const slotByClass = useMemo(() => {
-    const m = new Map<string, GridSlot>()
-    for (const g of grids) {
-      for (const sl of g.slots) m.set(`${g.classGroupId}:${sl.day_of_week}:${sl.slot_order}`, sl)
-    }
-    return m
-  }, [grids])
 
   const orderBySlotId = useMemo(() => {
     const m = new Map<string, number>()
@@ -856,11 +857,9 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
     for (const cluster of findTeacherClashes(items)) {
       const first = cluster[0]!.item
       const parts: string[] = []
-      const rows: string[] = []
       for (const { item } of cluster) {
         ids.add(item.id)
         const slot = slotById.get(item.time_slot_id)!
-        rows.push(`${item.day_of_week}:${slot.slot_order}`)
         parts.push(
           `${item.teaching_assignments?.class_subjects?.class_groups?.name ?? '—'} ${slot.slot_order}ª (${slotTime(slot)})`
         )
@@ -870,14 +869,33 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
         start: cluster[0]!.interval.start,
         teacherName: first.teaching_assignments?.teachers?.name ?? '—',
         parts,
-        rows,
+        spans: cluster.map((c) => c.interval),
       })
     }
     list.sort((a, b) => a.day - b.day || a.start - b.start || a.teacherName.localeCompare(b.teacherName))
     return { clashes: list, clashEntryIds: ids }
   }, [entries, slotById])
 
-  const clashSlots = useMemo(() => new Set(clashes.flatMap((c) => c.rows)), [clashes])
+  const clashSpansByDay = useMemo(() => {
+    const m = new Map<number, Interval[]>()
+    for (const c of clashes) m.set(c.day, [...(m.get(c.day) ?? []), ...c.spans])
+    return m
+  }, [clashes])
+
+  // chave: "turma:dia" → slots daquele dia com o horário em minutos (para o layout por tempo).
+  const timedSlotsByClassDay = useMemo(() => {
+    const m = new Map<string, TimedSlot[]>()
+    for (const g of grids) {
+      for (const sl of g.slots) {
+        const k = `${g.classGroupId}:${sl.day_of_week}`
+        const timed = { ...sl, start: toMinutes(sl.start_time), end: toMinutes(sl.end_time) }
+        const arr = m.get(k)
+        if (arr) arr.push(timed)
+        else m.set(k, [timed])
+      }
+    }
+    return m
+  }, [grids])
 
   const allSlots = useMemo(() => grids.flatMap((g) => g.slots), [grids])
   const dayValues = useMemo(() => daysOf(allSlots), [allSlots])
@@ -968,19 +986,21 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
           </thead>
           <tbody>
             {visibleDays.map((day) => {
-              const periods = periodsOf(allSlots.filter((s) => s.day_of_week === day)).filter(
-                (order) => !onlyClashes || clashSlots.has(`${day}:${order}`)
+              const columns = classGroups.map(
+                (cg) => timedSlotsByClassDay.get(`${cg.id}:${day}`) ?? []
               )
-              if (periods.length === 0) return null
-              const daySlots = allSlots.filter((s) => s.day_of_week === day)
+              const clashSpans = clashSpansByDay.get(day) ?? []
+              const segments = buildSegments(columns.flat()).filter(
+                (seg) => !onlyClashes || clashSpans.some((c) => overlaps(c, seg))
+              )
+              if (segments.length === 0) return null
               return (
                 <DayRows
                   key={day}
                   day={day}
-                  periods={periods}
-                  daySlots={daySlots}
+                  segments={segments}
+                  columns={columns}
                   classGroups={classGroups}
-                  slotByClass={slotByClass}
                   entryByClass={entryByClass}
                   clashEntryIds={clashEntryIds}
                 />
@@ -993,23 +1013,32 @@ function SlotView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid[] 
   )
 }
 
+const fmtMinutes = (m: number) =>
+  `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+
+/** Altura mínima da linha proporcional à duração da faixa (px por minuto). */
+const PX_PER_MINUTE = 0.9
+const MIN_ROW_PX = 26
+
 function DayRows({
   day,
-  periods,
-  daySlots,
+  segments,
+  columns,
   classGroups,
-  slotByClass,
   entryByClass,
   clashEntryIds,
 }: {
   day: number
-  periods: number[]
-  daySlots: GridSlot[]
+  /** Linhas: faixas de tempo do dia (ver time-rows.ts). */
+  segments: Segment[]
+  /** Slots de cada turma neste dia, na ordem de `classGroups`. */
+  columns: TimedSlot[][]
   classGroups: { id: string; name: string }[]
-  slotByClass: Map<string, GridSlot>
   entryByClass: Map<string, EntryRow>
   clashEntryIds: Set<string>
 }) {
+  const layouts = columns.map((slots) => layoutColumn(segments, slots))
+
   return (
     <>
       <tr className="border-t-2 border-navy/30">
@@ -1020,35 +1049,47 @@ function DayRows({
           {DAY_NAMES[day]}
         </td>
       </tr>
-      {periods.map((order) => {
-        const { title, time } = periodLabel(daySlots, order)
-        const showTime = time === null
+      {segments.map((seg, row) => {
+        // Faixa escondida pelo filtro ou vão sem aulas logo acima: separa visualmente.
+        const jump = row > 0 && segments[row - 1]!.end !== seg.start
         return (
-          <tr key={order} className="border-t border-border">
-            <td className="sticky left-0 z-10 px-3 py-1 text-xs text-slate bg-gray-50 whitespace-nowrap">
-              <PeriodHeader title={title} time={time} />
+          <tr
+            key={seg.start}
+            className={cn('border-t', jump ? 'border-t-2 border-dashed border-slate/40' : 'border-border')}
+            style={{ height: Math.max(MIN_ROW_PX, (seg.end - seg.start) * PX_PER_MINUTE) }}
+          >
+            <td className="sticky left-0 z-10 px-3 py-1 text-xs bg-gray-50 whitespace-nowrap align-top tabular-nums">
+              <span className="font-medium text-navy">{fmtMinutes(seg.start)}</span>
+              <span className="text-slate">–{fmtMinutes(seg.end)}</span>
             </td>
-            {classGroups.map((cg) => {
-              const slot = slotByClass.get(`${cg.id}:${day}:${order}`)
-              if (!slot) {
+            {classGroups.map((cg, col) => {
+              const cell = layouts[col]![row]
+              if (!cell) return null // coberta pela célula de cima (rowSpan)
+              if (cell.kind === 'gap') {
                 return (
-                  <td key={cg.id} className="p-0.5">
-                    <div className="h-full min-h-[44px] bg-gray-100" />
+                  <td key={cg.id} rowSpan={cell.rowSpan} className="p-0.5 h-px">
+                    <div className="h-full bg-gray-100 rounded-sm" />
                   </td>
                 )
               }
-              const cellTime = showTime ? slotTime(slot) : null
+              const slot = cell.slot
+              // A faixa da linha já diz o horário; a célula só repete quando ocupa outra faixa.
+              const lastSeg = segments[row + cell.rowSpan - 1]!
+              const cellTime =
+                slot.start !== seg.start || slot.end !== lastSeg.end
+                  ? `${slot.slot_order}ª · ${slotTime(slot)}`
+                  : null
               if (slot.type === 'BREAK') {
                 return (
-                  <td key={cg.id} className="p-0.5">
+                  <td key={cg.id} rowSpan={cell.rowSpan} className="p-0.5 h-px">
                     <BreakCell compact time={cellTime} />
                   </td>
                 )
               }
-              const entry = entryByClass.get(`${cg.id}:${day}:${order}`)
+              const entry = entryByClass.get(`${cg.id}:${day}:${slot.slot_order}`)
               if (!entry) {
                 return (
-                  <td key={cg.id} className="p-0.5">
+                  <td key={cg.id} rowSpan={cell.rowSpan} className="p-0.5 h-px">
                     <EmptyCell compact time={cellTime} />
                   </td>
                 )
@@ -1057,17 +1098,17 @@ function DayRows({
               const teacher = entry.teaching_assignments?.teachers
               const clash = clashEntryIds.has(entry.id)
               return (
-                <td key={cg.id} className="p-0.5">
+                <td key={cg.id} rowSpan={cell.rowSpan} className="p-0.5 h-px">
                   <div
                     className={cn(
-                      'h-full min-h-[44px] p-1 rounded-sm border-l-2 relative',
+                      'h-full p-1 rounded-sm border-l-2 relative',
                       clash && 'ring-2 ring-red-500'
                     )}
                     style={{
                       background: clash ? '#FEE2E2' : hexWithOpacity(subject?.color, SUBJECT_TINT),
                       borderLeftColor: clash ? '#EF4444' : (subject?.color ?? '#212F5C'),
                     }}
-                    title={`${subject?.name ?? '—'} — ${teacher?.name ?? '—'}${clash ? ' (choque)' : ''}`}
+                    title={`${subject?.name ?? '—'} — ${teacher?.name ?? '—'} (${slot.slot_order}ª, ${slotTime(slot)})${clash ? ' (choque)' : ''}`}
                   >
                     <p className="text-[11px] font-semibold text-navy leading-tight truncate">
                       {subject?.name ?? '—'}
