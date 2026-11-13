@@ -15,12 +15,15 @@ type GridData = {
   days_of_week: number[]
 }
 
+/** LESSON = aula · BREAK = intervalo · ROUTINE = atividade fixa (não é aula nem intervalo). */
+type SlotKind = 'LESSON' | 'BREAK' | 'ROUTINE'
+
 type SlotData = {
   slot_order: number
   duration_minutes: number
   start_time: string
   end_time: string
-  type: 'LESSON' | 'BREAK'
+  type: SlotKind
   label?: string
 }
 
@@ -53,7 +56,7 @@ function flattenSlots(slotsByDay: SlotsByDay, gridId: string) {
     duration_minutes: number
     start_time: string
     end_time: string
-    type: 'LESSON' | 'BREAK'
+    type: SlotKind
     label: string | null
   }> = []
 
@@ -207,7 +210,7 @@ export async function duplicateTimeGrid(id: string): Promise<ActionResult> {
     duration_minutes: number
     start_time: string
     end_time: string
-    type: 'LESSON' | 'BREAK'
+    type: SlotKind
     label: string | null
   }>
 

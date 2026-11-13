@@ -141,7 +141,7 @@ function buildSlotsByDay(
         id: s.id,
         order: s.slot_order,
         durationMinutes: s.duration_minutes,
-        type: (s.type === 'BREAK' ? 'BREAK' : 'LESSON') as SlotType,
+        type: (s.type === 'BREAK' || s.type === 'ROUTINE' ? s.type : 'LESSON') as SlotType,
         startTime: start,
         endTime: end,
       }

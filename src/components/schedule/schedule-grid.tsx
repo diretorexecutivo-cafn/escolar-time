@@ -225,6 +225,29 @@ function PeriodHeader({ title, time }: { title: string; time: string | null }) {
   )
 }
 
+/** Atividade fixa do dia (não é aula nem intervalo): mostra o rótulo cadastrado na grade. */
+function RoutineCell({
+  label,
+  time,
+  compact = false,
+}: {
+  label?: string | null
+  time?: string | null
+  compact?: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'h-full flex flex-col items-center justify-center text-center text-teal-800 bg-teal-50 rounded-sm border-l-2 border-teal-400 px-1',
+        compact ? 'text-[10px]' : 'min-h-[56px] text-xs font-medium'
+      )}
+    >
+      {label || 'Rotina'}
+      <CellTime time={time} />
+    </div>
+  )
+}
+
 function BreakCell({ time, compact = false }: { time?: string | null; compact?: boolean }) {
   return (
     <div
@@ -472,6 +495,16 @@ function GridTable({
                       </td>
                     )
                   }
+                  if (slot.type === 'ROUTINE') {
+                    return (
+                      <td key={d.value} className="p-0.5">
+                        <RoutineCell
+                          label={slot.label}
+                          time={showTime && breakTimes ? slotTime(slot) : null}
+                        />
+                      </td>
+                    )
+                  }
                   return (
                     <td key={d.value} className="p-0.5">
                       {renderCell(d.value, slot, showTime)}
@@ -660,7 +693,7 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
   const [selectedTeacher, setSelectedTeacher] = useState(teachers[0]?.[0] ?? '')
 
   // Um professor pode atender várias turmas: a visão dele é a união das grades.
-  // Quando o mesmo horário é intervalo numa turma e aula em outra, vale a aula —
+  // Quando o mesmo horário é intervalo/rotina numa turma e aula em outra, vale a aula —
   // senão a aula real ficaria escondida atrás de um "Intervalo".
   const slots = useMemo(() => {
     const byPeriod = new Map<string, GridSlot>()
@@ -668,7 +701,7 @@ function TeacherView({ entries, grids }: { entries: EntryRow[]; grids: ClassGrid
       for (const sl of g.slots) {
         const k = `${sl.day_of_week}:${sl.slot_order}`
         const atual = byPeriod.get(k)
-        if (!atual || (atual.type === 'BREAK' && sl.type !== 'BREAK')) byPeriod.set(k, sl)
+        if (!atual || (atual.type !== 'LESSON' && sl.type === 'LESSON')) byPeriod.set(k, sl)
       }
     }
     return Array.from(byPeriod.values())
@@ -1155,6 +1188,13 @@ function DayRows({
                 return (
                   <td key={key} rowSpan={cell.rowSpan} className="p-0.5 h-px">
                     <BreakCell compact time={cellTime} />
+                  </td>
+                )
+              }
+              if (slot.type === 'ROUTINE') {
+                return (
+                  <td key={key} rowSpan={cell.rowSpan} className="p-0.5 h-px">
+                    <RoutineCell compact label={slot.label} time={cellTime} />
                   </td>
                 )
               }

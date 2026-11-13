@@ -45,7 +45,46 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type SlotType = 'LESSON' | 'BREAK'
+/** LESSON = aula (disciplina) · BREAK = intervalo · ROUTINE = atividade fixa que não é aula nem intervalo. */
+type SlotType = 'LESSON' | 'BREAK' | 'ROUTINE'
+
+const SLOT_TYPE_META: Record<
+  SlotType,
+  { label: string; defaultLabel: string; duration: number; row: string; text: string; active: string }
+> = {
+  LESSON: {
+    label: 'Aula',
+    defaultLabel: '',
+    duration: 50,
+    row: 'bg-navy/5 border-navy/15',
+    text: 'text-navy',
+    active: 'bg-navy text-white border-navy',
+  },
+  BREAK: {
+    label: 'Intervalo',
+    defaultLabel: 'Intervalo',
+    duration: 20,
+    row: 'bg-ocre/5 border-ocre/20',
+    text: 'text-ocre',
+    active: 'bg-ocre text-white border-ocre',
+  },
+  ROUTINE: {
+    label: 'Rotina',
+    defaultLabel: 'Rotina',
+    duration: 20,
+    row: 'bg-teal-50 border-teal-200',
+    text: 'text-teal-700',
+    active: 'bg-teal-600 text-white border-teal-600',
+  },
+}
+const SLOT_TYPES: SlotType[] = ['LESSON', 'BREAK', 'ROUTINE']
+
+/** Troca de tipo: mantém o rótulo digitado, mas não carrega o padrão de outro tipo. */
+function labelForType(next: SlotType, current: string): string {
+  if (next === 'LESSON') return ''
+  const isDefaultOfOther = Object.values(SLOT_TYPE_META).some((m) => m.defaultLabel && m.defaultLabel === current)
+  return current && !isDefaultOfOther ? current : SLOT_TYPE_META[next].defaultLabel
+}
 
 type Slot = {
   key: string
@@ -212,7 +251,7 @@ interface SortableSlotRowProps {
   slot: Slot
   lessonNum: number | null
   timeBadge: string
-  onToggleType: () => void
+  onChangeType: (type: SlotType) => void
   onChangeDuration: (value: number) => void
   onChangeLabel: (value: string) => void
   onRemove: () => void
@@ -222,7 +261,7 @@ function SortableSlotRow({
   slot,
   lessonNum,
   timeBadge,
-  onToggleType,
+  onChangeType,
   onChangeDuration,
   onChangeLabel,
   onRemove,
@@ -243,6 +282,7 @@ function SortableSlotRow({
   }
 
   const isLesson = slot.type === 'LESSON'
+  const meta = SLOT_TYPE_META[slot.type]
 
   return (
     <div
@@ -250,7 +290,7 @@ function SortableSlotRow({
       style={style}
       className={cn(
         'flex flex-wrap items-center gap-2.5 p-2.5 rounded-lg border',
-        isLesson ? 'bg-navy/5 border-navy/15' : 'bg-ocre/5 border-ocre/20'
+        meta.row
       )}
     >
       {/* Drag handle */}
@@ -266,11 +306,9 @@ function SortableSlotRow({
 
       {/* Label numeric / badge */}
       <div className="w-16 shrink-0 text-center">
-        {isLesson ? (
-          <span className="text-xs font-bold text-navy">Aula {lessonNum}</span>
-        ) : (
-          <span className="text-xs font-bold text-ocre">Intervalo</span>
-        )}
+        <span className={cn('text-xs font-bold', meta.text)}>
+          {isLesson ? `Aula ${lessonNum}` : meta.label}
+        </span>
       </div>
 
       {/* Time badge (computed) */}
@@ -278,19 +316,30 @@ function SortableSlotRow({
         {timeBadge}
       </span>
 
-      {/* Type toggle */}
-      <button
-        type="button"
-        onClick={onToggleType}
-        className={cn(
-          'text-xs px-2.5 py-1 rounded border font-medium cursor-pointer transition-colors shrink-0',
-          isLesson
-            ? 'border-navy text-navy hover:bg-navy hover:text-white'
-            : 'border-ocre text-ocre hover:bg-ocre hover:text-white'
-        )}
-      >
-        {isLesson ? 'Aula' : 'Intervalo'}
-      </button>
+      {/* Tipo: aula, intervalo ou rotina */}
+      <div className="flex shrink-0 rounded border border-border overflow-hidden" role="group" aria-label="Tipo do slot">
+        {SLOT_TYPES.map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => t !== slot.type && onChangeType(t)}
+            aria-pressed={t === slot.type}
+            title={
+              t === 'ROUTINE'
+                ? 'Atividade fixa que não é aula nem intervalo (ex.: leitura em voz alta, higienização)'
+                : undefined
+            }
+            className={cn(
+              'text-xs px-2.5 py-1 font-medium cursor-pointer transition-colors border-l border-border first:border-l-0',
+              t === slot.type
+                ? SLOT_TYPE_META[t].active
+                : cn('bg-white hover:bg-gray-50', SLOT_TYPE_META[t].text)
+            )}
+          >
+            {SLOT_TYPE_META[t].label}
+          </button>
+        ))}
+      </div>
 
       {/* Duration */}
       <div className="flex items-center gap-1.5">
@@ -306,10 +355,10 @@ function SortableSlotRow({
         <span className="text-xs text-slate shrink-0">min</span>
       </div>
 
-      {/* Label (só BREAK) */}
+      {/* Rótulo (intervalo e rotina) */}
       {!isLesson && (
         <Input
-          placeholder="Rótulo"
+          placeholder={slot.type === 'ROUTINE' ? 'Ex.: Leitura em Voz Alta' : 'Rótulo'}
           value={slot.label}
           onChange={(e) => onChangeLabel(e.target.value)}
           className="h-8 text-sm w-36"
@@ -453,11 +502,8 @@ function DayPanel({ day, slots, startTime, otherDays, onChange, onCopy }: DayPan
   }
 
   function addSlot(type: SlotType) {
-    const defaults: Partial<Omit<Slot, 'key'>> =
-      type === 'BREAK'
-        ? { type, duration_minutes: 20, label: 'Intervalo' }
-        : { type, duration_minutes: 50, label: '' }
-    onChange([...slots, makeSlot(defaults)])
+    const meta = SLOT_TYPE_META[type]
+    onChange([...slots, makeSlot({ type, duration_minutes: meta.duration, label: meta.defaultLabel })])
   }
 
   function removeSlot(key: string) {
@@ -468,14 +514,10 @@ function DayPanel({ day, slots, startTime, otherDays, onChange, onCopy }: DayPan
     onChange(slots.map((s) => (s.key === key ? { ...s, ...patch } : s)))
   }
 
-  function toggleType(key: string) {
+  function changeType(key: string, nextType: SlotType) {
     const target = slots.find((s) => s.key === key)
     if (!target) return
-    const nextType: SlotType = target.type === 'LESSON' ? 'BREAK' : 'LESSON'
-    updateSlot(key, {
-      type: nextType,
-      label: nextType === 'BREAK' ? target.label || 'Intervalo' : '',
-    })
+    updateSlot(key, { type: nextType, label: labelForType(nextType, target.label) })
   }
 
   return (
@@ -517,7 +559,7 @@ function DayPanel({ day, slots, startTime, otherDays, onChange, onCopy }: DayPan
                     slot={slot}
                     lessonNum={lessonNumbers[idx]}
                     timeBadge={`${start} – ${end}`}
-                    onToggleType={() => toggleType(slot.key)}
+                    onChangeType={(t) => changeType(slot.key, t)}
                     onChangeDuration={(v) =>
                       updateSlot(slot.key, { duration_minutes: isNaN(v) ? 0 : v })
                     }
@@ -551,6 +593,16 @@ function DayPanel({ day, slots, startTime, otherDays, onChange, onCopy }: DayPan
         >
           <Plus className="h-3.5 w-3.5" />
           Adicionar Intervalo
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => addSlot('ROUTINE')}
+          className="gap-1.5 cursor-pointer border-teal-300 text-teal-700 hover:bg-teal-50"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Adicionar Rotina
         </Button>
       </div>
 
@@ -718,7 +770,7 @@ export function GridForm({ classGroups, initialData }: GridFormProps) {
         start_time: computed[idx].start,
         end_time: computed[idx].end,
         type: s.type,
-        label: s.type === 'BREAK' ? s.label : undefined,
+        label: s.type !== 'LESSON' ? s.label : undefined,
       }))
     }
 

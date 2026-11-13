@@ -136,6 +136,7 @@ export function swapCells<E extends EditableEntry>(
       const where = `${target.order}ª aula de ${DAY_NAME[target.day] ?? `dia ${target.day}`}`
       if (!slot) return { ok: false, error: `${className} não tem ${where} (aula agrupada).` }
       if (slot.type === 'BREAK') return { ok: false, error: `${where} é intervalo para ${className}.` }
+      if (slot.type === 'ROUTINE') return { ok: false, error: `${where} é uma rotina (não é aula) para ${className}.` }
       next[i] = { ...e, day_of_week: target.day, time_slot_id: slot.id }
     }
   }
