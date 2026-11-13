@@ -104,10 +104,15 @@ type ClassGroup = {
 
 interface GridFormProps {
   classGroups: ClassGroup[]
+  /** Vigências já existentes, para sugerir no campo. */
+  vigencias?: string[]
+  /** Vigência pré-preenchida numa grade nova (ex.: "Nova grade aqui" numa pasta). */
+  defaultVigencia?: string
   initialData?: {
     id: string
     class_group_id: string | null
     name: string
+    vigencia: string
     shift: string
     start_time: string
     days_of_week: number[]
@@ -187,6 +192,7 @@ const gridSchema = z.object({
     .string()
     .min(2, 'Nome deve ter pelo menos 2 caracteres')
     .max(100, 'Nome muito longo'),
+  vigencia: z.string().trim().max(30, 'Vigência muito longa'),
   shift: z.enum(['MORNING', 'AFTERNOON', 'EVENING'], {
     message: 'Selecione um turno',
   }),
@@ -623,7 +629,12 @@ function DayPanel({ day, slots, startTime, otherDays, onChange, onCopy }: DayPan
 
 // ─── Main form ────────────────────────────────────────────────────────────────
 
-export function GridForm({ classGroups, initialData }: GridFormProps) {
+export function GridForm({
+  classGroups,
+  vigencias = [],
+  defaultVigencia = '',
+  initialData,
+}: GridFormProps) {
   const router = useRouter()
   const isEditing = !!initialData
 
@@ -638,6 +649,7 @@ export function GridForm({ classGroups, initialData }: GridFormProps) {
     defaultValues: {
       class_group_id: initialData?.class_group_id ?? '',
       name: initialData?.name ?? '',
+      vigencia: initialData?.vigencia ?? defaultVigencia,
       shift: (initialData?.shift as GridFormValues['shift']) ?? undefined,
       start_time: initialData?.start_time ?? '07:00',
       days_of_week: initialData?.days_of_week ?? [],
@@ -777,6 +789,7 @@ export function GridForm({ classGroups, initialData }: GridFormProps) {
     const gridPayload = {
       class_group_id: values.class_group_id,
       name: values.name,
+      vigencia: values.vigencia || null,
       shift: values.shift,
       start_time: values.start_time,
       days_of_week: values.days_of_week,
@@ -834,11 +847,32 @@ export function GridForm({ classGroups, initialData }: GridFormProps) {
             )}
           </div>
 
-          {/* Nome */}
-          <div className="space-y-1.5">
-            <Label htmlFor="name">Nome *</Label>
-            <Input id="name" placeholder="Ex: Matutino 2026" {...register('name')} />
-            {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_12rem] gap-4">
+            {/* Nome */}
+            <div className="space-y-1.5">
+              <Label htmlFor="name">Nome *</Label>
+              <Input id="name" placeholder="Ex: Matutino 2026" {...register('name')} />
+              {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+            </div>
+
+            {/* Vigência */}
+            <div className="space-y-1.5">
+              <Label htmlFor="vigencia">Vigência</Label>
+              <Input
+                id="vigencia"
+                placeholder="Ex: 2027/1"
+                list="grid-vigencias"
+                {...register('vigencia')}
+              />
+              <datalist id="grid-vigencias">
+                {vigencias.map((v) => (
+                  <option key={v} value={v} />
+                ))}
+              </datalist>
+              {errors.vigencia && (
+                <p className="text-xs text-red-500">{errors.vigencia.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

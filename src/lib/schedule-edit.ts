@@ -71,3 +71,28 @@ export function badRequest(error: z.ZodError | string) {
   const message = typeof error === 'string' ? error : (error.issues[0]?.message ?? 'Body inválido.')
   return NextResponse.json({ error: message }, { status: 400 })
 }
+
+/**
+ * Vigência das grades usadas pelo horário. Horários novos a gravam no config_snapshot;
+ * nos antigos ela é deduzida pela grade de um dos slots usados. undefined = desconhecida
+ * (o motor usa então a vigência mais recente de cada turma).
+ */
+export async function scheduleVigencia(
+  schedule: EditableSchedule
+): Promise<string | null | undefined> {
+  const snap = schedule.config_snapshot
+  if (snap && 'vigencia' in snap) return (snap.vigencia as string | null) ?? null
+
+  const { data: entry } = await adminSupabase
+    .from('schedule_entries')
+    .select('time_slots(time_grids(vigencia))')
+    .eq('generated_schedule_id', schedule.id)
+    .limit(1)
+    .maybeSingle()
+
+  const slot = entry?.time_slots as unknown as
+    | { time_grids: { vigencia: string | null } | { vigencia: string | null }[] | null }
+    | null
+  const grid = Array.isArray(slot?.time_grids) ? slot?.time_grids[0] : slot?.time_grids
+  return grid ? (grid.vigencia ?? null) : undefined
+}

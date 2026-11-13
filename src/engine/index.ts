@@ -20,6 +20,8 @@ export interface GenerateScheduleOptions {
   name: string
   baselineScheduleId?: string
   baselineWeight?: number
+  /** Vigência das grades horárias; undefined = a mais recente de cada turma. */
+  vigencia?: string | null
 }
 
 export async function generateSchedule(
@@ -34,7 +36,8 @@ export async function generateSchedule(
     input = await loadEngineInput(
       tenantId,
       options.baselineScheduleId,
-      options.baselineWeight ?? 0.5
+      options.baselineWeight ?? 0.5,
+      options.vigencia
     )
   } catch (err) {
     return {
@@ -178,9 +181,10 @@ export async function validateEditedSchedule(
   tenantId: string,
   lessons: PlacedLesson[],
   baselineScheduleId?: string,
-  baselineWeight?: number
+  baselineWeight?: number,
+  vigencia?: string | null
 ): Promise<SolutionValidationResult> {
-  const input = await loadEngineInput(tenantId, baselineScheduleId, baselineWeight ?? 0.5)
+  const input = await loadEngineInput(tenantId, baselineScheduleId, baselineWeight ?? 0.5, vigencia)
   return validateSolution(lessons, input)
 }
 

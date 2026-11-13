@@ -7,6 +7,7 @@ import {
   lessonsSchema,
   loadEditableSchedule,
   parseJson,
+  scheduleVigencia,
 } from '@/lib/schedule-edit'
 
 const bodySchema = z.object({ entries: lessonsSchema })
@@ -29,7 +30,8 @@ export async function POST(
       TENANT_ID,
       parsed.data.entries,
       loaded.schedule.config_snapshot?.baselineScheduleId ?? undefined,
-      loaded.schedule.baseline_weight
+      loaded.schedule.baseline_weight,
+      await scheduleVigencia(loaded.schedule)
     )
     return NextResponse.json(result)
   } catch (err) {

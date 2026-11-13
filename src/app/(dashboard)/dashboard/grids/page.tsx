@@ -9,7 +9,7 @@ export default async function GridsPage() {
   const { data: grids } = await supabase
     .from('time_grids')
     .select(
-      'id, name, shift, days_of_week, start_time, active, class_group_id, class_groups(id, name, school_units(id, name)), time_slots(id, type, day_of_week)'
+      'id, name, shift, days_of_week, start_time, active, vigencia, class_group_id, class_groups(id, name, school_units(id, name)), time_slots(id, type, day_of_week)'
     )
     .eq('tenant_id', TENANT_ID)
     .order('name')

@@ -22,14 +22,25 @@ type ExistingSchedule = {
 
 type Props = {
   existingSchedules: ExistingSchedule[]
+  /** Vigências com grades ativas, mais recente primeiro. */
+  vigencias?: string[]
+  /** Há grades ativas sem vigência. */
+  hasNoVigencia?: boolean
 }
 
-export function GenerateScheduleForm({ existingSchedules }: Props) {
+const NO_VIGENCIA = '__none__'
+
+export function GenerateScheduleForm({
+  existingSchedules,
+  vigencias = [],
+  hasNoVigencia = false,
+}: Props) {
   const router = useRouter()
 
   const [name, setName] = useState('')
   const [baselineScheduleId, setBaselineScheduleId] = useState('')
   const [baselineWeight, setBaselineWeight] = useState(70)
+  const [vigencia, setVigencia] = useState(vigencias[0] ?? (hasNoVigencia ? NO_VIGENCIA : ''))
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<string[] | null>(null)
   const [warnings, setWarnings] = useState<string[]>([])
@@ -55,6 +66,7 @@ export function GenerateScheduleForm({ existingSchedules }: Props) {
           name: name.trim(),
           baselineScheduleId: baselineScheduleId || undefined,
           baselineWeight: baselineScheduleId ? baselineWeight / 100 : undefined,
+          vigencia: vigencia === '' ? undefined : vigencia === NO_VIGENCIA ? null : vigencia,
         }),
       })
 
@@ -111,6 +123,32 @@ export function GenerateScheduleForm({ existingSchedules }: Props) {
                 required
               />
             </div>
+
+            {/* Vigência das grades */}
+            {(vigencias.length > 1 || (vigencias.length > 0 && hasNoVigencia)) && (
+              <div className="space-y-2">
+                <Label htmlFor="vigencia" className="text-navy font-medium">
+                  Vigência das grades
+                </Label>
+                <select
+                  id="vigencia"
+                  value={vigencia}
+                  onChange={(e) => setVigencia(e.target.value)}
+                  disabled={isLoading}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {vigencias.map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                  {hasNoVigencia && <option value={NO_VIGENCIA}>Sem vigência</option>}
+                </select>
+                <p className="text-xs text-slate">
+                  Cada turma usa a grade ativa desta vigência.
+                </p>
+              </div>
+            )}
 
             {/* Baseline */}
             <div className="space-y-2">
