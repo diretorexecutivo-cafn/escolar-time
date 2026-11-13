@@ -69,6 +69,15 @@ describe('swapCells', () => {
     expect(swapCells(base(), GRIDS, { classGroupId: 'A', day: 1, order: 1 }, { classGroupId: 'B', day: 1, order: 1 }).ok).toBe(false)
   })
 
+  it('recusa rotina (atividade fixa que não é aula)', () => {
+    const grids = GRIDS.map((g) => ({
+      ...g,
+      slots: g.slots.map((sl) => (sl.slot_order === 3 ? { ...sl, type: 'ROUTINE' } : sl)),
+    }))
+    const r = swapCells(base(), grids, { classGroupId: 'A', day: 1, order: 1 }, { classGroupId: 'A', day: 1, order: 3 })
+    expect(r).toEqual({ ok: false, error: '3ª aula de segunda é uma rotina (não é aula) para Turma A.' })
+  })
+
   it('trocar e destrocar volta ao original, sem células alteradas', () => {
     const a = { classGroupId: 'A', day: 1, order: 1 }
     const b = { classGroupId: 'A', day: 2, order: 2 }

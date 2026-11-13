@@ -220,6 +220,9 @@ if (oldGrids.length) {
 if (oldGroupIds.length) ok(await sb.from('class_groups').delete().in('id', oldGroupIds), 'del groups')
 console.log(`→ limpeza: ${oldGroupIds.length} turmas, ${oldGrids.length} grades removidas`)
 
+// Atividades fixas do Infantil: não são intervalo nem disciplina → slot do tipo ROUTINE.
+const ROTINAS_INFANTIL = new Set(['Higienização', 'Leitura em Voz Alta', 'Parquinho', 'Rotina Diária / Mural e Bits'])
+
 // 4. turmas + grades + slots (slots vêm direto do CSV, por turma e dia)
 const groupIdByTurma = new Map()
 const slotIdByKey = new Map() // `${turma}|${day}|${ordem}` → id
@@ -244,7 +247,7 @@ for (const turma of TURMAS) {
     start_time: r.inicio,
     end_time: r.fim,
     duration_minutes: toMin(r.fim) - toMin(r.inicio),
-    type: r.tipo === 'AULA' ? 'LESSON' : 'BREAK',
+    type: r.tipo === 'AULA' ? 'LESSON' : ROTINAS_INFANTIL.has(r.disciplina) && r.etapa === 'INFANTIL' ? 'ROUTINE' : 'BREAK',
     label: r.tipo === 'AULA' ? null : r.disciplina,
   }))
   const inserted = ok(await sb.from('time_slots').insert(slots).select('id,day_of_week,slot_order'), `insert slots ${turma}`)

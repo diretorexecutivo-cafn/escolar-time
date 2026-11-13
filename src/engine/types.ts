@@ -1,7 +1,8 @@
 // ─── Engine domain types ──────────────────────────────────────────────────────
 
 export type Priority = 'MANDATORY' | 'PREFERRED'
-export type SlotType = 'LESSON' | 'BREAK'
+/** Só LESSON recebe aulas; BREAK (intervalo) e ROUTINE (atividade fixa) ficam fora da alocação. */
+export type SlotType = 'LESSON' | 'BREAK' | 'ROUTINE'
 
 export interface EngineConstraint {
   id: string
