@@ -6,7 +6,14 @@ import { isAllowedEmail } from '@/lib/auth/allowed-domain'
 // Destino do OAuth (Google). Troca o `code` pela sessão e só a mantém se a
 // conta for do domínio da escola E já tiver perfil cadastrado no sistema.
 export async function GET(request: NextRequest) {
-  const { origin, searchParams } = request.nextUrl
+  const { searchParams } = request.nextUrl
+  // Atrás de proxy reverso (Coolify) `nextUrl.origin` é o endereço interno
+  // (localhost:3000). O host público vem nos cabeçalhos encaminhados.
+  const host =
+    request.headers.get('x-forwarded-host') ?? request.headers.get('host')
+  const proto = request.headers.get('x-forwarded-proto') ??
+    request.nextUrl.protocol.replace(':', '')
+  const origin = host ? `${proto}://${host}` : request.nextUrl.origin
   const code = searchParams.get('code')
 
   const fail = async (
