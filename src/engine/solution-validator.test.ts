@@ -226,6 +226,58 @@ describe('validateSolution', () => {
     expect(types(validateSolution(validLessons(), input))).toEqual(['FIXED_DAY'])
   })
 
+  describe('rotina conduzida pela regente', () => {
+    /** Acrescenta o Infantil (sem aulas): 1ª posição é rotina 07:00–07:50, regente Carla (T3). */
+    function withInfantil(input: EngineInput, homeroomTeacherId: string | null = 'T3'): EngineInput {
+      const g = grid('I')
+      for (const d of DAYS) {
+        g.slotsByDay[d] = g.slotsByDay[d]!.map((sl) =>
+          sl.order === 1 ? { ...sl, type: 'ROUTINE' as const, label: 'Leitura em Voz Alta' } : sl
+        )
+      }
+      return {
+        ...input,
+        classGroups: [
+          ...input.classGroups,
+          { id: 'I', name: 'Infantil III', schoolUnitId: 'U1', assignments: [], timeGrid: g, homeroomTeacherId: homeroomTeacherId ?? undefined },
+        ],
+        timeGrids: [...input.timeGrids, g],
+      }
+    }
+
+    it('detecta a regente em aula durante a rotina da turma dela', () => {
+      // validLessons: História do 6º B (Carla) na seg 1ª, 07:00–07:50 — hora da rotina.
+      const r = validateSolution(validLessons(), withInfantil(makeInput()))
+      expect(types(r)).toEqual(['ROUTINE_CLASH'])
+      expect(r.hardViolations[0]!.description).toBe(
+        'Carla é regente de Infantil III e conduz "Leitura em Voz Alta" (07:00–07:50) na segunda — ' +
+          'choca com História (6º B) 1ª (07:00–07:50).'
+      )
+      expect(r.hardViolations[0]!.cells).toEqual([
+        { classGroupId: 'B', day: 1, slotOrder: 1 },
+        { classGroupId: 'I', day: 1, slotOrder: 1 },
+      ])
+    })
+
+    it('rotina sem regente não ocupa ninguém', () => {
+      expect(validateSolution(validLessons(), withInfantil(makeInput(), null)).valid).toBe(true)
+    })
+
+    it('solver + otimizador não põem a regente em aula durante a rotina', () => {
+      const input = withInfantil(makeInput())
+      const { solution } = solve(input, 5000)
+      expect(solution).not.toBeNull()
+      const optimized = optimize(solution!, input, { iterations: 200, restarts: 2 })
+      for (const s of [solution!, optimized]) {
+        const lessons = s.entries.map((e) => ({ assignmentId: e.assignmentId, day: e.day, slotId: e.slotId }))
+        expect(validateSolution(lessons, input).hardViolations).toEqual([])
+        const carla = s.entries.filter((e) => e.teacherId === 'T3')
+        expect(carla.length).toBe(2)
+        expect(carla.every((e) => e.slotOrder !== 1)).toBe(true)
+      }
+    })
+  })
+
   describe('choque por horário real (grades diferentes por turma)', () => {
     it('detecta bilocação com números de aula diferentes que se sobrepõem', () => {
       // 6º B começa 30 min depois: 1ª aula 07:30–08:20. Ana na 2ª do 6º A (07:50–08:40)

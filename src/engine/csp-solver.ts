@@ -9,7 +9,7 @@ import type {
   SlotPosition,
   SolutionEntry,
 } from './types'
-import { overlaps, slotTimeIndex, type Interval } from './time'
+import { overlaps, routineDutyAt, slotTimeIndex, type Interval } from './time'
 
 const DEFAULT_TIMEOUT_MS = 25000
 
@@ -191,11 +191,16 @@ export function applyHardConstraints(
     )
   }
 
+  const slotTimes = slotTimeIndex(input)
+
   return variables.map((v) => {
     // Uma posição é válida para o grupo só se for válida para TODOS os membros — se um dos
     // professores do grupo não pode naquele horário, o grupo inteiro não pode.
     const filtered = v.domain.filter((pos) => {
       for (const member of v.members) {
+        // A regente está ocupada nas rotinas da própria turma.
+        const interval = slotTimes.get(pos.slotIdByClass[member.classGroupId]!)
+        if (interval && routineDutyAt(input, member.teacherId, pos.day, interval)) return false
         const constraints = teacherConstraints.get(member.teacherId) ?? []
         for (const c of constraints) {
           if (c.subjectId && c.subjectId !== member.subjectId) continue

@@ -6,12 +6,20 @@ const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 export default async function NewClassPage() {
   const supabase = await createClient()
 
-  const { data: units } = await supabase
-    .from('school_units')
-    .select('id, name')
-    .eq('tenant_id', TENANT_ID)
-    .eq('active', true)
-    .order('name')
+  const [{ data: units }, { data: teachers }] = await Promise.all([
+    supabase
+      .from('school_units')
+      .select('id, name')
+      .eq('tenant_id', TENANT_ID)
+      .eq('active', true)
+      .order('name'),
+    supabase
+      .from('teachers')
+      .select('id, name')
+      .eq('tenant_id', TENANT_ID)
+      .eq('active', true)
+      .order('name'),
+  ])
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -19,7 +27,7 @@ export default async function NewClassPage() {
         <h1 className="text-2xl font-bold text-navy">Nova Turma</h1>
         <p className="text-slate text-sm mt-1">Cadastre uma nova turma.</p>
       </div>
-      <ClassForm units={units ?? []} />
+      <ClassForm units={units ?? []} teachers={teachers ?? []} />
     </div>
   )
 }

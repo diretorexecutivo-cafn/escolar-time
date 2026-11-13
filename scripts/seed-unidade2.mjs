@@ -21,9 +21,10 @@
  *     nem a Jackeline é a "Jaqueline" de Biologia da Unidade I.
  *   - Ed. Física: Leonardo = Educação Física Masculina, Gleice = Feminina
  *     (mesmas disciplinas da Unidade I).
- *   - Rotina, Leitura em Voz Alta, Higienização, Intervalo e Parquinho do
- *     Infantil são rotina fixa: entram na grade como intervalos rotulados
- *     (type BREAK), não como aulas — assim o gerador não os move.
+ *   - Rotina, Leitura em Voz Alta, Higienização e Parquinho do Infantil são
+ *     rotina fixa (type ROUTINE; Intervalo fica BREAK), não aulas — o gerador
+ *     não os move. As rotinas são conduzidas pela regente da turma, gravada em
+ *     class_groups.homeroom_teacher_id.
  *   - "Reforço" (sexta 12:00, após o fim das aulas) não entra.
  *
  * Gleice, Eugênio e Lara já existiam (dão aula na Unidade I) e são reusados.
@@ -220,6 +221,13 @@ if (oldGrids.length) {
 if (oldGroupIds.length) ok(await sb.from('class_groups').delete().in('id', oldGroupIds), 'del groups')
 console.log(`→ limpeza: ${oldGroupIds.length} turmas, ${oldGrids.length} grades removidas`)
 
+// Professora regente de cada turma — conduz as rotinas da grade (migração 007).
+const REGENTES = {
+  'Infantil III': 'Geovanna', 'Infantil IV': 'Patrícia', 'Infantil V': 'Mariana (Infantil V)',
+  '1º Ano': 'Laine', '2º Ano': 'Jackeline', '3º Ano A': 'Sarah', '3º Ano B': 'Rosângela',
+  '4º Ano': 'Lilian', '5º Ano A': 'Evani', '5º Ano B': 'Evani',
+}
+
 // Atividades fixas do Infantil: não são intervalo nem disciplina → slot do tipo ROUTINE.
 const ROTINAS_INFANTIL = new Set(['Higienização', 'Leitura em Voz Alta', 'Parquinho', 'Rotina Diária / Mural e Bits'])
 
@@ -229,6 +237,7 @@ const slotIdByKey = new Map() // `${turma}|${day}|${ordem}` → id
 for (const turma of TURMAS) {
   const cg = ok(await sb.from('class_groups').insert({
     school_unit_id: unitId, tenant_id: tenantId, name: turma, shift: 'MORNING', year: YEAR,
+    homeroom_teacher_id: teacherByName.get(REGENTES[turma]) ?? null,
   }).select('id').single(), `insert turma ${turma}`)
   groupIdByTurma.set(turma, cg.id)
 

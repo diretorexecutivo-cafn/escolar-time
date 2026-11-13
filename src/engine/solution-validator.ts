@@ -8,7 +8,7 @@ import type {
   EngineTimeSlot,
   SolutionEntry,
 } from './types'
-import { findTeacherClashes, slotTimeIndex, type TimedItem } from './time'
+import { findTeacherClashes, routineDutyAt, slotTimeIndex, type TimedItem } from './time'
 
 const { extractTeacherLimits, isPositionBlocked } = __cspInternals
 
@@ -26,6 +26,7 @@ export type HardViolationType =
   | 'INVALID_SLOT'
   | 'CLASS_CLASH'
   | 'TEACHER_CLASH'
+  | 'ROUTINE_CLASH'
   | 'TEACHER_UNAVAILABLE'
   | 'MAX_LESSONS_PER_DAY'
   | 'MAX_CONSECUTIVE'
@@ -227,6 +228,28 @@ export function validateSolution(
         day: item.day,
         slotOrder: item.slotOrder,
       })),
+    })
+  }
+
+  // 3b. Rotina: a regente conduz as rotinas da própria turma e não pode estar em aula ─
+  for (const e of entries) {
+    const interval = slotTimes.get(e.slotId)
+    if (!interval) continue
+    const duty = routineDutyAt(input, e.teacherId, e.day, interval)
+    if (!duty) continue
+    const a = assignmentById.get(e.assignmentId)!
+    const slot = slotOf.get(e)!
+    hard.push({
+      type: 'ROUTINE_CLASH',
+      description:
+        `${teacherName(e.teacherId)} é regente de ${duty.className} e conduz "${duty.label}" ` +
+        `(${duty.startTime}–${duty.endTime}) na ${DAY_LABEL[e.day] ?? e.day} — choca com ` +
+        `${a.subjectName} (${a.classGroupName}) ${e.slotOrder}ª (${slot.startTime}–${slot.endTime}).`,
+      teacherId: e.teacherId,
+      cells: [
+        { classGroupId: e.classGroupId, day: e.day, slotOrder: e.slotOrder },
+        { classGroupId: duty.classGroupId, day: duty.day, slotOrder: duty.slotOrder },
+      ],
     })
   }
 

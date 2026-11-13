@@ -70,6 +70,7 @@ type RawTimeSlot = {
   type: string
   start_time: string | null
   end_time: string | null
+  label: string | null
 }
 
 export type RawTimeGrid = {
@@ -87,6 +88,7 @@ type RawClassGroup = {
   name: string
   school_unit_id: string
   active: boolean
+  homeroom_teacher_id: string | null
   class_subjects: RawClassSubject[] | null
   time_grids: RawTimeGrid[] | null
 }
@@ -146,6 +148,7 @@ function buildSlotsByDay(
         type: (s.type === 'BREAK' || s.type === 'ROUTINE' ? s.type : 'LESSON') as SlotType,
         startTime: start,
         endTime: end,
+        label: s.label ?? undefined,
       }
     })
   }
@@ -206,7 +209,7 @@ export async function loadEngineInput(
     .from('class_groups')
     .select(
       `
-      id, name, school_unit_id, active,
+      id, name, school_unit_id, active, homeroom_teacher_id,
       class_subjects (
         id, weekly_lessons, allow_double_lesson, group_key,
         subjects ( id, name ),
@@ -214,7 +217,7 @@ export async function loadEngineInput(
       ),
       time_grids!class_group_id (
         id, class_group_id, start_time, days_of_week, active, vigencia,
-        time_slots ( id, day_of_week, slot_order, duration_minutes, type, start_time, end_time )
+        time_slots ( id, day_of_week, slot_order, duration_minutes, type, start_time, end_time, label )
       )
     `
     )
@@ -340,6 +343,7 @@ export async function loadEngineInput(
     schoolUnitId: cg.school_unit_id,
     assignments: assignmentsByClass.get(cg.id) ?? [],
     timeGrid: gridByClass.get(cg.id),
+    homeroomTeacherId: cg.homeroom_teacher_id ?? undefined,
   }))
 
   // 7. Compose engine teachers

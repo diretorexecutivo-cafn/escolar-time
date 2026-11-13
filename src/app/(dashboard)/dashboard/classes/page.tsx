@@ -9,7 +9,7 @@ export default async function ClassesPage() {
   const [{ data: classes }, { data: units }] = await Promise.all([
     supabase
       .from('class_groups')
-      .select('id, name, shift, year, active, school_units(id, name)')
+      .select('id, name, shift, year, active, school_units(id, name), regente:teachers!homeroom_teacher_id(name)')
       .eq('tenant_id', TENANT_ID)
       .order('name'),
     supabase

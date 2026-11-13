@@ -30,14 +30,17 @@ const classSchema = z.object({
     message: 'Selecione um turno',
   }),
   year: z.number().int().min(2020, 'Ano inválido').max(2100, 'Ano inválido'),
+  homeroom_teacher_id: z.string(),
 })
 
 type ClassFormValues = z.infer<typeof classSchema>
 
 type Unit = { id: string; name: string }
+type Teacher = { id: string; name: string }
 
 interface ClassFormProps {
   units: Unit[]
+  teachers: Teacher[]
   initialData?: {
     id: string
     name: string
@@ -45,6 +48,7 @@ interface ClassFormProps {
     year: number
     active: boolean
     school_unit_id: string
+    homeroom_teacher_id: string | null
   }
 }
 
@@ -54,7 +58,7 @@ const selectClassName = cn(
   'disabled:pointer-events-none disabled:opacity-50'
 )
 
-export function ClassForm({ units, initialData }: ClassFormProps) {
+export function ClassForm({ units, teachers, initialData }: ClassFormProps) {
   const router = useRouter()
   const isEditing = !!initialData
 
@@ -69,6 +73,7 @@ export function ClassForm({ units, initialData }: ClassFormProps) {
       name: initialData?.name ?? '',
       shift: (initialData?.shift as ClassFormValues['shift']) ?? undefined,
       year: initialData?.year ?? new Date().getFullYear(),
+      homeroom_teacher_id: initialData?.homeroom_teacher_id ?? '',
     },
   })
 
@@ -156,6 +161,27 @@ export function ClassForm({ units, initialData }: ClassFormProps) {
             {errors.year && (
               <p className="text-xs text-red-500">{errors.year.message}</p>
             )}
+          </div>
+
+          {/* Professora regente */}
+          <div className="space-y-1.5">
+            <Label htmlFor="homeroom_teacher_id">Professora regente</Label>
+            <select
+              id="homeroom_teacher_id"
+              className={selectClassName}
+              {...register('homeroom_teacher_id')}
+            >
+              <option value="">Nenhuma</option>
+              {teachers.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-slate">
+              Conduz as rotinas da grade da turma (ex.: leitura em voz alta, higienização no
+              Infantil). Nesses horários ela fica ocupada e o gerador não lhe dá aula em outra turma.
+            </p>
           </div>
 
           {/* Botões */}

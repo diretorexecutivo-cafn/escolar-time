@@ -100,3 +100,69 @@ export function findTeacherClashes<T>(items: TimedItem<T>[]): TimedItem<T>[][] {
 export function hasTeacherClash<T>(items: TimedItem<T>[]): boolean {
   return findTeacherClashes(items).length > 0
 }
+
+/**
+ * Rotina conduzida pela professora regente: cada slot ROUTINE da grade de uma turma que
+ * tem regente ocupa a regente naquele dia/horário — ela não pode dar aula em outra turma.
+ */
+export interface RoutineDuty {
+  teacherId: string
+  classGroupId: string
+  className: string
+  day: number
+  slotId: string
+  slotOrder: number
+  label: string
+  startTime: string
+  endTime: string
+  interval: Interval
+}
+
+const dutyCache = new WeakMap<EngineInput, Map<string, RoutineDuty[]>>()
+
+/** Rotinas por "teacherId|day". */
+export function routineDutiesByTeacherDay(input: EngineInput): Map<string, RoutineDuty[]> {
+  const cached = dutyCache.get(input)
+  if (cached) return cached
+  const m = new Map<string, RoutineDuty[]>()
+  for (const cg of input.classGroups) {
+    const teacherId = cg.homeroomTeacherId
+    if (!teacherId) continue
+    for (const [dayStr, slots] of Object.entries(cg.timeGrid?.slotsByDay ?? {})) {
+      const day = Number(dayStr)
+      for (const s of slots) {
+        if (s.type !== 'ROUTINE') continue
+        const duty: RoutineDuty = {
+          teacherId,
+          classGroupId: cg.id,
+          className: cg.name,
+          day,
+          slotId: s.id,
+          slotOrder: s.order,
+          label: s.label || 'Rotina',
+          startTime: s.startTime,
+          endTime: s.endTime,
+          interval: { start: toMinutes(s.startTime), end: toMinutes(s.endTime) },
+        }
+        const k = `${teacherId}|${day}`
+        const arr = m.get(k)
+        if (arr) arr.push(duty)
+        else m.set(k, [duty])
+      }
+    }
+  }
+  dutyCache.set(input, m)
+  return m
+}
+
+/** Rotina da regente que se sobrepõe ao intervalo dado (ou undefined). */
+export function routineDutyAt(
+  input: EngineInput,
+  teacherId: string,
+  day: number,
+  interval: Interval
+): RoutineDuty | undefined {
+  return routineDutiesByTeacherDay(input)
+    .get(`${teacherId}|${day}`)
+    ?.find((d) => overlaps(d.interval, interval))
+}

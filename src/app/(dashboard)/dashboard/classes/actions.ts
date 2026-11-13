@@ -10,6 +10,8 @@ type FormData = {
   name: string
   shift: 'MORNING' | 'AFTERNOON' | 'EVENING'
   year: number
+  /** Professora regente (conduz as rotinas da turma); '' = nenhuma. */
+  homeroom_teacher_id?: string
 }
 
 type ActionResult = { success: boolean; error?: string }
@@ -23,6 +25,7 @@ export async function createClass(data: FormData): Promise<ActionResult> {
     name: data.name,
     shift: data.shift,
     year: data.year,
+    homeroom_teacher_id: data.homeroom_teacher_id || null,
   })
 
   if (error) return { success: false, error: error.message }
@@ -41,6 +44,7 @@ export async function updateClass(id: string, data: FormData): Promise<ActionRes
       name: data.name,
       shift: data.shift,
       year: data.year,
+      homeroom_teacher_id: data.homeroom_teacher_id || null,
     })
     .eq('id', id)
     .eq('tenant_id', TENANT_ID)

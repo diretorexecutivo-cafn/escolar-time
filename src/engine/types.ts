@@ -54,6 +54,8 @@ export interface EngineTimeSlot {
   type: SlotType
   startTime: string
   endTime: string
+  /** Rótulo do intervalo/rotina (ex.: "Leitura em Voz Alta"). */
+  label?: string
 }
 
 export interface EngineTimeGrid {
@@ -70,6 +72,8 @@ export interface EngineClassGroup {
   schoolUnitId: string
   assignments: EngineAssignment[]
   timeGrid?: EngineTimeGrid
+  /** Professora regente: conduz as rotinas (slots ROUTINE) da turma e fica ocupada nelas. */
+  homeroomTeacherId?: string
 }
 
 export interface BaselineSchedule {
