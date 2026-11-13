@@ -79,6 +79,74 @@ function flattenSlots(slotsByDay: SlotsByDay, gridId: string) {
   return rows
 }
 
+/**
+ * Sincroniza os slots da grade sem apagar tudo: slots existentes na mesma posição
+ * (dia + ordem) são atualizados no lugar, mantendo o id — isso preserva as referências
+ * de horários já gerados (schedule_entries.time_slot_id). Só insere os novos e remove
+ * os que deixaram de existir.
+ */
+async function syncTimeSlots(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  gridId: string,
+  rows: ReturnType<typeof flattenSlots>
+): Promise<string | null> {
+  const { data: existing, error: fetchError } = await supabase
+    .from('time_slots')
+    .select('id, day_of_week, slot_order')
+    .eq('time_grid_id', gridId)
+
+  if (fetchError) return fetchError.message
+
+  const key = (day: number, order: number) => `${day}:${order}`
+  const existingByKey = new Map(
+    (existing ?? []).map((s) => [key(s.day_of_week, s.slot_order), s.id as string])
+  )
+  const keptKeys = new Set<string>()
+  const toInsert: typeof rows = []
+
+  for (const row of rows) {
+    const k = key(row.day_of_week, row.slot_order)
+    const slotId = existingByKey.get(k)
+    if (!slotId) {
+      toInsert.push(row)
+      continue
+    }
+    keptKeys.add(k)
+    const { error } = await supabase
+      .from('time_slots')
+      .update({
+        duration_minutes: row.duration_minutes,
+        start_time: row.start_time,
+        end_time: row.end_time,
+        type: row.type,
+        label: row.label,
+      })
+      .eq('id', slotId)
+    if (error) return error.message
+  }
+
+  const toDeleteIds = [...existingByKey.entries()]
+    .filter(([k]) => !keptKeys.has(k))
+    .map(([, slotId]) => slotId)
+
+  if (toDeleteIds.length > 0) {
+    const { error } = await supabase.from('time_slots').delete().in('id', toDeleteIds)
+    if (error) {
+      if (error.code === '23503') {
+        return 'Não é possível remover horários que já são usados em um horário gerado. Exclua esse horário gerado antes ou mantenha a quantidade de slots.'
+      }
+      return error.message
+    }
+  }
+
+  if (toInsert.length > 0) {
+    const { error } = await supabase.from('time_slots').insert(toInsert)
+    if (error) return error.message
+  }
+
+  return null
+}
+
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
 export async function createTimeGrid(
@@ -154,18 +222,8 @@ export async function updateTimeGrid(
 
   if (gridError) return { success: false, error: gridError.message }
 
-  const { error: deleteError } = await supabase
-    .from('time_slots')
-    .delete()
-    .eq('time_grid_id', id)
-
-  if (deleteError) return { success: false, error: deleteError.message }
-
-  const rows = flattenSlots(slotsByDay, id)
-  if (rows.length > 0) {
-    const { error: slotsError } = await supabase.from('time_slots').insert(rows)
-    if (slotsError) return { success: false, error: slotsError.message }
-  }
+  const syncError = await syncTimeSlots(supabase, id, flattenSlots(slotsByDay, id))
+  if (syncError) return { success: false, error: syncError }
 
   revalidatePath('/dashboard/grids')
   return { success: true }
