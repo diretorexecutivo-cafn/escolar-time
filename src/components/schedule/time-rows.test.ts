@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildSegments, layoutColumn } from './time-rows'
+import { buildSegments, groupBands, layoutColumn } from './time-rows'
 
 const iv = (start: number, end: number) => ({ start, end })
 
@@ -53,5 +53,53 @@ describe('layoutColumn', () => {
       { kind: 'slot', slot: a, rowSpan: 1 },
       { kind: 'slot', slot: a, rowSpan: 1 },
     ])
+  })
+})
+
+describe('groupBands', () => {
+  // Grade de 50 min começando em `first` (minutos), com `n` aulas, nos dias 1 e 2.
+  const cadence = (first: number, n: number) => {
+    const slots = Array.from({ length: n }, (_, k) => iv(first + 50 * k, first + 50 * (k + 1)))
+    return new Map([
+      [1, slots],
+      [2, slots],
+    ])
+  }
+  const col = (unit: string, slotsByDay: Map<number, ReturnType<typeof iv>[]>) => ({
+    unit,
+    slotsByDay,
+  })
+
+  it('turmas na mesma cadência ficam num bloco, mesmo com quantidades diferentes de aulas', () => {
+    expect(groupBands([col('U1', cadence(430, 6)), col('U1', cadence(430, 7))])).toEqual([[0, 1]])
+  })
+
+  it('contraturno diferente não separa turmas com a mesma manhã', () => {
+    const tarde = (slots: ReturnType<typeof iv>[]) => {
+      const m = cadence(430, 6)
+      m.set(2, [...m.get(2)!, ...slots])
+      return m
+    }
+    const a = col('U1', tarde([iv(790, 830), iv(830, 870)]))
+    const b = col('U1', tarde([iv(840, 890)]))
+    expect(groupBands([a, a, b, b])).toEqual([[0, 1, 2, 3]])
+  })
+
+  it('outra cadência na mesma unidade abre outro bloco', () => {
+    const a = col('U2', cadence(430, 5))
+    const b = col('U2', cadence(450, 5))
+    expect(groupBands([a, a, b, b])).toEqual([[0, 1], [2, 3]])
+  })
+
+  it('unidades diferentes nunca dividem bloco', () => {
+    expect(groupBands([col('U1', cadence(430, 5)), col('U2', cadence(430, 5))])).toEqual([[0], [1]])
+  })
+
+  it('turmas isoladas vizinhas (Infantil) dividem um bloco só', () => {
+    const fund = col('U2', cadence(450, 5))
+    const inf3 = col('U2', new Map([[1, [iv(450, 470), iv(470, 505)]]]))
+    const inf4 = col('U2', new Map([[1, [iv(450, 480), iv(480, 505)]]]))
+    const inf5 = col('U2', new Map([[1, [iv(450, 460), iv(460, 505)]]]))
+    expect(groupBands([fund, fund, inf3, inf4, inf5])).toEqual([[0, 1], [2, 3, 4]])
   })
 })
