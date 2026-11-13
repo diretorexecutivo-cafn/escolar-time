@@ -5,6 +5,7 @@ import type {
   ScheduleSolution,
   SolutionEntry,
 } from './types'
+import { hasTeacherClash, slotTimeIndex, type TimedItem } from './time'
 
 // ─── Tunable weights (per spec) ───────────────────────────────────────────────
 
@@ -492,24 +493,23 @@ function validateHard(
   changed: number[]
 ): boolean {
   const idx = buildIndices(entries)
-  // Re-derive: detect collisions at changed positions. Duas entradas no mesmo "day:order" só
-  // não são colisão se pertencerem à mesma unidade agrupada (mesmo owner).
-  const seenTeacher = new Map<string, Map<string, string>>()
+  // Turma: duas entradas no mesmo "day:order" só não são colisão se pertencerem à mesma
+  // unidade agrupada (mesmo owner). Professor: colisão por sobreposição de horário real.
+  const slotTimes = slotTimeIndex(input)
+  const timed: TimedItem<null>[] = []
   const seenClass = new Map<string, Map<string, string>>()
   for (const e of entries) {
     const k = key(e.day, e.slotOrder)
     const owner = unitOwner(e)
-    if (!seenTeacher.has(e.teacherId)) seenTeacher.set(e.teacherId, new Map())
-    const ts = seenTeacher.get(e.teacherId)!
-    const tOwner = ts.get(k)
-    if (tOwner !== undefined && tOwner !== owner) return false
-    ts.set(k, owner)
+    const interval = slotTimes.get(e.slotId)
+    if (interval) timed.push({ teacherId: e.teacherId, day: e.day, interval, owner, item: null })
     if (!seenClass.has(e.classGroupId)) seenClass.set(e.classGroupId, new Map())
     const cs = seenClass.get(e.classGroupId)!
     const cOwner = cs.get(k)
     if (cOwner !== undefined && cOwner !== owner) return false
     cs.set(k, owner)
   }
+  if (hasTeacherClash(timed)) return false
 
   // Check MAX_LESSONS_PER_DAY and MAX_CONSECUTIVE for teachers with such MANDATORY constraints
   const limits = new Map<string, { maxDay?: number; maxConsec?: number }>()

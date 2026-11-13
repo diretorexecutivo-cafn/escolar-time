@@ -24,6 +24,7 @@ export async function POST(
     .select('id, status')
     .eq('id', id)
     .eq('tenant_id', TENANT_ID)
+    .is('deleted_at', null)
     .single()
 
   if (fetchError || !schedule) {

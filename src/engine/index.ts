@@ -3,6 +3,11 @@ import { loadEngineInput } from './data-loader'
 import { optimize, scoreSolution } from './optimizer'
 import type { EngineInput, EngineResult } from './types'
 import { validateEngineInput } from './validator'
+import {
+  validateSolution,
+  type PlacedLesson,
+  type SolutionValidationResult,
+} from './solution-validator'
 
 // Tratar aulas agrupadas (group_key) como decisão conjunta deixa o CSP genuinamente mais
 // restrito (a busca precisa casar vários professores/turmas no mesmo slot em vez de tratá-los
@@ -162,3 +167,21 @@ export async function generateSchedule(
 }
 
 export type { EngineInput, EngineResult, ScheduleSolution } from './types'
+
+// ─── Validação de horário editado manualmente ─────────────────────────────────
+
+/**
+ * Valida um horário completo contra os cadastros atuais. `baselineScheduleId` deve ser o
+ * mesmo baseline usado na geração original, para que a nota recalculada seja comparável.
+ */
+export async function validateEditedSchedule(
+  tenantId: string,
+  lessons: PlacedLesson[],
+  baselineScheduleId?: string,
+  baselineWeight?: number
+): Promise<SolutionValidationResult> {
+  const input = await loadEngineInput(tenantId, baselineScheduleId, baselineWeight ?? 0.5)
+  return validateSolution(lessons, input)
+}
+
+export type { PlacedLesson, SolutionValidationResult, HardViolation } from './solution-validator'

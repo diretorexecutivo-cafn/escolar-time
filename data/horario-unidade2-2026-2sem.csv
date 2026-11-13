@@ -1,0 +1,358 @@
+etapa,turma,dia,ordem,inicio,fim,tipo,disciplina,professor,celula
+FUND I,1º Ano,SEGUNDA,1,07:30,08:20,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,1º Ano,SEGUNDA,2,08:20,09:10,AULA,Língua Portuguesa,Laine,Português
+FUND I,1º Ano,SEGUNDA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,1º Ano,SEGUNDA,4,09:30,10:20,AULA,Artes,Laine,Arte
+FUND I,1º Ano,SEGUNDA,5,10:20,11:10,AULA,Matemática,Laine,Matemática
+FUND I,1º Ano,SEGUNDA,6,11:10,12:00,AULA,Ciências,Laine,Ciências
+FUND I,1º Ano,TERÇA,1,07:30,08:20,AULA,Língua Portuguesa,Laine,Português
+FUND I,1º Ano,TERÇA,2,08:20,09:10,AULA,Matemática,Laine,Matemática
+FUND I,1º Ano,TERÇA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,1º Ano,TERÇA,4,09:30,10:20,AULA,Música,Bárbara,Música/Bárbara
+FUND I,1º Ano,TERÇA,5,10:20,11:10,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,1º Ano,TERÇA,6,11:10,12:00,AULA,Inglês,Mariana,Inglês/Mariana
+FUND I,1º Ano,QUARTA,1,07:30,08:20,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,1º Ano,QUARTA,2,08:20,09:10,AULA,Música,Bárbara,Música/Bárbara
+FUND I,1º Ano,QUARTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,1º Ano,QUARTA,4,09:30,10:20,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,1º Ano,QUARTA,5,10:20,11:10,AULA,Língua Portuguesa,Laine,Português
+FUND I,1º Ano,QUARTA,6,11:10,12:00,AULA,Matemática,Laine,Matemática
+FUND I,1º Ano,QUINTA,1,07:30,08:20,AULA,Matemática,Laine,Matemática
+FUND I,1º Ano,QUINTA,2,08:20,09:10,AULA,História,Laine,História
+FUND I,1º Ano,QUINTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,1º Ano,QUINTA,4,09:30,10:20,AULA,Língua Portuguesa,Laine,Português
+FUND I,1º Ano,QUINTA,5,10:20,11:10,AULA,Ensino Religioso,Nathalia,Ens.Religioso
+FUND I,1º Ano,QUINTA,6,11:10,12:00,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,1º Ano,SEXTA,1,07:30,08:20,AULA,Língua Portuguesa,Laine,Português
+FUND I,1º Ano,SEXTA,2,08:20,09:10,AULA,Geografia,Laine,Geografia
+FUND I,1º Ano,SEXTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,1º Ano,SEXTA,4,09:30,10:20,AULA,Leitura,Laine,Leitura
+FUND I,1º Ano,SEXTA,5,10:20,11:10,AULA,Matemática,Laine,Matemática
+FUND I,1º Ano,SEXTA,6,11:10,12:00,AULA,Inglês,Mariana,Inglês/Mariana
+FUND I,2º Ano,SEGUNDA,1,07:30,08:20,AULA,Língua Portuguesa,Jackeline,Português
+FUND I,2º Ano,SEGUNDA,2,08:20,09:10,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,2º Ano,SEGUNDA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,2º Ano,SEGUNDA,4,09:30,10:20,AULA,Matemática,Jackeline,Matemática
+FUND I,2º Ano,SEGUNDA,5,10:20,11:10,AULA,História,Jackeline,História
+FUND I,2º Ano,SEGUNDA,6,11:10,12:00,AULA,Inglês,Mariana,Inglês/Mariana
+FUND I,2º Ano,TERÇA,1,07:30,08:20,AULA,Música,Bárbara,Música/Bárbara
+FUND I,2º Ano,TERÇA,2,08:20,09:10,AULA,Língua Portuguesa,Jackeline,Português
+FUND I,2º Ano,TERÇA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,2º Ano,TERÇA,4,09:30,10:20,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,2º Ano,TERÇA,5,10:20,11:10,AULA,Matemática,Jackeline,Matemática
+FUND I,2º Ano,TERÇA,6,11:10,12:00,AULA,Ciências,Jackeline,Ciências
+FUND I,2º Ano,QUARTA,1,07:30,08:20,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,2º Ano,QUARTA,2,08:20,09:10,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,2º Ano,QUARTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,2º Ano,QUARTA,4,09:30,10:20,AULA,Música,Bárbara,Música/Bárbara
+FUND I,2º Ano,QUARTA,5,10:20,11:10,AULA,Língua Portuguesa,Jackeline,Português
+FUND I,2º Ano,QUARTA,6,11:10,12:00,AULA,Matemática,Jackeline,Matemática
+FUND I,2º Ano,QUINTA,1,07:30,08:20,AULA,Ensino Religioso,Nathalia,Ens.Religioso
+FUND I,2º Ano,QUINTA,2,08:20,09:10,AULA,Geografia,Jackeline,Geografia
+FUND I,2º Ano,QUINTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,2º Ano,QUINTA,4,09:30,10:20,AULA,Língua Portuguesa,Jackeline,Português
+FUND I,2º Ano,QUINTA,5,10:20,11:10,AULA,Matemática,Jackeline,Matemática
+FUND I,2º Ano,QUINTA,6,11:10,12:00,AULA,Inglês,Mariana,Inglês/Mariana
+FUND I,2º Ano,SEXTA,1,07:30,08:20,AULA,Artes,Jackeline,Arte
+FUND I,2º Ano,SEXTA,2,08:20,09:10,AULA,Matemática,Jackeline,Matemática
+FUND I,2º Ano,SEXTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,2º Ano,SEXTA,4,09:30,10:20,AULA,Língua Portuguesa,Jackeline,Português
+FUND I,2º Ano,SEXTA,5,10:20,11:10,AULA,Língua Portuguesa,Jackeline,Português
+FUND I,2º Ano,SEXTA,6,11:10,12:00,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,3º Ano A,SEGUNDA,1,07:30,08:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano A,SEGUNDA,2,08:20,09:10,AULA,Língua Portuguesa,Sarah,Português
+FUND I,3º Ano A,SEGUNDA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano A,SEGUNDA,4,09:30,10:20,AULA,Língua Portuguesa,Sarah,Português
+FUND I,3º Ano A,SEGUNDA,5,10:20,11:10,AULA,Ciências,Sarah,Ciências
+FUND I,3º Ano A,SEGUNDA,6,11:10,12:00,AULA,História,Sarah,História
+FUND I,3º Ano A,TERÇA,1,07:30,08:20,AULA,Artes,Sarah,Arte
+FUND I,3º Ano A,TERÇA,2,08:20,09:10,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,3º Ano A,TERÇA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano A,TERÇA,4,09:30,10:20,AULA,Língua Portuguesa,Sarah,Português
+FUND I,3º Ano A,TERÇA,5,10:20,11:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano A,TERÇA,6,11:10,12:00,AULA,Música,Bárbara,Música/Bárbara
+FUND I,3º Ano A,QUARTA,1,07:30,08:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano A,QUARTA,2,08:20,09:10,AULA,Língua Portuguesa,Sarah,Português
+FUND I,3º Ano A,QUARTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano A,QUARTA,4,09:30,10:20,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,3º Ano A,QUARTA,5,10:20,11:10,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,3º Ano A,QUARTA,6,11:10,12:00,AULA,Música,Bárbara,Música/Bárbara
+FUND I,3º Ano A,QUINTA,1,07:30,08:20,AULA,Língua Portuguesa,Sarah,Português
+FUND I,3º Ano A,QUINTA,2,08:20,09:10,AULA,Ensino Religioso,Nathalia,Ens.Religioso
+FUND I,3º Ano A,QUINTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano A,QUINTA,4,09:30,10:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano A,QUINTA,5,10:20,11:10,AULA,Inglês,Lara,Inglês/Lara
+FUND I,3º Ano A,QUINTA,6,11:10,12:00,AULA,Língua Portuguesa,Sarah,Português
+FUND I,3º Ano A,SEXTA,1,07:30,08:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano A,SEXTA,2,08:20,09:10,AULA,Língua Portuguesa,Sarah,Português
+FUND I,3º Ano A,SEXTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano A,SEXTA,4,09:30,10:20,AULA,Geografia,Sarah,Geografia
+FUND I,3º Ano A,SEXTA,5,10:20,11:10,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,3º Ano A,SEXTA,6,11:10,12:00,AULA,Inglês,Lara,Inglês/Lara
+FUND I,3º Ano B,SEGUNDA,1,07:30,08:20,AULA,Língua Portuguesa,Rosângela,Português
+FUND I,3º Ano B,SEGUNDA,2,08:20,09:10,AULA,Ciências,Rosângela,Ciências
+FUND I,3º Ano B,SEGUNDA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano B,SEGUNDA,4,09:30,10:20,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,3º Ano B,SEGUNDA,5,10:20,11:10,AULA,Língua Portuguesa,Rosângela,Português
+FUND I,3º Ano B,SEGUNDA,6,11:10,12:00,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano B,TERÇA,1,07:30,08:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano B,TERÇA,2,08:20,09:10,AULA,Geografia,Rosângela,Geografia
+FUND I,3º Ano B,TERÇA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano B,TERÇA,4,09:30,10:20,AULA,Língua Portuguesa,Rosângela,Português
+FUND I,3º Ano B,TERÇA,5,10:20,11:10,AULA,Música,Bárbara,Música/Bárbara
+FUND I,3º Ano B,TERÇA,6,11:10,12:00,AULA,Língua Portuguesa,Rosângela,Português
+FUND I,3º Ano B,QUARTA,1,07:30,08:20,AULA,História,Rosângela,História
+FUND I,3º Ano B,QUARTA,2,08:20,09:10,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,3º Ano B,QUARTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano B,QUARTA,4,09:30,10:20,AULA,Língua Portuguesa,Rosângela,Português
+FUND I,3º Ano B,QUARTA,5,10:20,11:10,AULA,Música,Bárbara,Música/Bárbara
+FUND I,3º Ano B,QUARTA,6,11:10,12:00,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano B,QUINTA,1,07:30,08:20,AULA,Inglês,Lara,Inglês/Lara
+FUND I,3º Ano B,QUINTA,2,08:20,09:10,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,3º Ano B,QUINTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano B,QUINTA,4,09:30,10:20,AULA,Ensino Religioso,Nathalia,Ens.Religioso
+FUND I,3º Ano B,QUINTA,5,10:20,11:10,AULA,Língua Portuguesa,Rosângela,Português
+FUND I,3º Ano B,QUINTA,6,11:10,12:00,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano B,SEXTA,1,07:30,08:20,AULA,Língua Portuguesa,Rosângela,Português
+FUND I,3º Ano B,SEXTA,2,08:20,09:10,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,3º Ano B,SEXTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,3º Ano B,SEXTA,4,09:30,10:20,AULA,Inglês,Lara,Inglês/Lara
+FUND I,3º Ano B,SEXTA,5,10:20,11:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,3º Ano B,SEXTA,6,11:10,12:00,AULA,Artes,Rosângela,Arte
+FUND I,4º Ano,SEGUNDA,1,07:30,08:20,AULA,Língua Portuguesa,Lilian,Português
+FUND I,4º Ano,SEGUNDA,2,08:20,09:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,4º Ano,SEGUNDA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,4º Ano,SEGUNDA,4,09:30,10:20,AULA,Língua Portuguesa,Lilian,Português
+FUND I,4º Ano,SEGUNDA,5,10:20,11:10,AULA,Artes,Lilian,Arte
+FUND I,4º Ano,SEGUNDA,6,11:10,12:00,AULA,Geografia,Lilian,Geografia
+FUND I,4º Ano,TERÇA,1,07:30,08:20,AULA,Inglês,Lara,Inglês/Lara
+FUND I,4º Ano,TERÇA,2,08:20,09:10,AULA,Música,Bárbara,Música/Bárbara
+FUND I,4º Ano,TERÇA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,4º Ano,TERÇA,4,09:30,10:20,AULA,História,Lilian,História
+FUND I,4º Ano,TERÇA,5,10:20,11:10,AULA,Língua Portuguesa,Lilian,Português
+FUND I,4º Ano,TERÇA,6,11:10,12:00,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,4º Ano,QUARTA,1,07:30,08:20,AULA,Música,Bárbara,Música/Bárbara
+FUND I,4º Ano,QUARTA,2,08:20,09:10,AULA,Língua Portuguesa,Lilian,Português
+FUND I,4º Ano,QUARTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,4º Ano,QUARTA,4,09:30,10:20,AULA,Língua Portuguesa,Lilian,Português
+FUND I,4º Ano,QUARTA,5,10:20,11:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,4º Ano,QUARTA,6,11:10,12:00,AULA,Ciências,Lilian,Ciências
+FUND I,4º Ano,QUINTA,1,07:30,08:20,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,4º Ano,QUINTA,2,08:20,09:10,AULA,Língua Portuguesa,Lilian,Português
+FUND I,4º Ano,QUINTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,4º Ano,QUINTA,4,09:30,10:20,AULA,Inglês,Lara,Inglês/Lara
+FUND I,4º Ano,QUINTA,5,10:20,11:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,4º Ano,QUINTA,6,11:10,12:00,AULA,Ensino Religioso,Nathalia,Ens.Religioso
+FUND I,4º Ano,SEXTA,1,07:30,08:20,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,4º Ano,SEXTA,2,08:20,09:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,4º Ano,SEXTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,4º Ano,SEXTA,4,09:30,10:20,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,4º Ano,SEXTA,5,10:20,11:10,AULA,Inglês,Lara,Inglês/Lara
+FUND I,4º Ano,SEXTA,6,11:10,12:00,AULA,Língua Portuguesa,Lilian,Português
+FUND I,5º Ano A,SEGUNDA,1,07:30,08:20,AULA,Música,Gabriela,Música/Ana Clara
+FUND I,5º Ano A,SEGUNDA,2,08:20,09:10,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano A,SEGUNDA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano A,SEGUNDA,4,09:30,10:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano A,SEGUNDA,5,10:20,11:10,AULA,Música,Gabriela,Música/Ana Clara
+FUND I,5º Ano A,SEGUNDA,6,11:10,12:00,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano A,TERÇA,1,07:30,08:20,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,5º Ano A,TERÇA,2,08:20,09:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano A,TERÇA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano A,TERÇA,4,09:30,10:20,AULA,Inglês,Lara,Inglês/Lara
+FUND I,5º Ano A,TERÇA,5,10:20,11:10,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano A,TERÇA,6,11:10,12:00,AULA,Inglês,Lara,Inglês/Lara
+FUND I,5º Ano A,QUARTA,1,07:30,08:20,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano A,QUARTA,2,08:20,09:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano A,QUARTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano A,QUARTA,4,09:30,10:20,AULA,Artes,Sarah,Arte/Sarah
+FUND I,5º Ano A,QUARTA,5,10:20,11:10,AULA,História,Lilian,História/Lilian
+FUND I,5º Ano A,QUARTA,6,11:10,12:00,AULA,Ciências,Rosângela,Ciências/Rosângela
+FUND I,5º Ano A,QUINTA,1,07:30,08:20,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano A,QUINTA,2,08:20,09:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano A,QUINTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano A,QUINTA,4,09:30,10:20,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano A,QUINTA,5,10:20,11:10,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,5º Ano A,QUINTA,6,11:10,12:00,AULA,Inglês,Lara,Inglês/Lara
+FUND I,5º Ano A,SEXTA,1,07:30,08:20,AULA,Ensino Religioso,Nathalia,Ens.Religioso
+FUND I,5º Ano A,SEXTA,2,08:20,09:10,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,5º Ano A,SEXTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano A,SEXTA,4,09:30,10:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano A,SEXTA,5,10:20,11:10,AULA,Geografia,Lilian,Geografia/Lilian
+FUND I,5º Ano A,SEXTA,6,11:10,12:00,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,SEGUNDA,1,07:30,08:20,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,SEGUNDA,2,08:20,09:10,AULA,Música,Gabriela,Música/Ana Clara
+FUND I,5º Ano B,SEGUNDA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano B,SEGUNDA,4,09:30,10:20,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,SEGUNDA,5,10:20,11:10,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano B,SEGUNDA,6,11:10,12:00,AULA,Música,Gabriela,Música/Ana Clara
+FUND I,5º Ano B,TERÇA,1,07:30,08:20,AULA,História,Lilian,História/Lilian
+FUND I,5º Ano B,TERÇA,2,08:20,09:10,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,TERÇA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano B,TERÇA,4,09:30,10:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano B,TERÇA,5,10:20,11:10,AULA,Inglês,Lara,Inglês/Lara
+FUND I,5º Ano B,TERÇA,6,11:10,12:00,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,QUARTA,1,07:30,08:20,AULA,Artes,Sarah,Arte/Sarah
+FUND I,5º Ano B,QUARTA,2,08:20,09:10,AULA,Ciências,Rosângela,Ciências/Rosângela
+FUND I,5º Ano B,QUARTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano B,QUARTA,4,09:30,10:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano B,QUARTA,5,10:20,11:10,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,QUARTA,6,11:10,12:00,AULA,Inglês,Lara,Inglês/Lara
+FUND I,5º Ano B,QUINTA,1,07:30,08:20,AULA,Matemática,Raynara,Mat./Raynara
+FUND I,5º Ano B,QUINTA,2,08:20,09:10,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,QUINTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano B,QUINTA,4,09:30,10:20,AULA,Educação Física Feminina,Gleice,Ed. Fís./Gleice
+FUND I,5º Ano B,QUINTA,5,10:20,11:10,AULA,Geografia,Lilian,Geografia/Lilian
+FUND I,5º Ano B,QUINTA,6,11:10,12:00,AULA,Latim,Eugênio,Latim/Eugênio
+FUND I,5º Ano B,SEXTA,1,07:30,08:20,AULA,Inglês,Lara,Inglês/Lara
+FUND I,5º Ano B,SEXTA,2,08:20,09:10,AULA,Ensino Religioso,Nathalia,Ens.Religioso
+FUND I,5º Ano B,SEXTA,3,09:10,09:30,PAUSA,Intervalo,,Intervalo
+FUND I,5º Ano B,SEXTA,4,09:30,10:20,AULA,Educação Física Masculina,Leonardo,Ed. Fís./Leonardo
+FUND I,5º Ano B,SEXTA,5,10:20,11:10,AULA,Língua Portuguesa,Evani,Português/Evani
+FUND I,5º Ano B,SEXTA,6,11:10,12:00,AULA,Matemática,Raynara,Mat./Raynara
+INFANTIL,Infantil III,SEGUNDA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil III,SEGUNDA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil III,SEGUNDA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,SEGUNDA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil III,SEGUNDA,5,08:40,09:25,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil III,SEGUNDA,6,09:25,10:05,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil III,SEGUNDA,7,10:05,10:15,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,SEGUNDA,8,10:15,10:45,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil III,SEGUNDA,9,10:45,11:15,AULA,Atividades Artísticas e Motoras,Geovanna,Atividades Artísticas e Motoras
+INFANTIL,Infantil III,SEGUNDA,10,11:15,11:30,AULA,Motricidade,Geovanna,Motricidade
+INFANTIL,Infantil III,TERÇA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil III,TERÇA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil III,TERÇA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,TERÇA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil III,TERÇA,5,08:40,09:25,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil III,TERÇA,6,09:25,10:05,AULA,Musicalização,Gabriela,Musicalização / Gabriela
+INFANTIL,Infantil III,TERÇA,7,10:05,10:15,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,TERÇA,8,10:15,10:45,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil III,TERÇA,9,10:45,11:15,AULA,Conhecimento de Mundo,Geovanna,Conhecimento de Mundo
+INFANTIL,Infantil III,TERÇA,10,11:15,11:30,AULA,Psicomotricidade — Regente,Geovanna,Psicomotricidade — Regente
+INFANTIL,Infantil III,QUARTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil III,QUARTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil III,QUARTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,QUARTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil III,QUARTA,5,08:40,09:25,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil III,QUARTA,6,09:25,10:05,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil III,QUARTA,7,10:05,10:15,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,QUARTA,8,10:15,10:45,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil III,QUARTA,9,10:45,11:15,AULA,Atividades Artísticas e Motoras,Geovanna,Atividades Artísticas e Motoras
+INFANTIL,Infantil III,QUARTA,10,11:15,11:30,AULA,Motricidade,Geovanna,Motricidade
+INFANTIL,Infantil III,QUINTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil III,QUINTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil III,QUINTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,QUINTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil III,QUINTA,5,08:40,09:25,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil III,QUINTA,6,09:25,10:05,AULA,Atividades Artísticas e Motoras,Geovanna,Atividades Artísticas e Motoras
+INFANTIL,Infantil III,QUINTA,7,10:05,10:15,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,QUINTA,8,10:15,10:45,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil III,QUINTA,9,10:45,11:15,AULA,Conhecimento de Mundo,Geovanna,Conhecimento de Mundo
+INFANTIL,Infantil III,QUINTA,10,11:15,11:30,AULA,Psicomotricidade — Regente,Geovanna,Psicomotricidade — Regente
+INFANTIL,Infantil III,SEXTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil III,SEXTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil III,SEXTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,SEXTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil III,SEXTA,5,08:40,09:25,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil III,SEXTA,6,09:25,10:05,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil III,SEXTA,7,10:05,10:15,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil III,SEXTA,8,10:15,10:50,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil III,SEXTA,9,10:50,11:30,AULA,Ensino Religioso,Nathalia,Ensino Religioso / Nathalia
+INFANTIL,Infantil IV,SEGUNDA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil IV,SEGUNDA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil IV,SEGUNDA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,SEGUNDA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil IV,SEGUNDA,5,08:40,09:20,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil IV,SEGUNDA,6,09:20,09:45,AULA,Pensamento Lógico-Matemático,Patrícia,Pensamento Lógico-Matemático
+INFANTIL,Infantil IV,SEGUNDA,7,09:45,09:55,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,SEGUNDA,8,09:55,10:25,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil IV,SEGUNDA,9,10:25,11:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil IV,SEGUNDA,10,11:10,11:30,AULA,Linguagem e Grafomotricidade,Patrícia,Linguagem e Grafomotricidade
+INFANTIL,Infantil IV,TERÇA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil IV,TERÇA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil IV,TERÇA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,TERÇA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil IV,TERÇA,5,08:40,09:20,AULA,Musicalização,Gabriela,Musicalização / Gabriela
+INFANTIL,Infantil IV,TERÇA,6,09:20,09:45,AULA,Pensamento Lógico-Matemático,Patrícia,Pensamento Lógico-Matemático
+INFANTIL,Infantil IV,TERÇA,7,09:45,09:55,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,TERÇA,8,09:55,10:25,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil IV,TERÇA,9,10:25,11:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil IV,TERÇA,10,11:10,11:30,AULA,Psicomotricidade — Regente,Patrícia,Psicomotricidade — Regente
+INFANTIL,Infantil IV,QUARTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil IV,QUARTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil IV,QUARTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,QUARTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil IV,QUARTA,5,08:40,09:20,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil IV,QUARTA,6,09:20,09:45,AULA,Pensamento Lógico-Matemático,Patrícia,Pensamento Lógico-Matemático
+INFANTIL,Infantil IV,QUARTA,7,09:45,09:55,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,QUARTA,8,09:55,10:25,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil IV,QUARTA,9,10:25,11:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil IV,QUARTA,10,11:10,11:30,AULA,Linguagem e Grafomotricidade,Patrícia,Linguagem e Grafomotricidade
+INFANTIL,Infantil IV,QUINTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil IV,QUINTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil IV,QUINTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,QUINTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil IV,QUINTA,5,08:40,09:20,AULA,Atividades Artísticas e Motoras,Patrícia,Atividades Artísticas e Motoras
+INFANTIL,Infantil IV,QUINTA,6,09:20,09:45,AULA,Conhecimento de Mundo,Patrícia,Conhecimento de Mundo
+INFANTIL,Infantil IV,QUINTA,7,09:45,09:55,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,QUINTA,8,09:55,10:25,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil IV,QUINTA,9,10:25,11:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil IV,QUINTA,10,11:10,11:30,AULA,Psicomotricidade — Regente,Patrícia,Psicomotricidade — Regente
+INFANTIL,Infantil IV,SEXTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil IV,SEXTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil IV,SEXTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil IV,SEXTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil IV,SEXTA,5,08:40,09:20,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil IV,SEXTA,6,09:20,10:00,AULA,Ensino Religioso,Nathalia,Ensino Religioso / Nathalia
+INFANTIL,Infantil IV,SEXTA,7,10:00,10:25,PAUSA,Intervalo / Parquinho,,Intervalo / Parquinho
+INFANTIL,Infantil IV,SEXTA,8,10:25,11:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil IV,SEXTA,9,11:10,11:30,AULA,Linguagem e Grafomotricidade,Patrícia,Linguagem e Grafomotricidade
+INFANTIL,Infantil V,SEGUNDA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil V,SEGUNDA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil V,SEGUNDA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,SEGUNDA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil V,SEGUNDA,5,08:40,09:05,AULA,Pensamento Lógico-Matemático,Mariana (Infantil V),Pensamento Lógico-Matemático
+INFANTIL,Infantil V,SEGUNDA,6,09:05,09:25,AULA,Linguagem e Grafomotricidade,Mariana (Infantil V),Linguagem e Grafomotricidade
+INFANTIL,Infantil V,SEGUNDA,7,09:25,10:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil V,SEGUNDA,8,10:10,10:20,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,SEGUNDA,9,10:20,11:00,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil V,SEGUNDA,10,11:00,11:30,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil V,TERÇA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil V,TERÇA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil V,TERÇA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,TERÇA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil V,TERÇA,5,08:40,09:05,AULA,Pensamento Lógico-Matemático,Mariana (Infantil V),Pensamento Lógico-Matemático
+INFANTIL,Infantil V,TERÇA,6,09:05,09:25,AULA,Psicomotricidade — Regente,Mariana (Infantil V),Psicomotricidade — Regente
+INFANTIL,Infantil V,TERÇA,7,09:25,10:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil V,TERÇA,8,10:10,10:20,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,TERÇA,9,10:20,11:00,AULA,Musicalização,Gabriela,Musicalização / Gabriela
+INFANTIL,Infantil V,TERÇA,10,11:00,11:30,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil V,QUARTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil V,QUARTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil V,QUARTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,QUARTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil V,QUARTA,5,08:40,09:05,AULA,Pensamento Lógico-Matemático,Mariana (Infantil V),Pensamento Lógico-Matemático
+INFANTIL,Infantil V,QUARTA,6,09:05,09:25,AULA,Linguagem e Grafomotricidade,Mariana (Infantil V),Linguagem e Grafomotricidade
+INFANTIL,Infantil V,QUARTA,7,09:25,10:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil V,QUARTA,8,10:10,10:20,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,QUARTA,9,10:20,11:00,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil V,QUARTA,10,11:00,11:30,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil V,QUINTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil V,QUINTA,2,07:50,08:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil V,QUINTA,3,08:00,08:30,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,QUINTA,4,08:30,08:40,PAUSA,Higienização,,Higienização
+INFANTIL,Infantil V,QUINTA,5,08:40,09:05,AULA,Conhecimento de Mundo,Mariana (Infantil V),Conhecimento de Mundo
+INFANTIL,Infantil V,QUINTA,6,09:05,09:25,AULA,Psicomotricidade — Regente,Mariana (Infantil V),Psicomotricidade — Regente
+INFANTIL,Infantil V,QUINTA,7,09:25,10:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil V,QUINTA,8,10:10,10:20,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,QUINTA,9,10:20,11:00,AULA,Linguagem e Grafomotricidade,Mariana (Infantil V),Linguagem e Grafomotricidade
+INFANTIL,Infantil V,QUINTA,10,11:00,11:30,PAUSA,Parquinho,,Parquinho
+INFANTIL,Infantil V,SEXTA,1,07:30,07:50,PAUSA,Rotina Diária / Mural e Bits,,Rotina Diária / Mural e Bits
+INFANTIL,Infantil V,SEXTA,2,07:50,08:00,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,SEXTA,3,08:00,08:40,AULA,Psicomotricidade,Gleice,Psicomotricidade / Gleice
+INFANTIL,Infantil V,SEXTA,4,08:40,09:05,AULA,Atividades Artísticas e Motoras,Mariana (Infantil V),Atividades Artísticas e Motoras
+INFANTIL,Infantil V,SEXTA,5,09:05,09:25,PAUSA,Intervalo,,Intervalo
+INFANTIL,Infantil V,SEXTA,6,09:25,10:10,AULA,Inglês,Mariana,Inglês / Mariana
+INFANTIL,Infantil V,SEXTA,7,10:10,10:50,AULA,Ensino Religioso,Nathalia,Ensino Religioso / Nathalia
+INFANTIL,Infantil V,SEXTA,8,10:50,11:00,PAUSA,Leitura em Voz Alta,,Leitura em Voz Alta
+INFANTIL,Infantil V,SEXTA,9,11:00,11:30,PAUSA,Parquinho,,Parquinho

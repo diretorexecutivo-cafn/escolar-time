@@ -12,6 +12,7 @@ import type {
   Priority,
   SlotType,
 } from './types'
+import { normalizeTime } from './time'
 
 // ─── Raw row shapes (relaxed; Supabase types cast at edges) ───────────────────
 
@@ -129,10 +130,12 @@ function buildSlotsByDay(
   const out: Record<number, EngineTimeSlot[]> = {}
   for (const [day, slots] of grouped) {
     slots.sort((a, b) => a.slot_order - b.slot_order)
-    let cursor = gridStart
+    let cursor = normalizeTime(gridStart)
     out[day] = slots.map((s) => {
-      const start = cursor
-      const end = addMinutes(cursor, s.duration_minutes)
+      // Usa o horário gravado no slot (o mesmo que a tela mostra); o encadeamento por
+      // duração é só fallback para slots antigos sem start/end.
+      const start = s.start_time ? normalizeTime(s.start_time) : cursor
+      const end = s.end_time ? normalizeTime(s.end_time) : addMinutes(start, s.duration_minutes)
       cursor = end
       return {
         id: s.id,
@@ -160,8 +163,9 @@ function normalizeConstraint(r: RawConstraint): EngineConstraint {
     daysOfWeek: r.days_of_week ?? [],
     schoolUnitId: r.school_unit_id ?? undefined,
     subjectId: r.subject_id ?? undefined,
-    timeFrom: r.time_from ?? undefined,
-    timeTo: r.time_to ?? undefined,
+    // Normaliza "HH:MM:SS" → "HH:MM": as comparações com os horários dos slots são textuais.
+    timeFrom: r.time_from ? normalizeTime(r.time_from) : undefined,
+    timeTo: r.time_to ? normalizeTime(r.time_to) : undefined,
     slotOrder: r.slot_order ?? undefined,
     minGapSlots: r.min_gap_slots ?? undefined,
     value: r.value ?? undefined,
