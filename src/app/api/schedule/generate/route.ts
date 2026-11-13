@@ -18,7 +18,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 })
   }
 
-  let body: { name?: string; baselineScheduleId?: string; baselineWeight?: number }
+  let body: {
+    name?: string
+    baselineScheduleId?: string
+    baselineWeight?: number
+    /** Vigência das grades; null = grades sem vigência; ausente = a mais recente. */
+    vigencia?: string | null
+  }
   try {
     body = await request.json()
   } catch {
@@ -26,6 +32,8 @@ export async function POST(request: NextRequest) {
   }
 
   const { name, baselineScheduleId, baselineWeight } = body
+  const vigencia =
+    body.vigencia === undefined ? undefined : body.vigencia?.trim() ? body.vigencia.trim() : null
 
   if (!name || name.trim() === '') {
     return NextResponse.json({ error: 'O nome do horário é obrigatório.' }, { status: 400 })
@@ -54,6 +62,7 @@ export async function POST(request: NextRequest) {
       name: name.trim(),
       baselineScheduleId,
       baselineWeight: baselineWeight ?? 0.7,
+      vigencia,
     })
 
     if (result.status === 'INFEASIBLE') {
@@ -62,7 +71,11 @@ export async function POST(request: NextRequest) {
         .update({
           status: 'FAILED',
           violations: result.validationErrors ?? [],
-          config_snapshot: { warnings: result.warnings ?? [], stats: result.stats },
+          config_snapshot: {
+            warnings: result.warnings ?? [],
+            stats: result.stats,
+            ...(vigencia !== undefined ? { vigencia } : {}),
+          },
         })
         .eq('id', scheduleId)
 
@@ -119,6 +132,7 @@ export async function POST(request: NextRequest) {
           warnings: result.warnings ?? [],
           baselineSimilarity: result.baselineSimilarity,
           baselineScheduleId: baselineScheduleId ?? null,
+          ...(vigencia !== undefined ? { vigencia } : {}),
         },
       })
       .eq('id', scheduleId)

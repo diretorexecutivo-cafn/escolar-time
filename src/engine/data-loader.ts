@@ -72,12 +72,13 @@ type RawTimeSlot = {
   end_time: string | null
 }
 
-type RawTimeGrid = {
+export type RawTimeGrid = {
   id: string
   class_group_id: string | null
   start_time: string
   days_of_week: number[]
   active: boolean
+  vigencia: string | null
   time_slots: RawTimeSlot[] | null
 }
 
@@ -94,6 +95,7 @@ type RawBaselineEntry = {
   teaching_assignment_id: string
   day_of_week: number
   time_slot_id: string
+  time_slots: { slot_order: number } | { slot_order: number }[] | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -174,10 +176,30 @@ function normalizeConstraint(r: RawConstraint): EngineConstraint {
 
 // ─── Loader ───────────────────────────────────────────────────────────────────
 
+/**
+ * Escolhe a grade da turma. Com vigência informada, só vale a grade ativa daquela
+ * vigência (a turma sem grade nela fica sem grade). Sem vigência, usa a grade ativa
+ * da vigência mais recente.
+ */
+export function pickGrid(grids: RawTimeGrid[], vigencia: string | null | undefined): RawTimeGrid | null {
+  const active = grids.filter((g) => g.active)
+  if (vigencia !== undefined) {
+    return active.find((g) => (g.vigencia ?? null) === vigencia) ?? null
+  }
+  const sorted = [...active].sort((a, b) => {
+    if (!a.vigencia) return 1
+    if (!b.vigencia) return -1
+    return b.vigencia.localeCompare(a.vigencia, 'pt-BR', { numeric: true })
+  })
+  return sorted[0] ?? null
+}
+
 export async function loadEngineInput(
   tenantId: string,
   baselineScheduleId?: string,
-  baselineWeight: number = 0.5
+  baselineWeight: number = 0.5,
+  /** Vigência das grades a usar; undefined = a mais recente de cada turma. */
+  vigencia?: string | null
 ): Promise<EngineInput> {
   // 1. Class groups + class_subjects (subjects + teaching_assignments) + time_grids + slots
   const { data: classGroupsRaw, error: cgErr } = await adminSupabase
@@ -191,7 +213,7 @@ export async function loadEngineInput(
         teaching_assignments ( id, teacher_id )
       ),
       time_grids!class_group_id (
-        id, class_group_id, start_time, days_of_week, active,
+        id, class_group_id, start_time, days_of_week, active, vigencia,
         time_slots ( id, day_of_week, slot_order, duration_minutes, type, start_time, end_time )
       )
     `
@@ -294,13 +316,12 @@ export async function loadEngineInput(
     }
   }
 
-  // 5. Build time grids per class group (active grid only — pick first active)
+  // 5. Build time grids per class group (grade ativa da vigência — ver pickGrid)
   const allTimeGrids: EngineTimeGrid[] = []
   const gridByClass = new Map<string, EngineTimeGrid>()
   for (const cg of classGroupsRows) {
-    const grids = (cg.time_grids ?? []).filter((g) => g.active)
-    if (grids.length === 0) continue
-    const g = grids[0]!
+    const g = pickGrid(cg.time_grids ?? [], vigencia)
+    if (!g) continue
     const tg: EngineTimeGrid = {
       id: g.id,
       classGroupId: cg.id,
@@ -335,15 +356,29 @@ export async function loadEngineInput(
     try {
       const { data: entries } = await adminSupabase
         .from('schedule_entries')
-        .select('teaching_assignment_id, day_of_week, time_slot_id')
+        .select('teaching_assignment_id, day_of_week, time_slot_id, time_slots(slot_order)')
         .eq('generated_schedule_id', baselineScheduleId)
       if (entries && entries.length > 0) {
         const rows = entries as unknown as RawBaselineEntry[]
+        // A base pode ser de outra vigência (outra grade, outros ids de slot): a aula é
+        // levada para o slot na mesma posição (dia + ordem) da grade usada agora.
+        const classByAssignment = new Map(allAssignments.map((a) => [a.id, a.classGroupId]))
+        const currentSlotIds = new Set(
+          allTimeGrids.flatMap((g) => Object.values(g.slotsByDay).flat().map((sl) => sl.id))
+        )
+        const mapSlot = (e: RawBaselineEntry): string => {
+          if (currentSlotIds.has(e.time_slot_id)) return e.time_slot_id
+          const order = firstOf(e.time_slots)?.slot_order
+          const classId = classByAssignment.get(e.teaching_assignment_id)
+          const grid = classId ? gridByClass.get(classId) : undefined
+          const match = grid?.slotsByDay[e.day_of_week]?.find((sl) => sl.order === order)
+          return match?.id ?? e.time_slot_id
+        }
         baseline = {
           entries: rows.map((e) => ({
             assignmentId: e.teaching_assignment_id,
             day: e.day_of_week,
-            slotId: e.time_slot_id,
+            slotId: mapSlot(e),
           })),
         }
       }

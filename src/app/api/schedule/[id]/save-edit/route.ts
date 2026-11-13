@@ -8,6 +8,7 @@ import {
   lessonsSchema,
   loadEditableSchedule,
   parseJson,
+  scheduleVigencia,
 } from '@/lib/schedule-edit'
 
 const bodySchema = z.object({
@@ -37,6 +38,7 @@ export async function POST(
   const { mode, entries } = parsed.data
 
   const baselineScheduleId = original.config_snapshot?.baselineScheduleId ?? null
+  const vigencia = await scheduleVigencia(original)
 
   let result
   try {
@@ -44,7 +46,8 @@ export async function POST(
       TENANT_ID,
       entries,
       baselineScheduleId ?? undefined,
-      original.baseline_weight
+      original.baseline_weight,
+      vigencia
     )
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Erro desconhecido.'
@@ -78,6 +81,7 @@ export async function POST(
         editedFrom: original.id,
         editMode: mode,
         baselineScheduleId,
+        ...(vigencia !== undefined ? { vigencia } : {}),
         warnings: [],
       },
     })

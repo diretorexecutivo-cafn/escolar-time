@@ -86,6 +86,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
       day_of_week,
       locked,
       time_slot_id,
+      time_slots ( time_grid_id ),
       teaching_assignments (
         id,
         teachers ( id, name ),
@@ -115,17 +116,41 @@ export default async function ScheduleDetailPage({ params }: Props) {
     )
   )
 
-  const { data: grids } = classGroupIds.length
+  // A grade de cada turma é a dos slots que o horário usou — com várias vigências, a
+  // grade "ativa" pode ser outra. Turmas sem aula caem na grade ativa (fallback).
+  const usedGridIds = Array.from(
+    new Set(
+      (entries ?? [])
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((e: any) => (Array.isArray(e.time_slots) ? e.time_slots[0] : e.time_slots)?.time_grid_id)
+        .filter((v): v is string => typeof v === 'string')
+    )
+  )
+
+  const gridSelect =
+    'id, class_group_id, time_slots (id, day_of_week, slot_order, start_time, end_time, type, label)'
+  const { data: usedGrids } = usedGridIds.length
+    ? await supabase.from('time_grids').select(gridSelect).in('id', usedGridIds)
+    : { data: [] }
+
+  const coveredClasses = new Set((usedGrids ?? []).map((g) => g.class_group_id))
+  const missingClassIds = classGroupIds.filter((id) => !coveredClasses.has(id))
+  const { data: fallbackGrids } = missingClassIds.length
     ? await supabase
         .from('time_grids')
-        .select(
-          'id, class_group_id, time_slots (id, day_of_week, slot_order, start_time, end_time, type, label)'
-        )
-        .in('class_group_id', classGroupIds)
+        .select(gridSelect)
+        .in('class_group_id', missingClassIds)
         .eq('active', true)
     : { data: [] }
 
-  const gridsByClass = (grids ?? []).map((g) => ({
+  const seen = new Set<string>()
+  const grids = [...(usedGrids ?? []), ...(fallbackGrids ?? [])].filter((g) => {
+    if (!g.class_group_id || seen.has(g.class_group_id)) return false
+    seen.add(g.class_group_id)
+    return true
+  })
+
+  const gridsByClass = grids.map((g) => ({
     classGroupId: g.class_group_id as string,
     slots: ((g.time_slots ?? []) as GridSlotRow[]).filter((s) => s.day_of_week != null),
   }))
