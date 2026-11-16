@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { Pencil, Power, Search, Plus } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -53,6 +54,7 @@ const selectClassName = cn(
 )
 
 export function ClassesTable({ classes, units }: ClassesTableProps) {
+  const canEdit = useCanEdit()
   const [search, setSearch] = useState('')
   const [unitFilter, setUnitFilter] = useState('')
   const [isPending, startTransition] = useTransition()
@@ -85,13 +87,15 @@ export function ClassesTable({ classes, units }: ClassesTableProps) {
           <h1 className="text-2xl font-bold text-navy">Turmas</h1>
           <p className="text-slate text-sm mt-1">Gerencie as turmas da rede.</p>
         </div>
-        <Link
-          href="/dashboard/classes/new"
-          className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
-        >
-          <Plus className="h-4 w-4" />
-          Nova Turma
-        </Link>
+        {canEdit && (
+          <Link
+            href="/dashboard/classes/new"
+            className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
+          >
+            <Plus className="h-4 w-4" />
+            Nova Turma
+          </Link>
+        )}
       </div>
 
       {/* Filtros */}
@@ -130,13 +134,13 @@ export function ClassesTable({ classes, units }: ClassesTableProps) {
               <TableHead className="font-semibold text-navy">Turno</TableHead>
               <TableHead className="font-semibold text-navy">Ano</TableHead>
               <TableHead className="font-semibold text-navy">Status</TableHead>
-              <TableHead className="font-semibold text-navy text-right">Ações</TableHead>
+              {canEdit && <TableHead className="font-semibold text-navy text-right">Ações</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-12 text-slate">
+                <TableCell colSpan={canEdit ? 7 : 6} className="text-center py-12 text-slate">
                   {search || unitFilter
                     ? 'Nenhuma turma encontrada para os filtros selecionados.'
                     : 'Nenhuma turma cadastrada.'}
@@ -167,39 +171,41 @@ export function ClassesTable({ classes, units }: ClassesTableProps) {
                       {classGroup.active ? 'Ativo' : 'Inativo'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Link
-                        href={`/dashboard/classes/${classGroup.id}/edit`}
-                        className={cn(
-                          buttonVariants({ variant: 'ghost', size: 'sm' }),
-                          'h-8 w-8 p-0 text-slate hover:text-navy cursor-pointer'
-                        )}
-                        title="Editar"
-                      >
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Editar</span>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={isPending && pendingId === classGroup.id}
-                        onClick={() => handleToggle(classGroup.id)}
-                        className={cn(
-                          'h-8 w-8 p-0 cursor-pointer',
-                          classGroup.active
-                            ? 'text-emerald-600 hover:text-red-500'
-                            : 'text-slate hover:text-emerald-600'
-                        )}
-                        title={classGroup.active ? 'Desativar' : 'Ativar'}
-                      >
-                        <Power className="h-4 w-4" />
-                        <span className="sr-only">
-                          {classGroup.active ? 'Desativar' : 'Ativar'}
-                        </span>
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {canEdit && (
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Link
+                          href={`/dashboard/classes/${classGroup.id}/edit`}
+                          className={cn(
+                            buttonVariants({ variant: 'ghost', size: 'sm' }),
+                            'h-8 w-8 p-0 text-slate hover:text-navy cursor-pointer'
+                          )}
+                          title="Editar"
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar</span>
+                        </Link>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={isPending && pendingId === classGroup.id}
+                          onClick={() => handleToggle(classGroup.id)}
+                          className={cn(
+                            'h-8 w-8 p-0 cursor-pointer',
+                            classGroup.active
+                              ? 'text-emerald-600 hover:text-red-500'
+                              : 'text-slate hover:text-emerald-600'
+                          )}
+                          title={classGroup.active ? 'Desativar' : 'Ativar'}
+                        >
+                          <Power className="h-4 w-4" />
+                          <span className="sr-only">
+                            {classGroup.active ? 'Desativar' : 'Ativar'}
+                          </span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}

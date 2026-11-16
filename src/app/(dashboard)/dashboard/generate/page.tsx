@@ -1,9 +1,13 @@
+import { redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { GenerateScheduleForm } from '@/components/schedule/generate-schedule-form'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
 export default async function GeneratePage() {
+  if (!(await getEditorProfile())) redirect('/dashboard/schedules')
+
   const supabase = await createClient()
 
   const [{ data: schedules }, { data: grids }] = await Promise.all([

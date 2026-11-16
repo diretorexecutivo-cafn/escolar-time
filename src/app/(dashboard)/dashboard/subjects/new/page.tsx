@@ -1,6 +1,10 @@
+import { redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { SubjectForm } from '@/components/subjects/subject-form'
 
-export default function NewSubjectPage() {
+export default async function NewSubjectPage() {
+  if (!(await getEditorProfile())) redirect('/dashboard/subjects')
+
   return (
     <div className="max-w-2xl space-y-6">
       <div>

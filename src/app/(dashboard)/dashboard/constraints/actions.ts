@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { denyIfReadOnly } from '@/lib/auth/session'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
@@ -38,6 +39,9 @@ type CreateConstraintData = {
 type ActionResult = { success: boolean; error?: string }
 
 export async function createConstraint(data: CreateConstraintData): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase.from('teacher_constraints').insert({
@@ -64,6 +68,9 @@ export async function createConstraint(data: CreateConstraintData): Promise<Acti
 }
 
 export async function toggleConstraintStatus(id: string): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { data: constraint, error: fetchError } = await supabase
@@ -88,6 +95,9 @@ export async function toggleConstraintStatus(id: string): Promise<ActionResult> 
 }
 
 export async function deleteConstraint(id: string): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase

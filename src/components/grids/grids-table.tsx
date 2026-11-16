@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -214,6 +215,7 @@ function VigenciaDialog({ state, vigencias, pending, onConfirm, onClose }: Vigen
 // ─── Tabela ───────────────────────────────────────────────────────────────────
 
 export function GridsTable({ grids }: GridsTableProps) {
+  const canEdit = useCanEdit()
   const [isPending, startTransition] = useTransition()
   const [pendingAction, setPendingAction] = useState<{
     id: string
@@ -306,12 +308,14 @@ export function GridsTable({ grids }: GridsTableProps) {
             Gerencie os horários de aulas e intervalos por turma, organizados por vigência.
           </p>
         </div>
-        <Link href="/dashboard/grids/new">
-          <Button className="bg-navy hover:bg-navy/90 text-white cursor-pointer gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Grade
-          </Button>
-        </Link>
+        {canEdit && (
+          <Link href="/dashboard/grids/new">
+            <Button className="bg-navy hover:bg-navy/90 text-white cursor-pointer gap-2">
+              <Plus className="h-4 w-4" />
+              Nova Grade
+            </Button>
+          </Link>
+        )}
       </div>
 
       {grids.length === 0 ? (
@@ -352,29 +356,31 @@ export function GridsTable({ grids }: GridsTableProps) {
                         ` · ${activeCount} ativa${activeCount !== 1 ? 's' : ''}`}
                     </span>
                   </button>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={
-                        vigencia
-                          ? `/dashboard/grids/new?vigencia=${encodeURIComponent(vigencia)}`
-                          : '/dashboard/grids/new'
-                      }
-                    >
-                      <Button variant="outline" size="sm" className="gap-1.5 cursor-pointer">
-                        <Plus className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline">Nova grade aqui</span>
+                  {canEdit && (
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={
+                          vigencia
+                            ? `/dashboard/grids/new?vigencia=${encodeURIComponent(vigencia)}`
+                            : '/dashboard/grids/new'
+                        }
+                      >
+                        <Button variant="outline" size="sm" className="gap-1.5 cursor-pointer">
+                          <Plus className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">Nova grade aqui</span>
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDialog({ kind: 'folder', source: vigencia })}
+                        className="gap-1.5 cursor-pointer"
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Duplicar vigência</span>
                       </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDialog({ kind: 'folder', source: vigencia })}
-                      className="gap-1.5 cursor-pointer"
-                    >
-                      <Copy className="h-3.5 w-3.5" />
-                      <span className="hidden sm:inline">Duplicar vigência</span>
-                    </Button>
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 {open && (
@@ -469,53 +475,55 @@ export function GridsTable({ grids }: GridsTableProps) {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex items-center gap-2 pt-1 border-t border-border">
-                              <Link href={`/dashboard/grids/${grid.id}/edit`} className="flex-1">
+                            {canEdit && (
+                              <div className="flex items-center gap-2 pt-1 border-t border-border">
+                                <Link href={`/dashboard/grids/${grid.id}/edit`} className="flex-1">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full gap-1.5 cursor-pointer"
+                                  >
+                                    <Edit2 className="h-3.5 w-3.5" />
+                                    Editar
+                                  </Button>
+                                </Link>
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="w-full gap-1.5 cursor-pointer"
+                                  onClick={() =>
+                                    setDialog({
+                                      kind: 'grid',
+                                      gridId: grid.id,
+                                      gridName: grid.name,
+                                      current: grid.vigencia ?? null,
+                                    })
+                                  }
+                                  disabled={duplicatePending}
+                                  title="Duplicar grade (escolher vigência)"
+                                  className="cursor-pointer"
                                 >
-                                  <Edit2 className="h-3.5 w-3.5" />
-                                  Editar
+                                  <Copy
+                                    className={`h-3.5 w-3.5 ${
+                                      duplicatePending ? 'opacity-50' : 'text-slate'
+                                    }`}
+                                  />
                                 </Button>
-                              </Link>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  setDialog({
-                                    kind: 'grid',
-                                    gridId: grid.id,
-                                    gridName: grid.name,
-                                    current: grid.vigencia ?? null,
-                                  })
-                                }
-                                disabled={duplicatePending}
-                                title="Duplicar grade (escolher vigência)"
-                                className="cursor-pointer"
-                              >
-                                <Copy
-                                  className={`h-3.5 w-3.5 ${
-                                    duplicatePending ? 'opacity-50' : 'text-slate'
-                                  }`}
-                                />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleToggle(grid.id)}
-                                disabled={togglePending}
-                                title={grid.active ? 'Desativar grade' : 'Ativar grade'}
-                                className="cursor-pointer"
-                              >
-                                <Power
-                                  className={`h-3.5 w-3.5 ${
-                                    grid.active ? 'text-emerald-600' : 'text-gray-400'
-                                  }`}
-                                />
-                              </Button>
-                            </div>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleToggle(grid.id)}
+                                  disabled={togglePending}
+                                  title={grid.active ? 'Desativar grade' : 'Ativar grade'}
+                                  className="cursor-pointer"
+                                >
+                                  <Power
+                                    className={`h-3.5 w-3.5 ${
+                                      grid.active ? 'text-emerald-600' : 'text-gray-400'
+                                    }`}
+                                  />
+                                </Button>
+                              </div>
+                            )}
                           </CardContent>
                         </Card>
                       )

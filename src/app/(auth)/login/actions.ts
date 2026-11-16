@@ -14,5 +14,16 @@ export async function loginAction(
     return { success: false, error: 'E-mail ou senha inválidos.' }
   }
 
+  // Usuário desativado (ou sem perfil) não entra: a RLS esconde o perfil dele.
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = user
+    ? await supabase.from('profiles').select('id').eq('id', user.id).eq('active', true).maybeSingle()
+    : { data: null }
+
+  if (!profile) {
+    await supabase.auth.signOut()
+    return { success: false, error: 'Seu acesso está desativado. Fale com o administrador.' }
+  }
+
   return { success: true }
 }

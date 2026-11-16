@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -193,6 +194,7 @@ function RuleCard({
   onWeightChange,
   onParamsChange,
 }: RuleCardProps) {
+  const canEdit = useCanEdit()
   const meta = RULE_META[rule.type] ?? RULE_META.CUSTOM
   const Icon = meta.icon
   const isMandatory = rule.priority === 'MANDATORY'
@@ -255,7 +257,7 @@ function RuleCard({
             setLocalWeight(v)
             onWeightChange(v)
           }}
-          disabled={isPending || !rule.active}
+          disabled={!canEdit || isPending || !rule.active}
         />
 
         {/* Type-specific extras */}
@@ -273,7 +275,7 @@ function RuleCard({
                   min_gap_slots: parseInt(e.target.value, 10) || 1,
                 })
               }
-              disabled={isPending || !rule.active}
+              disabled={!canEdit || isPending || !rule.active}
               className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring disabled:opacity-50"
             />
           </div>
@@ -289,65 +291,67 @@ function RuleCard({
             onChange={(v) =>
               onParamsChange({ ...params, baseline_weight: v })
             }
-            disabled={isPending || !rule.active}
+            disabled={!canEdit || isPending || !rule.active}
             format={(v) => `${Math.round(v * 100)}%`}
           />
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 pt-1 border-t border-border">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onToggle}
-            disabled={isPending}
-            className="gap-1.5 cursor-pointer"
-            title={rule.active ? 'Desativar' : 'Ativar'}
-          >
-            <Power
-              className={cn(
-                'h-3.5 w-3.5',
-                rule.active ? 'text-emerald-600' : 'text-gray-400'
-              )}
-            />
-            {rule.active ? 'Desativar' : 'Ativar'}
-          </Button>
-
-          {confirmDelete ? (
-            <div className="ml-auto flex items-center gap-1.5">
-              <span className="text-xs text-red-600 font-medium">
-                Confirmar exclusão?
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onDelete}
-                disabled={isPending}
-                className="h-7 px-2 text-xs border-red-300 text-red-600 hover:bg-red-50 cursor-pointer"
-              >
-                Sim
-              </Button>
-              <button
-                type="button"
-                onClick={() => setConfirmDelete(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          ) : (
+        {canEdit && (
+          <div className="flex items-center gap-2 pt-1 border-t border-border">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setConfirmDelete(true)}
+              onClick={onToggle}
               disabled={isPending}
-              className="ml-auto cursor-pointer text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 gap-1.5"
+              className="gap-1.5 cursor-pointer"
+              title={rule.active ? 'Desativar' : 'Ativar'}
             >
-              <Trash2 className="h-3.5 w-3.5" />
-              Excluir
+              <Power
+                className={cn(
+                  'h-3.5 w-3.5',
+                  rule.active ? 'text-emerald-600' : 'text-gray-400'
+                )}
+              />
+              {rule.active ? 'Desativar' : 'Ativar'}
             </Button>
-          )}
-        </div>
+
+            {confirmDelete ? (
+              <div className="ml-auto flex items-center gap-1.5">
+                <span className="text-xs text-red-600 font-medium">
+                  Confirmar exclusão?
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onDelete}
+                  disabled={isPending}
+                  className="h-7 px-2 text-xs border-red-300 text-red-600 hover:bg-red-50 cursor-pointer"
+                >
+                  Sim
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(false)}
+                  className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setConfirmDelete(true)}
+                disabled={isPending}
+                className="ml-auto cursor-pointer text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 gap-1.5"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Excluir
+              </Button>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
@@ -537,6 +541,7 @@ function AddRuleDialog({ onClose, onCreate, isPending }: AddRuleDialogProps) {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function GlobalRulesConfig({ rules }: GlobalRulesConfigProps) {
+  const canEdit = useCanEdit()
   const [isPending, startTransition] = useTransition()
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [showAdd, setShowAdd] = useState(false)
@@ -608,13 +613,15 @@ export function GlobalRulesConfig({ rules }: GlobalRulesConfigProps) {
             Configure as regras que orientam o algoritmo na geração dos horários.
           </p>
         </div>
-        <Button
-          onClick={() => setShowAdd(true)}
-          className="bg-navy hover:bg-navy/90 text-white cursor-pointer gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          Adicionar Regra
-        </Button>
+        {canEdit && (
+          <Button
+            onClick={() => setShowAdd(true)}
+            className="bg-navy hover:bg-navy/90 text-white cursor-pointer gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Adicionar Regra
+          </Button>
+        )}
       </div>
 
       {/* Info alert */}
@@ -636,13 +643,15 @@ export function GlobalRulesConfig({ rules }: GlobalRulesConfigProps) {
           <p className="text-slate/60 text-sm mt-1">
             Adicione regras para orientar o algoritmo de geração de horários.
           </p>
-          <button
-            type="button"
-            onClick={() => setShowAdd(true)}
-            className="mt-3 text-sm text-navy hover:underline font-medium cursor-pointer"
-          >
-            + Adicionar primeira regra
-          </button>
+          {canEdit && (
+            <button
+              type="button"
+              onClick={() => setShowAdd(true)}
+              className="mt-3 text-sm text-navy hover:underline font-medium cursor-pointer"
+            >
+              + Adicionar primeira regra
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -661,7 +670,7 @@ export function GlobalRulesConfig({ rules }: GlobalRulesConfigProps) {
       )}
 
       {/* Add dialog */}
-      {showAdd && (
+      {canEdit && showAdd && (
         <AddRuleDialog
           onClose={() => setShowAdd(false)}
           onCreate={handleCreate}

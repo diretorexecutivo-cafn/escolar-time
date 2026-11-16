@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { denyIfReadOnly } from '@/lib/auth/session'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
@@ -11,6 +12,9 @@ export async function assignTeacher(
   classSubjectId: string,
   teacherId: string
 ): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -27,6 +31,9 @@ export async function assignTeacher(
 }
 
 export async function removeAssignment(classSubjectId: string): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -46,6 +53,9 @@ export async function addSubjectToClass(
   weeklyLessons: number,
   allowDoubleLesson: boolean
 ): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase.from('class_subjects').insert({
@@ -62,6 +72,9 @@ export async function addSubjectToClass(
 }
 
 export async function removeSubjectFromClass(classSubjectId: string): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase

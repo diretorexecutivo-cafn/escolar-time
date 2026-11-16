@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { Pencil, Power, Search, Plus } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,6 +29,7 @@ type Subject = {
 }
 
 export function SubjectsTable({ subjects }: { subjects: Subject[] }) {
+  const canEdit = useCanEdit()
   const [search, setSearch] = useState('')
   const [isPending, startTransition] = useTransition()
   const [pendingId, setPendingId] = useState<string | null>(null)
@@ -57,13 +59,15 @@ export function SubjectsTable({ subjects }: { subjects: Subject[] }) {
           <h1 className="text-2xl font-bold text-navy">Disciplinas</h1>
           <p className="text-slate text-sm mt-1">Gerencie as disciplinas da rede.</p>
         </div>
-        <Link
-          href="/dashboard/subjects/new"
-          className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
-        >
-          <Plus className="h-4 w-4" />
-          Nova Disciplina
-        </Link>
+        {canEdit && (
+          <Link
+            href="/dashboard/subjects/new"
+            className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
+          >
+            <Plus className="h-4 w-4" />
+            Nova Disciplina
+          </Link>
+        )}
       </div>
 
       {/* Search */}
@@ -86,13 +90,13 @@ export function SubjectsTable({ subjects }: { subjects: Subject[] }) {
               <TableHead className="font-semibold text-navy">Código</TableHead>
               <TableHead className="font-semibold text-navy">Cor</TableHead>
               <TableHead className="font-semibold text-navy">Status</TableHead>
-              <TableHead className="font-semibold text-navy text-right">Ações</TableHead>
+              {canEdit && <TableHead className="font-semibold text-navy text-right">Ações</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-12 text-slate">
+                <TableCell colSpan={canEdit ? 5 : 4} className="text-center py-12 text-slate">
                   {search
                     ? 'Nenhuma disciplina encontrada para esta busca.'
                     : 'Nenhuma disciplina cadastrada.'}
@@ -127,36 +131,38 @@ export function SubjectsTable({ subjects }: { subjects: Subject[] }) {
                       {subject.active ? 'Ativo' : 'Inativo'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/dashboard/subjects/${subject.id}/edit`}
-                        className={cn(
-                          buttonVariants({ variant: 'ghost', size: 'sm' }),
-                          'h-8 w-8 p-0 text-slate hover:text-navy cursor-pointer'
-                        )}
-                      >
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Editar</span>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={isPending && pendingId === subject.id}
-                        onClick={() => handleToggle(subject.id)}
-                        className={cn(
-                          'h-8 w-8 p-0 cursor-pointer',
-                          subject.active
-                            ? 'text-emerald-600 hover:text-red-500'
-                            : 'text-slate hover:text-emerald-600'
-                        )}
-                        title={subject.active ? 'Desativar' : 'Ativar'}
-                      >
-                        <Power className="h-4 w-4" />
-                        <span className="sr-only">{subject.active ? 'Desativar' : 'Ativar'}</span>
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {canEdit && (
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/dashboard/subjects/${subject.id}/edit`}
+                          className={cn(
+                            buttonVariants({ variant: 'ghost', size: 'sm' }),
+                            'h-8 w-8 p-0 text-slate hover:text-navy cursor-pointer'
+                          )}
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar</span>
+                        </Link>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={isPending && pendingId === subject.id}
+                          onClick={() => handleToggle(subject.id)}
+                          className={cn(
+                            'h-8 w-8 p-0 cursor-pointer',
+                            subject.active
+                              ? 'text-emerald-600 hover:text-red-500'
+                              : 'text-slate hover:text-emerald-600'
+                          )}
+                          title={subject.active ? 'Desativar' : 'Ativar'}
+                        >
+                          <Power className="h-4 w-4" />
+                          <span className="sr-only">{subject.active ? 'Desativar' : 'Ativar'}</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}

@@ -1,9 +1,13 @@
+import { redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { ClassForm } from '@/components/classes/class-form'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
 export default async function NewClassPage() {
+  if (!(await getEditorProfile())) redirect('/dashboard/classes')
+
   const supabase = await createClient()
 
   const [{ data: units }, { data: teachers }] = await Promise.all([

@@ -6,7 +6,9 @@
       "Bash(echo \"EXIT:$?\")",
       "Bash(npm run *)",
       "Bash(git -C \"/Users/heliosantana/Desktop/Projetos IA/local/escolar-time\" status)",
-      "Bash(git -C \"/Users/heliosantana/Desktop/Projetos IA/local/escolar-time\" log --oneline -15)"
+      "Bash(git -C \"/Users/heliosantana/Desktop/Projetos IA/local/escolar-time\" log --oneline -15)",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "ClaudeInChromeDomain(localhost:3000)"
     ]
   },
   "enableAllProjectMcpServers": true,

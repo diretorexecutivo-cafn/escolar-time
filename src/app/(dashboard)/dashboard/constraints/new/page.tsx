@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { ConstraintWizard } from '@/components/constraints/constraint-wizard'
 
@@ -8,6 +10,8 @@ interface NewConstraintPageProps {
 }
 
 export default async function NewConstraintPage({ searchParams }: NewConstraintPageProps) {
+  if (!(await getEditorProfile())) redirect('/dashboard/constraints')
+
   const { teacherId } = await searchParams
   const supabase = await createClient()
 

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { getEditorProfile } from '@/lib/auth/session'
 import {
   AlarmCheck,
   AlarmClock,
@@ -57,6 +58,7 @@ export default async function TeacherProfilePage({
 }) {
   const { id } = await params
   const supabase = await createClient()
+  const canEdit = !!(await getEditorProfile())
 
   const [{ data: teacher }, { data: constraints }] = await Promise.all([
     supabase
@@ -108,16 +110,18 @@ export default async function TeacherProfilePage({
                 </Badge>
               </div>
             </div>
-            <Link
-              href={`/dashboard/teachers/${teacher.id}/edit`}
-              className={cn(
-                buttonVariants({ variant: 'outline', size: 'sm' }),
-                'shrink-0 cursor-pointer'
-              )}
-            >
-              <Pencil className="h-4 w-4" />
-              Editar Dados
-            </Link>
+            {canEdit && (
+              <Link
+                href={`/dashboard/teachers/${teacher.id}/edit`}
+                className={cn(
+                  buttonVariants({ variant: 'outline', size: 'sm' }),
+                  'shrink-0 cursor-pointer'
+                )}
+              >
+                <Pencil className="h-4 w-4" />
+                Editar Dados
+              </Link>
+            )}
           </div>
         </CardHeader>
       </Card>
@@ -139,16 +143,18 @@ export default async function TeacherProfilePage({
                 </p>
               </div>
             </div>
-            <Link
-              href={`/dashboard/constraints/new?teacherId=${teacher.id}`}
-              className={cn(
-                buttonVariants({ variant: 'outline', size: 'sm' }),
-                'shrink-0 cursor-pointer gap-1.5'
-              )}
-            >
-              <Plus className="h-4 w-4" />
-              Adicionar
-            </Link>
+            {canEdit && (
+              <Link
+                href={`/dashboard/constraints/new?teacherId=${teacher.id}`}
+                className={cn(
+                  buttonVariants({ variant: 'outline', size: 'sm' }),
+                  'shrink-0 cursor-pointer gap-1.5'
+                )}
+              >
+                <Plus className="h-4 w-4" />
+                Adicionar
+              </Link>
+            )}
           </div>
 
           {/* Lista de restrições ativas */}
