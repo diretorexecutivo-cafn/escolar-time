@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { adminSupabase } from '@/lib/supabase/admin'
+import { adminSupabaseAs } from '@/lib/supabase/admin'
 import { validateEditedSchedule } from '@/engine/index'
 import {
   TENANT_ID,
@@ -32,6 +32,7 @@ export async function POST(
   const loaded = await loadEditableSchedule(id)
   if (!loaded.ok) return loaded.response
   const { userId, schedule: original } = loaded
+  const adminSupabase = adminSupabaseAs(userId)
 
   const parsed = bodySchema.safeParse(await parseJson(request))
   if (!parsed.success) return badRequest(parsed.error)

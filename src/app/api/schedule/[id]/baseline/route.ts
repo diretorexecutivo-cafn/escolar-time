@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { adminSupabase } from '@/lib/supabase/admin'
+import { adminSupabaseAs } from '@/lib/supabase/admin'
+import { requireEditor } from '@/lib/auth/api'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
@@ -10,14 +10,11 @@ export async function POST(
 ) {
   const { id } = await params
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const auth = await requireEditor()
+  if (!auth.ok) return auth.response
+  const { user } = auth
 
-  if (!user) {
-    return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 })
-  }
+  const adminSupabase = adminSupabaseAs(user.id)
 
   const { data: schedule, error: fetchError } = await adminSupabase
     .from('generated_schedules')

@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { GridForm } from '@/components/grids/grid-form'
 
@@ -15,6 +17,8 @@ interface NewGridPageProps {
 }
 
 export default async function NewGridPage({ searchParams }: NewGridPageProps) {
+  if (!(await getEditorProfile())) redirect('/dashboard/grids')
+
   const { vigencia } = await searchParams
   const supabase = await createClient()
 

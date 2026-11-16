@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { isAllowedEmail } from './allowed-domain'
 import { passwordUpdateErrorMessage } from './password-errors'
+import { canEdit, DEFAULT_ROLE } from './roles'
 
 describe('isAllowedEmail', () => {
   it('accepts only the school domain', () => {
@@ -25,5 +26,17 @@ describe('passwordUpdateErrorMessage', () => {
   })
   it('falls back to a generic message', () => {
     expect(passwordUpdateErrorMessage({ message: 'boom' })).toMatch(/tente novamente/i)
+  })
+})
+
+describe('canEdit', () => {
+  it('lets only ADMIN and COORDINATOR change data', () => {
+    expect(canEdit('ADMIN')).toBe(true)
+    expect(canEdit('COORDINATOR')).toBe(true)
+    expect(canEdit('VIEWER')).toBe(false)
+    expect(canEdit(null)).toBe(false)
+  })
+  it('gives first-time Google users a read-only role', () => {
+    expect(canEdit(DEFAULT_ROLE)).toBe(false)
   })
 })

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
+import { requireEditor } from '@/lib/auth/api'
 import { adminSupabase } from '@/lib/supabase/admin'
 
 export const TENANT_ID = '00000000-0000-0000-0000-000000000001'
@@ -27,17 +27,13 @@ export type EditableSchedule = {
 type Ok<T> = { ok: true } & T
 type Fail = { ok: false; response: NextResponse }
 
-/** Usuário logado + horário editável (concluído e não apagado) do tenant. */
+/** Usuário que pode editar (ADMIN/COORDINATOR) + horário editável (concluído e não apagado) do tenant. */
 export async function loadEditableSchedule(
   id: string
 ): Promise<Ok<{ userId: string; schedule: EditableSchedule }> | Fail> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) {
-    return { ok: false, response: NextResponse.json({ error: 'Não autenticado.' }, { status: 401 }) }
-  }
+  const auth = await requireEditor()
+  if (!auth.ok) return auth
+  const { user } = auth
 
   const { data: schedule } = await adminSupabase
     .from('generated_schedules')

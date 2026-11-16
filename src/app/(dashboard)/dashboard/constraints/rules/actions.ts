@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { denyIfReadOnly } from '@/lib/auth/session'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
@@ -26,6 +27,9 @@ type CreateGlobalRuleData = {
 type ActionResult = { success: boolean; error?: string }
 
 export async function createGlobalRule(data: CreateGlobalRuleData): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase.from('global_rules').insert({
@@ -48,6 +52,9 @@ export async function updateGlobalRuleWeight(
   id: string,
   weight: number
 ): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -66,6 +73,9 @@ export async function updateGlobalRuleParams(
   id: string,
   params: Record<string, unknown>
 ): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -81,6 +91,9 @@ export async function updateGlobalRuleParams(
 }
 
 export async function toggleGlobalRule(id: string): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { data: rule, error: fetchError } = await supabase
@@ -105,6 +118,9 @@ export async function toggleGlobalRule(id: string): Promise<ActionResult> {
 }
 
 export async function deleteGlobalRule(id: string): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { error } = await supabase

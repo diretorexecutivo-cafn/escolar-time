@@ -26,8 +26,9 @@ type LoginFormValues = z.infer<typeof loginSchema>
 const CALLBACK_ERRORS: Record<string, string> = {
   domain: `Use uma conta Google @${ALLOWED_EMAIL_DOMAIN}.`,
   no_profile:
-    'Sua conta Google não está cadastrada no sistema. Peça acesso ao administrador.',
+    'Não foi possível criar seu acesso. Tente novamente ou fale com o administrador.',
   oauth: 'Não foi possível entrar com o Google. Tente novamente.',
+  inactive: 'Seu acesso está desativado. Fale com o administrador.',
 }
 
 function GoogleIcon() {

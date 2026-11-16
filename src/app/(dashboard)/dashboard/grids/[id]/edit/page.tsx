@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { GridForm } from '@/components/grids/grid-form'
 
@@ -25,6 +26,8 @@ type DbSlot = {
 }
 
 export default async function EditGridPage({ params }: EditGridPageProps) {
+  if (!(await getEditorProfile())) redirect('/dashboard/grids')
+
   const { id } = await params
   const supabase = await createClient()
 

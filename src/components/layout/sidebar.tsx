@@ -19,6 +19,8 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
+  UserCog,
+  History,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -32,8 +34,14 @@ const NAV_ITEMS = [
   { label: 'Grades Horárias',href: '/dashboard/grids',       icon: Clock },
   { label: 'Restrições',     href: '/dashboard/constraints', icon: ShieldAlert },
   { label: 'Regras Globais', href: '/dashboard/constraints/rules', icon: Settings2 },
-  { label: 'Gerar Horário',  href: '/dashboard/generate',    icon: Wand2 },
+  { label: 'Gerar Horário',  href: '/dashboard/generate',    icon: Wand2, editorOnly: true },
   { label: 'Horários',       href: '/dashboard/schedules',   icon: CalendarDays },
+]
+
+// Só para administradores.
+const ADMIN_NAV_ITEMS = [
+  { label: 'Usuários',       href: '/dashboard/users',       icon: UserCog },
+  { label: 'Histórico',      href: '/dashboard/history',     icon: History },
 ]
 
 const COLLAPSED_KEY = 'sidebar-collapsed'
@@ -57,9 +65,11 @@ function getCollapsedSnapshot() {
 interface SidebarProps {
   userName: string
   userEmail: string
+  isAdmin: boolean
+  canEdit: boolean
 }
 
-export function Sidebar({ userName, userEmail }: SidebarProps) {
+export function Sidebar({ userName, userEmail, isAdmin, canEdit }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -114,7 +124,9 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-2">
         <ul className="space-y-0.5">
-          {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+          {[...NAV_ITEMS, ...(isAdmin ? ADMIN_NAV_ITEMS : [])]
+            .filter((item) => canEdit || !('editorOnly' in item && item.editorOnly))
+            .map(({ label, href, icon: Icon }) => {
             const isActive =
               href === '/dashboard'
                 ? pathname === '/dashboard'
@@ -151,6 +163,9 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
           <div className="mb-3">
             <p className="text-white text-sm font-medium truncate">{userName}</p>
             <p className="text-white/50 text-xs truncate">{userEmail}</p>
+            {!canEdit && (
+              <p className="text-ocre text-xs mt-1">Somente consulta</p>
+            )}
           </div>
         )}
         <button

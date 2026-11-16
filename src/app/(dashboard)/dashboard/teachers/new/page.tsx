@@ -1,6 +1,10 @@
+import { redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { TeacherForm } from '@/components/teachers/teacher-form'
 
-export default function NewTeacherPage() {
+export default async function NewTeacherPage() {
+  if (!(await getEditorProfile())) redirect('/dashboard/teachers')
+
   return (
     <div className="max-w-2xl space-y-6">
       <div>

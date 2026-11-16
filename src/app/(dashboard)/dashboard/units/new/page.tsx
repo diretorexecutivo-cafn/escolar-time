@@ -1,6 +1,10 @@
+import { redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { UnitForm } from '@/components/units/unit-form'
 
-export default function NewUnitPage() {
+export default async function NewUnitPage() {
+  if (!(await getEditorProfile())) redirect('/dashboard/units')
+
   return (
     <div className="max-w-2xl space-y-6">
       <div>

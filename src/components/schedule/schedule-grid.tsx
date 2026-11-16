@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -1601,6 +1602,7 @@ function DeletedBanner({ schedule }: { schedule: ScheduleInfo }) {
 }
 
 export function ScheduleGrid({ schedule, entries, grids }: Props) {
+  const canEdit = useCanEdit()
   const router = useRouter()
   const [tab, setTab] = useState<keyof typeof TAB_LABELS>('class')
 
@@ -1778,7 +1780,7 @@ export function ScheduleGrid({ schedule, entries, grids }: Props) {
             <ScoreBadge score={schedule.score} />
           </div>
         </div>
-        {!isDeleted && !editing && (
+        {canEdit && !isDeleted && !editing && (
           <Button
             variant="outline"
             onClick={() => setShowModeDialog(true)}

@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { getEditorProfile } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { SubjectForm } from '@/components/subjects/subject-form'
 
@@ -9,6 +10,8 @@ export default async function EditSubjectPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+  if (!(await getEditorProfile())) redirect('/dashboard/subjects')
+
   const { id } = await params
   const supabase = await createClient()
 

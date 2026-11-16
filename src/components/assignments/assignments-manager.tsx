@@ -13,6 +13,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -148,6 +149,7 @@ function Modal({
 }
 
 export function AssignmentsManager({ units }: { units: Unit[] }) {
+  const canEdit = useCanEdit()
   const [selectedUnitId, setSelectedUnitId] = useState('')
   const [classGroups, setClassGroups] = useState<RawClassGroup[]>([])
   const [allTeachers, setAllTeachers] = useState<RawTeacher[]>([])
@@ -458,9 +460,11 @@ export function AssignmentsManager({ units }: { units: Unit[] }) {
                                 <TableHead className="font-semibold text-navy">
                                   Professor atribuído
                                 </TableHead>
-                                <TableHead className="font-semibold text-navy text-right">
-                                  Ações
-                                </TableHead>
+                                {canEdit && (
+                                  <TableHead className="font-semibold text-navy text-right">
+                                    Ações
+                                  </TableHead>
+                                )}
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -501,19 +505,21 @@ export function AssignmentsManager({ units }: { units: Unit[] }) {
                                       {teacher ? (
                                         <div className="flex items-center gap-1.5">
                                           <span className="text-sm text-navy">{teacher.name}</span>
-                                          <button
-                                            type="button"
-                                            onClick={() => handleRemoveAssignment(cs.id)}
-                                            disabled={isRemovingAssignment}
-                                            title="Remover atribuição"
-                                            className="text-slate hover:text-red-500 transition-colors disabled:opacity-50"
-                                          >
-                                            {isRemovingAssignment ? (
-                                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                            ) : (
-                                              <X className="h-3.5 w-3.5" />
-                                            )}
-                                          </button>
+                                          {canEdit && (
+                                            <button
+                                              type="button"
+                                              onClick={() => handleRemoveAssignment(cs.id)}
+                                              disabled={isRemovingAssignment}
+                                              title="Remover atribuição"
+                                              className="text-slate hover:text-red-500 transition-colors disabled:opacity-50"
+                                            >
+                                              {isRemovingAssignment ? (
+                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                              ) : (
+                                                <X className="h-3.5 w-3.5" />
+                                              )}
+                                            </button>
+                                          )}
                                         </div>
                                       ) : (
                                         <Badge className="bg-red-100 text-red-600 hover:bg-red-100 text-xs">
@@ -521,43 +527,45 @@ export function AssignmentsManager({ units }: { units: Unit[] }) {
                                         </Badge>
                                       )}
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                      <div className="flex items-center justify-end gap-1">
-                                        <button
-                                          type="button"
-                                          onClick={() =>
-                                            openAssignDialog(cs.id, teacher?.id ?? '')
-                                          }
-                                          title={teacher ? 'Trocar professor' : 'Atribuir professor'}
-                                          className={cn(
-                                            'flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors',
-                                            teacher
-                                              ? 'text-slate hover:text-navy hover:bg-gray-100'
-                                              : 'text-navy bg-navy/10 hover:bg-navy/20'
-                                          )}
-                                        >
-                                          {teacher ? (
-                                            <RefreshCw className="h-3.5 w-3.5" />
-                                          ) : (
-                                            <UserPlus className="h-3.5 w-3.5" />
-                                          )}
-                                          <span>{teacher ? 'Trocar' : 'Atribuir'}</span>
-                                        </button>
-                                        <button
-                                          type="button"
-                                          onClick={() => handleRemoveSubject(cs.id)}
-                                          disabled={isRemovingSubject}
-                                          title="Remover disciplina da turma"
-                                          className="p-1 text-slate hover:text-red-500 hover:bg-gray-100 rounded-md transition-colors disabled:opacity-50"
-                                        >
-                                          {isRemovingSubject ? (
-                                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                          ) : (
-                                            <Trash2 className="h-3.5 w-3.5" />
-                                          )}
-                                        </button>
-                                      </div>
-                                    </TableCell>
+                                    {canEdit && (
+                                      <TableCell className="text-right">
+                                        <div className="flex items-center justify-end gap-1">
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              openAssignDialog(cs.id, teacher?.id ?? '')
+                                            }
+                                            title={teacher ? 'Trocar professor' : 'Atribuir professor'}
+                                            className={cn(
+                                              'flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors',
+                                              teacher
+                                                ? 'text-slate hover:text-navy hover:bg-gray-100'
+                                                : 'text-navy bg-navy/10 hover:bg-navy/20'
+                                            )}
+                                          >
+                                            {teacher ? (
+                                              <RefreshCw className="h-3.5 w-3.5" />
+                                            ) : (
+                                              <UserPlus className="h-3.5 w-3.5" />
+                                            )}
+                                            <span>{teacher ? 'Trocar' : 'Atribuir'}</span>
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleRemoveSubject(cs.id)}
+                                            disabled={isRemovingSubject}
+                                            title="Remover disciplina da turma"
+                                            className="p-1 text-slate hover:text-red-500 hover:bg-gray-100 rounded-md transition-colors disabled:opacity-50"
+                                          >
+                                            {isRemovingSubject ? (
+                                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                            ) : (
+                                              <Trash2 className="h-3.5 w-3.5" />
+                                            )}
+                                          </button>
+                                        </div>
+                                      </TableCell>
+                                    )}
                                   </TableRow>
                                 )
                               })}
@@ -566,16 +574,18 @@ export function AssignmentsManager({ units }: { units: Unit[] }) {
                         )}
 
                         {/* Add subject button */}
-                        <div className="px-4 py-3 border-t border-border/60">
-                          <button
-                            type="button"
-                            onClick={() => openAddSubjectDialog(group.id)}
-                            className="flex items-center gap-1.5 text-sm text-navy hover:text-ocre transition-colors"
-                          >
-                            <Plus className="h-4 w-4" />
-                            Adicionar Disciplina
-                          </button>
-                        </div>
+                        {canEdit && (
+                          <div className="px-4 py-3 border-t border-border/60">
+                            <button
+                              type="button"
+                              onClick={() => openAddSubjectDialog(group.id)}
+                              className="flex items-center gap-1.5 text-sm text-navy hover:text-ocre transition-colors"
+                            >
+                              <Plus className="h-4 w-4" />
+                              Adicionar Disciplina
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

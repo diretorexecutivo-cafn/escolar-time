@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -164,6 +165,7 @@ function ConstraintCard({
   onDelete,
   isActionPending,
 }: ConstraintCardProps) {
+  const canEdit = useCanEdit()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const meta = CONSTRAINT_META[constraint.type] ?? CONSTRAINT_META.CUSTOM
   const Icon = meta.icon
@@ -233,52 +235,54 @@ function ConstraintCard({
         )}
 
         {/* Action row */}
-        <div className="flex items-center gap-2 pt-1 border-t border-border">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onToggle}
-            disabled={isActionPending}
-            className="gap-1.5 cursor-pointer"
-            title={constraint.active ? 'Desativar' : 'Ativar'}
-          >
-            <Power className={cn('h-3.5 w-3.5', constraint.active ? 'text-emerald-600' : 'text-gray-400')} />
-            {constraint.active ? 'Desativar' : 'Ativar'}
-          </Button>
-
-          {confirmDelete ? (
-            <div className="ml-auto flex items-center gap-1.5">
-              <span className="text-xs text-red-600 font-medium">Confirmar exclusão?</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onDelete}
-                disabled={isActionPending}
-                className="h-7 px-2 text-xs border-red-300 text-red-600 hover:bg-red-50 cursor-pointer"
-              >
-                Sim
-              </Button>
-              <button
-                type="button"
-                onClick={() => setConfirmDelete(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          ) : (
+        {canEdit && (
+          <div className="flex items-center gap-2 pt-1 border-t border-border">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setConfirmDelete(true)}
+              onClick={onToggle}
               disabled={isActionPending}
-              className="ml-auto cursor-pointer text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 gap-1.5"
+              className="gap-1.5 cursor-pointer"
+              title={constraint.active ? 'Desativar' : 'Ativar'}
             >
-              <Trash2 className="h-3.5 w-3.5" />
-              Excluir
+              <Power className={cn('h-3.5 w-3.5', constraint.active ? 'text-emerald-600' : 'text-gray-400')} />
+              {constraint.active ? 'Desativar' : 'Ativar'}
             </Button>
-          )}
-        </div>
+
+            {confirmDelete ? (
+              <div className="ml-auto flex items-center gap-1.5">
+                <span className="text-xs text-red-600 font-medium">Confirmar exclusão?</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onDelete}
+                  disabled={isActionPending}
+                  className="h-7 px-2 text-xs border-red-300 text-red-600 hover:bg-red-50 cursor-pointer"
+                >
+                  Sim
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(false)}
+                  className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setConfirmDelete(true)}
+                disabled={isActionPending}
+                className="ml-auto cursor-pointer text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 gap-1.5"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Excluir
+              </Button>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
@@ -287,6 +291,7 @@ function ConstraintCard({
 // ─── Main manager ─────────────────────────────────────────────────────────────
 
 export function ConstraintsManager({ teachers, constraints }: ConstraintsManagerProps) {
+  const canEdit = useCanEdit()
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>('')
   const [isPending, startTransition] = useTransition()
   const [pendingId, setPendingId] = useState<string | null>(null)
@@ -327,12 +332,14 @@ export function ConstraintsManager({ teachers, constraints }: ConstraintsManager
             Configure disponibilidades e preferências dos professores.
           </p>
         </div>
-        <Link href="/dashboard/constraints/new">
-          <Button className="bg-navy hover:bg-navy/90 text-white cursor-pointer gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Restrição
-          </Button>
-        </Link>
+        {canEdit && (
+          <Link href="/dashboard/constraints/new">
+            <Button className="bg-navy hover:bg-navy/90 text-white cursor-pointer gap-2">
+              <Plus className="h-4 w-4" />
+              Nova Restrição
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Teacher filter */}
@@ -370,12 +377,14 @@ export function ConstraintsManager({ teachers, constraints }: ConstraintsManager
           <p className="text-slate font-medium">
             {selectedTeacher?.name} não tem restrições cadastradas.
           </p>
-          <Link
-            href={`/dashboard/constraints/new?teacherId=${selectedTeacherId}`}
-            className="mt-3 text-sm text-navy hover:underline font-medium"
-          >
-            + Adicionar primeira restrição
-          </Link>
+          {canEdit && (
+            <Link
+              href={`/dashboard/constraints/new?teacherId=${selectedTeacherId}`}
+              className="mt-3 text-sm text-navy hover:underline font-medium"
+            >
+              + Adicionar primeira restrição
+            </Link>
+          )}
         </div>
       ) : (
         <div className="space-y-3">

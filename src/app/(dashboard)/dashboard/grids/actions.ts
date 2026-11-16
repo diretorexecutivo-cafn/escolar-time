@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { denyIfReadOnly } from '@/lib/auth/session'
 
 const TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
@@ -187,6 +188,9 @@ export async function createTimeGrid(
   gridData: GridData,
   slotsByDay: SlotsByDay
 ): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   if (!gridData.class_group_id) return { success: false, error: 'Turma é obrigatória.' }
@@ -236,6 +240,9 @@ export async function updateTimeGrid(
   gridData: GridData,
   slotsByDay: SlotsByDay
 ): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   if (!gridData.class_group_id) return { success: false, error: 'Turma é obrigatória.' }
@@ -356,6 +363,9 @@ export async function duplicateTimeGrid(
   id: string,
   targetVigencia: string | null
 ): Promise<ActionResult & { keptClassGroup?: boolean }> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { data: original, error: fetchError } = await supabase
@@ -385,6 +395,9 @@ export async function duplicateVigencia(
   sourceVigencia: string | null,
   targetVigencia: string
 ): Promise<ActionResult & { count?: number; skipped?: number }> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
   const source = normalizeVigencia(sourceVigencia)
   const target = normalizeVigencia(targetVigencia)
@@ -422,6 +435,9 @@ export async function duplicateVigencia(
 }
 
 export async function toggleGridStatus(id: string): Promise<ActionResult> {
+  const denied = await denyIfReadOnly()
+  if (denied) return denied
+
   const supabase = await createClient()
 
   const { data: grid, error: fetchError } = await supabase

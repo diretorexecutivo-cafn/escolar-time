@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Plus, Eye, Star, Trash2, ChevronDown, ChevronRight, Archive } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -76,6 +77,7 @@ function ScoreBadge({ score }: { score: number | null }) {
 }
 
 export function SchedulesHistory({ schedules, deletedSchedules = [] }: Props) {
+  const canEdit = useCanEdit()
   const router = useRouter()
   const [list, setList] = useState(schedules)
   const [showDeleted, setShowDeleted] = useState(false)
@@ -131,23 +133,30 @@ export function SchedulesHistory({ schedules, deletedSchedules = [] }: Props) {
           <h1 className="text-2xl font-bold text-navy">Horários Gerados</h1>
           <p className="text-slate text-sm mt-1">Histórico de grades horárias geradas pelo motor.</p>
         </div>
-        <Link
-          href="/dashboard/generate"
-          className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
-        >
-          <Plus className="h-4 w-4" />
-          Gerar Novo Horário
-        </Link>
+        {canEdit && (
+          <Link
+            href="/dashboard/generate"
+            className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
+          >
+            <Plus className="h-4 w-4" />
+            Gerar Novo Horário
+          </Link>
+        )}
       </div>
 
       {list.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-white p-16 text-center">
           <p className="text-slate text-sm">
-            Nenhum horário gerado ainda.{' '}
-            <Link href="/dashboard/generate" className="text-navy underline hover:text-ocre">
-              Clique em Gerar Novo Horário
-            </Link>{' '}
-            para começar.
+            Nenhum horário gerado ainda.
+            {canEdit && (
+              <>
+                {' '}
+                <Link href="/dashboard/generate" className="text-navy underline hover:text-ocre">
+                  Clique em Gerar Novo Horário
+                </Link>{' '}
+                para começar.
+              </>
+            )}
           </p>
         </div>
       ) : (
@@ -191,35 +200,39 @@ export function SchedulesHistory({ schedules, deletedSchedules = [] }: Props) {
                       <Eye className="h-4 w-4" />
                       <span className="hidden sm:inline">Visualizar</span>
                     </Link>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={isPending && pendingId === schedule.id}
-                      onClick={() => handleSetBaseline(schedule.id)}
-                      title="Marcar como Baseline"
-                      className={cn(
-                        'cursor-pointer gap-1',
-                        schedule.is_baseline
-                          ? 'text-ocre hover:text-ocre-dark'
-                          : 'text-slate hover:text-ocre'
-                      )}
-                    >
-                      <Star className="h-4 w-4" />
-                      <span className="hidden sm:inline">Marcar Baseline</span>
-                    </Button>
+                    {canEdit && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={isPending && pendingId === schedule.id}
+                        onClick={() => handleSetBaseline(schedule.id)}
+                        title="Marcar como Baseline"
+                        className={cn(
+                          'cursor-pointer gap-1',
+                          schedule.is_baseline
+                            ? 'text-ocre hover:text-ocre-dark'
+                            : 'text-slate hover:text-ocre'
+                        )}
+                      >
+                        <Star className="h-4 w-4" />
+                        <span className="hidden sm:inline">Marcar Baseline</span>
+                      </Button>
+                    )}
                   </>
                 )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={isPending && pendingId === schedule.id}
-                  onClick={() => handleDelete(schedule.id)}
-                  title="Excluir"
-                  className="text-slate hover:text-red-500 cursor-pointer gap-1"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Excluir</span>
-                </Button>
+                {canEdit && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={isPending && pendingId === schedule.id}
+                    onClick={() => handleDelete(schedule.id)}
+                    title="Excluir"
+                    className="text-slate hover:text-red-500 cursor-pointer gap-1"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="hidden sm:inline">Excluir</span>
+                  </Button>
+                )}
               </div>
             </div>
           ))}

@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { Pencil, Power, Search, Plus, ShieldAlert } from 'lucide-react'
 import { toast } from 'sonner'
+import { useCanEdit } from '@/components/auth/can-edit'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,6 +27,7 @@ type Teacher = {
 }
 
 export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
+  const canEdit = useCanEdit()
   const [search, setSearch] = useState('')
   const [isPending, startTransition] = useTransition()
   const [pendingId, setPendingId] = useState<string | null>(null)
@@ -55,13 +57,15 @@ export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
           <h1 className="text-2xl font-bold text-navy">Professores</h1>
           <p className="text-slate text-sm mt-1">Gerencie o quadro docente da rede.</p>
         </div>
-        <Link
-          href="/dashboard/teachers/new"
-          className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
-        >
-          <Plus className="h-4 w-4" />
-          Novo Professor
-        </Link>
+        {canEdit && (
+          <Link
+            href="/dashboard/teachers/new"
+            className={cn(buttonVariants(), 'bg-navy hover:bg-navy-light text-white cursor-pointer')}
+          >
+            <Plus className="h-4 w-4" />
+            Novo Professor
+          </Link>
+        )}
       </div>
 
       {/* Search */}
@@ -82,13 +86,13 @@ export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
             <TableRow className="bg-gray-50">
               <TableHead className="font-semibold text-navy">Nome</TableHead>
               <TableHead className="font-semibold text-navy">Status</TableHead>
-              <TableHead className="font-semibold text-navy text-right">Ações</TableHead>
+              {canEdit && <TableHead className="font-semibold text-navy text-right">Ações</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-12 text-slate">
+                <TableCell colSpan={canEdit ? 3 : 2} className="text-center py-12 text-slate">
                   {search
                     ? 'Nenhum professor encontrado para esta busca.'
                     : 'Nenhum professor cadastrado.'}
@@ -116,48 +120,50 @@ export function TeachersTable({ teachers }: { teachers: Teacher[] }) {
                       {teacher.active ? 'Ativo' : 'Inativo'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Link
-                        href={`/dashboard/teachers/${teacher.id}/edit`}
-                        className={cn(
-                          buttonVariants({ variant: 'ghost', size: 'sm' }),
-                          'h-8 w-8 p-0 text-slate hover:text-navy cursor-pointer'
-                        )}
-                        title="Editar"
-                      >
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Editar</span>
-                      </Link>
-                      <Link
-                        href={`/dashboard/teachers/${teacher.id}/constraints`}
-                        className={cn(
-                          buttonVariants({ variant: 'ghost', size: 'sm' }),
-                          'h-8 w-8 p-0 text-slate hover:text-ocre cursor-pointer'
-                        )}
-                        title="Restrições"
-                      >
-                        <ShieldAlert className="h-4 w-4" />
-                        <span className="sr-only">Restrições</span>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={isPending && pendingId === teacher.id}
-                        onClick={() => handleToggle(teacher.id)}
-                        className={cn(
-                          'h-8 w-8 p-0 cursor-pointer',
-                          teacher.active
-                            ? 'text-emerald-600 hover:text-red-500'
-                            : 'text-slate hover:text-emerald-600'
-                        )}
-                        title={teacher.active ? 'Desativar' : 'Ativar'}
-                      >
-                        <Power className="h-4 w-4" />
-                        <span className="sr-only">{teacher.active ? 'Desativar' : 'Ativar'}</span>
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {canEdit && (
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Link
+                          href={`/dashboard/teachers/${teacher.id}/edit`}
+                          className={cn(
+                            buttonVariants({ variant: 'ghost', size: 'sm' }),
+                            'h-8 w-8 p-0 text-slate hover:text-navy cursor-pointer'
+                          )}
+                          title="Editar"
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar</span>
+                        </Link>
+                        <Link
+                          href={`/dashboard/teachers/${teacher.id}/constraints`}
+                          className={cn(
+                            buttonVariants({ variant: 'ghost', size: 'sm' }),
+                            'h-8 w-8 p-0 text-slate hover:text-ocre cursor-pointer'
+                          )}
+                          title="Restrições"
+                        >
+                          <ShieldAlert className="h-4 w-4" />
+                          <span className="sr-only">Restrições</span>
+                        </Link>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={isPending && pendingId === teacher.id}
+                          onClick={() => handleToggle(teacher.id)}
+                          className={cn(
+                            'h-8 w-8 p-0 cursor-pointer',
+                            teacher.active
+                              ? 'text-emerald-600 hover:text-red-500'
+                              : 'text-slate hover:text-emerald-600'
+                          )}
+                          title={teacher.active ? 'Desativar' : 'Ativar'}
+                        >
+                          <Power className="h-4 w-4" />
+                          <span className="sr-only">{teacher.active ? 'Desativar' : 'Ativar'}</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}
